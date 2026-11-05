@@ -101,18 +101,27 @@
 }
 
 .mode-icon {
-  font-size: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.mode-card.active .mode-icon {
+  color: var(--accent-gold);
+}
+
+.mode-card:hover .mode-icon {
+  color: var(--text-main);
 }
 
 .mode-text strong {
   display: block;
   font-size: 13px;
   color: var(--text-main);
-}
-
-.mode-text span {
-  font-size: 11px;
-  color: var(--text-muted);
+  line-height: 1.2;
 }
 
 /* Gate Controls with Left Accent Borders */

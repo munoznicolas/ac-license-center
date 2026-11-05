@@ -50,11 +50,6 @@
   letter-spacing: 0.5px;
 }
 
-.header-actions {
-  display: flex;
-  gap: 12px;
-}
-
 /* License Tabs (Fixed, per requirements) */
 .license-nav {
   background-color: var(--bg-input);

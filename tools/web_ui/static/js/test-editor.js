@@ -85,10 +85,6 @@ async function loadReferenceTests() {
     const refData = await api.getReferenceTests();
     if (refData?.success) {
       state.referenceTests = refData.tests;
-      const refBadge = document.getElementById("ref-total-badge");
-      if (refBadge) {
-        refBadge.textContent = refData.count ?? refData.tests?.length ?? "";
-      }
     }
   } catch (err) {
     console.warn("Could not load reference benchmark tests:", err);

@@ -390,6 +390,19 @@ export function aggregateTestsByGame(list) {
         ? parseFloat((validPw.reduce((sum, t) => sum + t.pw_kg_hp, 0) / validPw.length).toFixed(2))
         : null;
 
+    const validHpKg = [];
+    tests.forEach((t) => {
+      const hp = Number(t.hp);
+      const wt = Number(t.weight_kg);
+      const kgHp = Number(t.pw_kg_hp);
+      if (hp > 0 && wt > 0) validHpKg.push(hp / wt);
+      else if (kgHp > 0) validHpKg.push(1 / kgHp);
+    });
+    const avgHpKg =
+      validHpKg.length > 0
+        ? parseFloat((validHpKg.reduce((sum, v) => sum + v, 0) / validHpKg.length).toFixed(3))
+        : null;
+
     const validGold = tests.filter(
       (t) => t.gold_seconds !== null && t.gold_seconds !== undefined && isFinite(t.gold_seconds)
     );
@@ -424,6 +437,7 @@ export function aggregateTestsByGame(list) {
       maxHp,
       validPwCount: validPw.length,
       avgPw,
+      avgHpKg,
       minPw,
       maxPw,
       validGoldCount: validGold.length,
@@ -473,6 +487,19 @@ export function aggregateTestsByLicense(list, activeGame = "ALL") {
         ? parseFloat((validPw.reduce((sum, t) => sum + t.pw_kg_hp, 0) / validPw.length).toFixed(2))
         : null;
 
+    const validHpKg = [];
+    tests.forEach((t) => {
+      const hp = Number(t.hp);
+      const wt = Number(t.weight_kg);
+      const kgHp = Number(t.pw_kg_hp);
+      if (hp > 0 && wt > 0) validHpKg.push(hp / wt);
+      else if (kgHp > 0) validHpKg.push(1 / kgHp);
+    });
+    const avgHpKg =
+      validHpKg.length > 0
+        ? parseFloat((validHpKg.reduce((sum, v) => sum + v, 0) / validHpKg.length).toFixed(3))
+        : null;
+
     const validGold = tests.filter(
       (t) => t.gold_seconds !== null && t.gold_seconds !== undefined && isFinite(t.gold_seconds)
     );
@@ -507,6 +534,7 @@ export function aggregateTestsByLicense(list, activeGame = "ALL") {
       maxHp,
       validPwCount: validPw.length,
       avgPw,
+      avgHpKg,
       minPw,
       maxPw,
       validGoldCount: validGold.length,
@@ -609,13 +637,19 @@ function renderPowerChart(list) {
     }
     labels = aggregates.map((a) => a.shortLabel);
     hpData = aggregates.map((a) => a.avgHp);
-    pwData = aggregates.map((a) => a.avgPw);
+    pwData = aggregates.map((a) => a.avgHpKg);
   } else {
     labels = list.map((t) =>
       state.activeRefGame === "ALL" ? `${t.game} ${t.code}` : t.code
     );
     hpData = list.map((t) => (t.hp && t.hp > 0 ? t.hp : null));
-    pwData = list.map((t) => (t.pw_kg_hp && t.pw_kg_hp > 0 ? t.pw_kg_hp : null));
+    pwData = list.map((t) =>
+      t.hp > 0 && t.weight_kg > 0
+        ? parseFloat((t.hp / t.weight_kg).toFixed(3))
+        : t.pw_kg_hp > 0
+        ? parseFloat((1 / t.pw_kg_hp).toFixed(3))
+        : null
+    );
   }
 
   const dense = labels.length > 50;
@@ -639,6 +673,21 @@ function renderPowerChart(list) {
       labels: labels,
       datasets: [
         {
+          label: isAgg ? "Avg Power to Weight (hp/kg)" : "Power to Weight (hp/kg)",
+          data: pwData,
+          yAxisID: "yPW",
+          borderColor: "#f59e0b",
+          backgroundColor: "rgba(245, 158, 11, 0.08)",
+          borderWidth: isAgg ? 2.5 : 2,
+          borderDash: isAgg ? [] : [4, 4],
+          fill: false,
+          tension: isAgg ? 0.3 : 0.2,
+          spanGaps: true,
+          pointBackgroundColor: "#f59e0b",
+          pointRadius: isAgg ? 4 : (dense ? 0 : 2),
+          pointHoverRadius: 7,
+        },
+        {
           label: isAgg ? "Avg Horsepower (HP)" : "Horsepower (HP)",
           data: hpData,
           yAxisID: "yHP",
@@ -649,21 +698,6 @@ function renderPowerChart(list) {
           tension: isAgg ? 0.3 : 0.2,
           spanGaps: true,
           pointBackgroundColor: "#ef4444",
-          pointRadius: isAgg ? 4 : (dense ? 0 : 2),
-          pointHoverRadius: 7,
-        },
-        {
-          label: isAgg ? "Avg Power to Weight (kg/hp)" : "Power to Weight (kg/hp)",
-          data: pwData,
-          yAxisID: "yPW",
-          borderColor: "#f59e0b",
-          backgroundColor: "rgba(245, 158, 11, 0.08)",
-          borderWidth: isAgg ? 2.5 : 2,
-          borderDash: [4, 4],
-          fill: false,
-          tension: isAgg ? 0.3 : 0.2,
-          spanGaps: true,
-          pointBackgroundColor: "#f59e0b",
           pointRadius: isAgg ? 4 : (dense ? 0 : 2),
           pointHoverRadius: 7,
         },
@@ -701,17 +735,18 @@ function renderPowerChart(list) {
               if (isAgg) {
                 const a = aggregates[item.dataIndex];
                 if (item.datasetIndex === 0) {
+                  const kgHp = item.parsed.y ? (1 / item.parsed.y).toFixed(2) : "N/A";
+                  return `Average P/W: ${item.parsed.y !== null ? item.parsed.y + " hp/kg (" + kgHp + " kg/hp)" : "N/A"}`;
+                } else {
                   const range = a.minHp !== null ? ` (Range: ${a.minHp} – ${a.maxHp} HP)` : "";
                   return `Average HP: ${item.parsed.y !== null ? item.parsed.y + " HP" : "N/A"}${range}`;
-                } else {
-                  const range = a.minPw !== null ? ` (Range: ${a.minPw} – ${a.maxPw} kg/hp)` : "";
-                  return `Average P/W: ${item.parsed.y !== null ? item.parsed.y + " kg/hp" : "N/A"}${range}`;
                 }
               }
               if (item.datasetIndex === 0) {
-                return `Horsepower: ${item.parsed.y} HP`;
+                const kgHp = item.parsed.y ? (1 / item.parsed.y).toFixed(2) : "N/A";
+                return `Power/Weight: ${item.parsed.y} hp/kg (${kgHp} kg/hp)`;
               } else {
-                return `Power/Weight: ${item.parsed.y} kg/hp`;
+                return `Horsepower: ${item.parsed.y} HP`;
               }
             },
           },
@@ -738,10 +773,27 @@ function renderPowerChart(list) {
             maxTicksLimit: showPerGame ? 10 : (isAgg ? 25 : 14),
           },
         },
-        yHP: {
+        yPW: {
           type: "linear",
           display: true,
           position: "left",
+          title: {
+            display: true,
+            text: isAgg ? "Avg P/W (hp/kg)" : "P/W (hp/kg)",
+            color: "#f59e0b",
+            font: { family: "Chakra Petch", size: 11, weight: "bold" },
+          },
+          ticks: {
+            color: "#fbbf24",
+            font: { family: "JetBrains Mono", size: 10 },
+            callback: (val) => `${Number(val).toFixed(2)}`,
+          },
+          grid: { color: gridColor },
+        },
+        yHP: {
+          type: "linear",
+          display: true,
+          position: "right",
           title: {
             display: true,
             text: isAgg ? "Avg Horsepower (HP)" : "Horsepower (HP)",
@@ -750,22 +802,6 @@ function renderPowerChart(list) {
           },
           ticks: {
             color: "#f87171",
-            font: { family: "JetBrains Mono", size: 10 },
-          },
-          grid: { color: gridColor },
-        },
-        yPW: {
-          type: "linear",
-          display: true,
-          position: "right",
-          title: {
-            display: true,
-            text: isAgg ? "Avg P/W (kg/hp)" : "P/W (kg/hp)",
-            color: "#f59e0b",
-            font: { family: "Chakra Petch", size: 11, weight: "bold" },
-          },
-          ticks: {
-            color: "#fbbf24",
             font: { family: "JetBrains Mono", size: 10 },
           },
           grid: { drawOnChartArea: false },

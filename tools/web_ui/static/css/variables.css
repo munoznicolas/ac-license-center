@@ -6,6 +6,7 @@
   --bg-main: #0c0f14;
   --bg-panel: #13171e;
   --bg-card: #191f28;
+  --card-bg: var(--bg-card);
   --bg-input: #10141a;
   --overlay-bg: rgba(12, 15, 20, 0.85);
 
@@ -82,6 +83,7 @@
   --bg-main: #f8fafc;
   --bg-panel: #ffffff;
   --bg-card: #ffffff;
+  --card-bg: var(--bg-card);
   --bg-input: #f1f5f9;
   --overlay-bg: rgba(248, 250, 252, 0.88);
 

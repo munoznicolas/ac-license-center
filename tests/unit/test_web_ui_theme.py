@@ -78,6 +78,27 @@ class TestWebUITheme(unittest.TestCase):
         self.assertIn(':root[data-theme="dark"]', content)
         self.assertIn(".theme-toggle-btn", content)
 
+    def test_header_actions_theme_and_shadow_isolation(self):
+        """Verify hamburger menu (header-actions drawer) adapts to theme and does not leak shadow when closed."""
+        responsive_path = os.path.join(STATIC_DIR, "css", "responsive.css")
+        self.assertTrue(os.path.isfile(responsive_path), f"File missing: {responsive_path}")
+        with open(responsive_path, "r", encoding="utf-8") as f:
+            css = f.read()
+
+        # 1. No hardcoded black background (#12161f) for header-actions
+        self.assertNotIn("#12161f", css, "header-actions drawer must not have hardcoded dark background #12161f")
+
+        # 2. Must use theme variable (var(--bg-panel) or var(--bg-card))
+        self.assertIn("background-color: var(--bg-panel);", css, "header-actions must use dynamic theme background var(--bg-panel)")
+
+        # 3. Closed state must not have persistent shadow leaking to viewport
+        self.assertIn("box-shadow: none;", css, "Closed header-actions must set box-shadow: none to prevent shadow leaking")
+        self.assertIn("visibility: hidden;", css, "Closed header-actions must set visibility: hidden to prevent shadow leaking")
+
+        # 4. Open state must apply shadow
+        self.assertIn(".header-actions.open", css)
+        self.assertIn(':root[data-theme="light"] .header-actions.open', css, "Light theme must have calibrated drawer shadow")
+
 
 if __name__ == "__main__":
     unittest.main()

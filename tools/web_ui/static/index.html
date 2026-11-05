@@ -236,9 +236,14 @@
               title="Gran Turismo Benchmark Data & Visualizations (406 Tests)"
               aria-label="Gran Turismo Benchmark Data & Visualizations"
             >
-              <span class="ref-tab-icon" aria-hidden="true">📊</span>
+              <span class="ref-tab-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+              </span>
               <span class="ref-tab-label">GT Values</span>
-              <span class="tab-count" id="ref-total-badge">406</span>
             </button>
           </div>
         </div>
@@ -701,10 +706,15 @@
                     id="radio-standing"
                   />
                   <div class="mode-body">
-                    <span class="mode-icon">🛑</span>
+                    <span class="mode-icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                      </svg>
+                    </span>
                     <div class="mode-text">
                       <strong>Standing Start</strong>
-                      <span>Chassis stationary at start line (0 km/h)</span>
                     </div>
                   </div>
                 </label>
@@ -717,10 +727,16 @@
                     id="radio-rolling"
                   />
                   <div class="mode-body">
-                    <span class="mode-icon">🏎️</span>
+                    <span class="mode-icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 11 2 11.4V16c0 .6.4 1 1 1h2"></path>
+                        <circle cx="7" cy="17" r="2"></circle>
+                        <path d="M9 17h6"></path>
+                        <circle cx="17" cy="17" r="2"></circle>
+                      </svg>
+                    </span>
                     <div class="mode-text">
                       <strong>Rolling Start</strong>
-                      <span>AI autopilot drives through countdown to GO!</span>
                     </div>
                   </div>
                 </label>
@@ -733,10 +749,17 @@
                     id="radio-flying"
                   />
                   <div class="mode-body">
-                    <span class="mode-icon">✈️</span>
+                    <span class="mode-icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="13" r="8"></circle>
+                        <path d="M12 9v4l2.5 2.5"></path>
+                        <path d="M5 3L2 6"></path>
+                        <path d="M22 6l-3-3"></path>
+                        <path d="M10 2h4"></path>
+                      </svg>
+                    </span>
                     <div class="mode-text">
                       <strong>Flying Lap</strong>
-                      <span>Hot lap with high-speed rolling launch</span>
                     </div>
                   </div>
                 </label>
@@ -854,25 +877,21 @@
           <div class="ref-controls">
             <span class="ref-control-label">SELECT GAME:</span>
             <div id="game-selector-pills" class="game-pills">
-              <div class="pills-row">
-                <button class="pill-btn active" data-game="ALL">All Games</button>
-                <button class="pill-btn" data-game="GT1">GT1</button>
-                <button class="pill-btn" data-game="GT2">GT2</button>
-                <button class="pill-btn" data-game="GT3">GT3</button>
-                <button class="pill-btn" data-game="GT4">GT4</button>
-              </div>
-              <div class="pills-row">
-                <button class="pill-btn" data-game="GT5">GT5</button>
-                <button class="pill-btn" data-game="GT6">GT6</button>
-                <button class="pill-btn" data-game="GT7">GT7</button>
-                <button
-                  class="pill-btn pill-btn-ac"
-                  data-game="AC Mod"
-                  title="Assetto Corsa GT-Like Career Driving School"
-                >
-                  AC Mod
-                </button>
-              </div>
+              <button class="pill-btn active" data-game="ALL">All Games</button>
+              <button class="pill-btn" data-game="GT1">GT1</button>
+              <button class="pill-btn" data-game="GT2">GT2</button>
+              <button class="pill-btn" data-game="GT3">GT3</button>
+              <button class="pill-btn" data-game="GT4">GT4</button>
+              <button class="pill-btn" data-game="GT5">GT5</button>
+              <button class="pill-btn" data-game="GT6">GT6</button>
+              <button class="pill-btn" data-game="GT7">GT7</button>
+              <button
+                class="pill-btn pill-btn-ac"
+                data-game="AC Mod"
+                title="Assetto Corsa GT-Like Career Driving School"
+              >
+                AC Mod
+              </button>
             </div>
           </div>
         </div>
@@ -995,16 +1014,16 @@
                 >Avg by Game</button>
                 <button
                   type="button"
-                  id="badge-toggle-hp"
-                  class="chart-badge chart-badge-btn-toggle chart-filter-badge text-red"
-                  title="Click to toggle Horsepower line"
-                >● Left: HP</button>
-                <button
-                  type="button"
                   id="badge-toggle-pw"
                   class="chart-badge chart-badge-btn-toggle chart-filter-badge text-amber"
                   title="Click to toggle Power/Weight line"
-                >● Right: kg/hp</button>
+                >● Left: hp/kg</button>
+                <button
+                  type="button"
+                  id="badge-toggle-hp"
+                  class="chart-badge chart-badge-btn-toggle chart-filter-badge text-red"
+                  title="Click to toggle Horsepower line"
+                >● Right: HP</button>
               </div>
             </div>
             <div class="chart-canvas-wrapper chart-scrollable">

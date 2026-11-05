@@ -24,6 +24,7 @@ if REPO_ROOT not in sys.path:
 if os.path.join(REPO_ROOT, "tools") not in sys.path:
     sys.path.insert(0, os.path.join(REPO_ROOT, "tools"))
 
+from tools.validate_web_ui import validate_web_ui_structure
 from tools.content.catalog import TEST_CATALOG
 from tools.web_ui.catalog_manager import (
     CAR_LAYOUT_MAP,
@@ -99,6 +100,16 @@ def build_static_site(out_dir: str = "dist_site", clean: bool = True) -> str:
     if clean and os.path.exists(dist_path):
         shutil.rmtree(dist_path)
     os.makedirs(dist_path, exist_ok=True)
+
+    # 0. Validate Web UI Structural Integrity
+    index_html = os.path.join(REPO_ROOT, 'tools', 'web_ui', 'static', 'index.html')
+    ui_errors = validate_web_ui_structure(index_html)
+    if ui_errors:
+        print('[ERROR] Web UI structural validation failed before build:')
+        for e in ui_errors:
+            print(f'  - {e}')
+        raise ValueError(f'Cannot build static site with {len(ui_errors)} structural HTML errors')
+    print('  [OK] Web UI HTML structure and DOM containment verified')
 
     # 1. Copy Frontend Static Assets
     static_src = os.path.join(REPO_ROOT, "tools", "web_ui", "static")

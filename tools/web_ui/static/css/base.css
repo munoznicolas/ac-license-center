@@ -274,6 +274,15 @@ select optgroup {
   border-color: var(--accent-gold);
 }
 
+.btn-ghost {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+.btn-ghost:hover {
+  background-color: var(--border-color);
+}
+
 
 /* Utilities */
 .flex-between {

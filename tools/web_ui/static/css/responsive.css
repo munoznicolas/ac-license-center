@@ -450,26 +450,24 @@
   }
 
   .game-pills {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 6px;
     width: 100%;
     overflow: visible;
   }
 
-  .pills-row {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    width: 100%;
-    flex-wrap: nowrap;
-  }
-
   .pill-btn {
-    flex-shrink: 0;
-    min-height: 32px;
-    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    min-height: 34px;
+    padding: 6px 8px;
     font-size: 11px;
+    box-sizing: border-box;
+    white-space: nowrap;
   }
 
   .ref-metrics-card {
@@ -620,14 +618,10 @@
     font-size: 12px;
   }
 
-  .pills-row {
-    gap: 4px;
-  }
-
   .pill-btn {
-    padding: 4px 8px;
+    padding: 5px 4px;
     font-size: 10.5px;
-    min-height: 30px;
+    min-height: 32px;
   }
 
   .ref-metrics-grid {

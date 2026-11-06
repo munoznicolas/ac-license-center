@@ -1,0 +1,11 @@
+{
+  "sync-origin-main": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "python tools/git_sync_hook.py --antigravity",
+        "timeout": 15
+      }
+    ]
+  }
+}

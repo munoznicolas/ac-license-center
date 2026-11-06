@@ -1829,20 +1829,20 @@ select optgroup {
 }
 
 .pill-btn-ac {
-  border-color: var(--accent-danger-border);
-  color: var(--accent-danger);
+  border-color: var(--border-color);
+  color: var(--text-muted);
 }
 
 .pill-btn-ac:hover {
-  border-color: var(--gt-red);
   color: var(--text-main);
-  background-color: var(--accent-danger-bg);
+  border-color: var(--border-color);
+  background-color: var(--bg-card);
 }
 
 .pill-btn-ac.active {
-  background-color: var(--gt-red);
-  border-color: var(--accent-danger);
-  color: var(--text-main);
+  background-color: var(--accent-sky-bg);
+  border-color: var(--accent-sky);
+  color: var(--accent-sky);
   box-shadow: none;
 }
 

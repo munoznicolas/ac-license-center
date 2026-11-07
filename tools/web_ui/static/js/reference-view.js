@@ -17,7 +17,31 @@ export function setupReferenceViewListeners() {
     });
   }
 
+  const updateGamePillsScrollCues = () => {
+    if (!dom.gamePillsContainer) return;
+    const container = dom.gamePillsContainer;
+    const scrollLeft = container.scrollLeft;
+    const maxScroll = container.scrollWidth - container.clientWidth;
+    const hasOverflow = maxScroll > 4;
+
+    if (!hasOverflow) {
+      container.classList.remove("has-fade-left", "has-fade-right", "has-fade-both");
+      return;
+    }
+
+    const canScrollLeft = scrollLeft > 6;
+    const canScrollRight = scrollLeft < maxScroll - 6;
+
+    container.classList.toggle("has-fade-left", canScrollLeft && !canScrollRight);
+    container.classList.toggle("has-fade-right", !canScrollLeft && canScrollRight);
+    container.classList.toggle("has-fade-both", canScrollLeft && canScrollRight);
+  };
+
   if (dom.gamePillsContainer) {
+    dom.gamePillsContainer.addEventListener("scroll", updateGamePillsScrollCues, { passive: true });
+    window.addEventListener("resize", updateGamePillsScrollCues, { passive: true });
+    setTimeout(updateGamePillsScrollCues, 100);
+
     dom.gamePillsContainer.querySelectorAll(".pill-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
         dom.gamePillsContainer
@@ -25,6 +49,8 @@ export function setupReferenceViewListeners() {
           .forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
         state.activeRefGame = btn.getAttribute("data-game") || "ALL";
+        btn.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+        setTimeout(updateGamePillsScrollCues, 250);
         populateRefTierDropdown();
         renderReferenceView();
       });
@@ -134,6 +160,18 @@ export function openReferenceView() {
   document.querySelectorAll(".tab-container .license-tab").forEach((tab) => {
     tab.classList.remove("active");
   });
+
+  if (dom.gamePillsContainer) {
+    dom.gamePillsContainer.querySelectorAll(".pill-btn").forEach((b) => {
+      const bGame = b.getAttribute("data-game") || "ALL";
+      const isActive = bGame === (state.activeRefGame || "ALL");
+      b.classList.toggle("active", isActive);
+      if (isActive) {
+        b.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      }
+    });
+    setTimeout(updateGamePillsScrollCues, 100);
+  }
 
   populateRefTierDropdown();
   renderReferenceView();
@@ -1312,6 +1350,12 @@ export function renderSingleChart(canvasId, config) {
   if (state.refCharts[canvasId]) {
     state.refCharts[canvasId].destroy();
   }
+
+  // Clear inline dimensions injected by previous Chart instances to allow responsive container resizing
+  canvas.style.width = "";
+  canvas.style.height = "";
+  canvas.removeAttribute("width");
+  canvas.removeAttribute("height");
 
   state.refCharts[canvasId] = new Chart(canvas, config);
 }

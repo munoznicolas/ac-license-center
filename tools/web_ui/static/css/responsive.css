@@ -468,14 +468,43 @@
     align-items: flex-start;
     gap: 8px;
     width: 100%;
+    min-width: 0;
   }
 
+  .ref-controls > .ref-control-label {
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  /* Material-UI Horizontal Scrollable Filter Chips on Mobile */
   .game-pills {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth;
+    scroll-snap-type: x proximity;
+    gap: 8px;
     width: 100%;
-    overflow: visible;
+    min-width: 0;
+    padding: 2px 24px 6px 2px;
+  }
+
+  .game-pills::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .pill-btn {
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+    min-height: 34px;
+    padding: 6px 14px;
+    font-size: 12px;
+    border-radius: 9999px;
+    white-space: nowrap;
   }
 
   .pills-row {
@@ -484,13 +513,6 @@
     align-items: center;
     width: 100%;
     flex-wrap: nowrap;
-  }
-
-  .pill-btn {
-    flex-shrink: 0;
-    min-height: 32px;
-    padding: 5px 10px;
-    font-size: 11px;
   }
 
   .ref-metrics-card {
@@ -531,15 +553,79 @@
     padding: 0 4px;
   }
 
+  .ref-charts-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .chart-card {
+    padding: 12px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .chart-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .chart-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .chart-title h3 {
+    font-size: 12px;
+    line-height: 1.35;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    margin: 0;
+  }
+
+  .chart-legend-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .chart-canvas-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: 210px;
+  }
+
   .chart-scrollable {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
     padding-bottom: 6px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .chart-scrollable .chart-scroll-inner {
-    min-width: 620px;
+    min-width: 580px;
     height: 100%;
   }
 
@@ -548,25 +634,24 @@
   }
 
   .chart-canvas-wrapper.chart-scrollable.no-scroll .chart-scroll-inner {
-    min-width: 100%;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .chart-scroll-inner {
+    height: 100%;
     width: 100%;
+    min-width: 0;
+  }
+
+  .chart-canvas-wrapper.chart-scrollable.no-scroll canvas,
+  .chart-canvas-wrapper:not(.chart-scrollable) canvas {
+    max-width: 100% !important;
   }
 
   .chart-swipe-hint {
     display: inline-flex;
-  }
-
-  .ref-charts-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .chart-card {
-    padding: 12px;
-  }
-
-  .chart-canvas-wrapper {
-    height: 210px;
   }
 
   .table-card {

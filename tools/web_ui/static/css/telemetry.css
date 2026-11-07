@@ -65,20 +65,45 @@
   color: var(--text-muted);
   letter-spacing: 0.5px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
+/* Material-UI Style Horizontally Scrollable Chip Filter Bar */
 .game-pills {
   display: flex;
-  gap: 6px;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
   flex-wrap: nowrap;
   overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  max-width: 100%;
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 2px;
 }
 
 .game-pills::-webkit-scrollbar {
   display: none;
+}
+
+/* Google-style Edge Gradient Fade Affordance */
+.game-pills.has-fade-right {
+  mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 44px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 44px), transparent 100%);
+}
+
+.game-pills.has-fade-left {
+  mask-image: linear-gradient(to right, transparent 0%, #000 36px, #000 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 36px, #000 100%);
+}
+
+.game-pills.has-fade-both {
+  mask-image: linear-gradient(to right, transparent 0%, #000 36px, #000 calc(100% - 44px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 36px, #000 calc(100% - 44px), transparent 100%);
 }
 
 .pills-row {
@@ -89,21 +114,28 @@
 }
 
 .pill-btn {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  white-space: nowrap;
   background-color: var(--bg-input);
   border: 1px solid var(--border-color);
   border-radius: 9999px;
-  padding: 5px 14px;
+  padding: 6px 14px;
+  min-height: 32px;
   color: var(--text-muted);
   font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.3px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
 }
 
 .pill-btn:hover {
   color: var(--text-main);
-  border-color: var(--border-color);
+  border-color: var(--border-focus);
   background-color: var(--bg-card);
 }
 
@@ -111,7 +143,8 @@
   background-color: var(--accent-sky-bg);
   border-color: var(--accent-sky);
   color: var(--accent-sky);
-  box-shadow: none;
+  font-weight: 700;
+  box-shadow: 0 0 0 1px var(--accent-sky), 0 2px 8px var(--accent-sky-glow);
 }
 
 .pill-btn-ac {
@@ -303,13 +336,15 @@
 /* 4 Charts Grid (2x2 layout) */
 .ref-charts-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+  width: 100%;
+  min-width: 0;
 }
 
 @media (max-width: 1100px) {
   .ref-charts-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -321,6 +356,10 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .chart-header {

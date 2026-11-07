@@ -1,4 +1,4 @@
-# Assetto Corsa Modding Capabilities & Architecture Investigation
+﻿# Assetto Corsa Modding Capabilities & Architecture Investigation
 
 ## 1. Introduction
 
@@ -19,16 +19,16 @@ This document investigates the capabilities, limitations, and architectural poss
 
 | Feature / Capability                        |    Vanilla AC (.ini Career)     |      Legacy Python API      |      Content Manager (CM)       |            CSP Lua Environment            |
 | :------------------------------------------ | :-----------------------------: | :-------------------------: | :-----------------------------: | :---------------------------------------: |
-| **Custom Career & Progression**             |     Limited (`series.ini`)      |            ❌ No            | ✅ Full support (`career.json`) |           N/A (runtime engine)            |
-| **Mid-Track Start (Sector Tests)**          | ❌ No (requires new track mesh) |            ❌ No            |              ❌ No              |     ✅ Yes (`physics.setCarPosition`)     |
-| **Rolling Start at Target Velocity**        |              ❌ No              |            ❌ No            |              ❌ No              |     ✅ Yes (`physics.setCarVelocity`)     |
-| **Instant Collision Disqualification**      |     ❌ No (only car damage)     | ⚠️ Partial (telemetry read) |              ❌ No              |    ✅ Yes (`physics.getCarCollisions`)    |
-| **Strict Off-Track Disqualification**       |  ❌ No (5s throttle cut only)   | ⚠️ Partial (telemetry read) |              ❌ No              |     ✅ Yes (`car.wheelsOutsideTrack`)     |
-| **Acceleration & Stop Box Detection**       |              ❌ No              |  ⚠️ Logic only (no reset)   |              ❌ No              | ✅ Yes (spatial trigger + velocity check) |
-| **Instant In-Memory Session Restart**       |       ❌ No (menu reload)       |            ❌ No            |              ❌ No              |       ✅ Yes (`physics.restart()`)        |
-| **3D World Rendering (Gates, Cones, Line)** |    ❌ No (static track KN5)     |            ❌ No            |              ❌ No              | ✅ Yes (`render.polyline`, `render.mesh`) |
-| **Custom Audio & Jingle Triggering**        |              ❌ No              |  ⚠️ Requires external libs  |              ❌ No              |      ✅ Yes (`ui.playSound` / FMOD)       |
-| **Ghost Car Recording & Offset Playback**   |  ⚠️ Vanilla full hotlap ghost   |            ❌ No            |    ⚠️ Via vanilla ghost file    |       ✅ Yes (CSP custom ghost API)       |
+| **Custom Career & Progression**             |     Limited (`series.ini`)      |            No            | Full support (`career.json`) |           N/A (runtime engine)            |
+| **Mid-Track Start (Sector Tests)**          | No (requires new track mesh) |            No            |              No              |     Yes (`physics.setCarPosition`)     |
+| **Rolling Start at Target Velocity**        |              No              |            No            |              No              |     Yes (`physics.setCarVelocity`)     |
+| **Instant Collision Disqualification**      |     No (only car damage)     | Partial (telemetry read) |              No              |    Yes (`physics.getCarCollisions`)    |
+| **Strict Off-Track Disqualification**       |  No (5s throttle cut only)   | Partial (telemetry read) |              No              |     Yes (`car.wheelsOutsideTrack`)     |
+| **Acceleration & Stop Box Detection**       |              No              |  Logic only (no reset)   |              No              | Yes (spatial trigger + velocity check) |
+| **Instant In-Memory Session Restart**       |       No (menu reload)       |            No            |              No              |       Yes (`physics.restart()`)        |
+| **3D World Rendering (Gates, Cones, Line)** |    No (static track KN5)     |            No            |              No              | Yes (`render.polyline`, `render.mesh`) |
+| **Custom Audio & Jingle Triggering**        |              No              |  Requires external libs  |              No              |      Yes (`ui.playSound` / FMOD)       |
+| **Ghost Car Recording & Offset Playback**   |  Vanilla full hotlap ghost   |            No            |    Via vanilla ghost file    |       Yes (CSP custom ghost API)       |
 
 ---
 

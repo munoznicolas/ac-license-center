@@ -1,4 +1,4 @@
-/**
+﻿/**
  * telemetry-submitter.js
  * Frictionless GitHub Pull Request submission for Assetto Corsa AI Telemetry profiles.
  * Integrates Google OAuth identity validation, client-side JSON parsing/metrics,
@@ -178,7 +178,7 @@ function setAuthenticatedUser(user) {
 
   if (user) {
     if (badge) badge.style.display = "inline-flex";
-    if (nameSpan) nameSpan.textContent = `✓ ${user.name} (${user.email})`;
+    if (nameSpan) nameSpan.textContent = `${user.name} (${user.email})`;
     if (authStatus) {
       authStatus.textContent = "Authenticated";
       authStatus.style.background = "rgba(34, 197, 94, 0.2)";
@@ -311,7 +311,7 @@ async function executeSubmitPR() {
 
   if (btnSubmit) {
     btnSubmit.disabled = true;
-    btnSubmit.innerHTML = "<span>⏳ Submitting Pull Request...</span>";
+    btnSubmit.innerHTML = "<span>Submitting Pull Request...</span>";
   }
 
   if (statusDiv) {
@@ -341,7 +341,7 @@ async function executeSubmitPR() {
       }
       showToast(`Pull Request #${res.pr_number} created successfully.`, "success");
       if (btnSubmit) {
-        btnSubmit.innerHTML = "<span>✓ Pull Request Created!</span>";
+        btnSubmit.innerHTML = "<span>Pull Request Created!</span>";
       }
     } else {
       throw new Error(res?.error || "Gateway returned failure");

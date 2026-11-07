@@ -1,4 +1,4 @@
-# Document 13: Rolling Start Candidate Straight-Line Analyzer
+﻿# Document 13: Rolling Start Candidate Straight-Line Analyzer
 
 ## 1. Overview & Problem Definition
 
@@ -99,6 +99,6 @@ The generated HTML map (`output/curriculum_rolling_map.html`) features real-time
 6. **Track Selector Dropdown**: Switch between circuits instantly.
 7. **Interactive SVG Map**:
    - Glowing emerald green straights vs dark gray curves.
-   - Click any candidate card to pan/zoom, revealing the 🚗 Spawn Point, ⏱️ Dashed Countdown vector, and 🏁 Start Gate perpendicular line.
+   - Click any candidate card to pan/zoom, revealing the Spawn Point, dashed Countdown vector, and Start Gate perpendicular line.
 8. **Curriculum Snippet Generator**: Copy-paste ready JSON snippet matching `TEST_CATALOG` in `tools/generate_all_content.py`, complete with `speed`, `gear`, and `rpm`.
 

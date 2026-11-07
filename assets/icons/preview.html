@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assetto Corsa GT-Like Licenses - SVG Icon Library Showcase</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --text-bright: #ffffff;
+      --accent: #58a6ff;
+      --gold: #d29922;
+      --silver: #8b949e;
+      --bronze: #d97706;
+      --success: #3fb950;
+      --danger: #f85149;
+    }
+    body.light-theme {
+      --bg: #f6f8fa;
+      --card-bg: #ffffff;
+      --border: #d0d7de;
+      --text: #24292f;
+      --text-bright: #0969da;
+      --accent: #0969da;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 32px; transition: background 0.2s, color 0.2s; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    h1 { font-size: 24px; color: var(--text-bright); display: flex; align-items: center; gap: 10px; }
+    .theme-toggle { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--text-bright); }
+    .controls { display: flex; gap: 12px; margin-bottom: 24px; align-items: center; flex-wrap: wrap; }
+    .search-box { flex: 1; min-width: 200px; padding: 8px 12px; background: var(--card-bg); border: 1px solid var(--border); color: var(--text); border-radius: 6px; }
+    .size-btn { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+    .size-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .category-title { font-size: 18px; color: var(--text-bright); margin: 24px 0 12px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 12px; transition: transform 0.15s, border-color 0.15s; }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card-visual { display: flex; align-items: center; justify-content: space-around; background: rgba(0,0,0,0.15); border-radius: 6px; padding: 16px; }
+    .original-emoji { font-size: 32px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .original-emoji span { font-size: 11px; opacity: 0.6; text-transform: uppercase; font-weight: 700; }
+    .arrow-divider { font-size: 18px; opacity: 0.4; }
+    .svg-container { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-bright); }
+    .svg-container span { font-size: 11px; opacity: 0.6; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+    .svg-icon { width: 32px; height: 32px; transition: width 0.15s, height 0.15s; }
+    .card-meta { display: flex; flex-direction: column; gap: 4px; }
+    .card-title { font-size: 14px; font-weight: 600; color: var(--text-bright); }
+    .card-id { font-size: 12px; color: var(--silver); font-family: monospace; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; width: fit-content; }
+    .copy-snippet { font-size: 11px; background: rgba(0,0,0,0.25); border: 1px dashed var(--border); padding: 6px; border-radius: 4px; font-family: monospace; color: var(--text); overflow-x: auto; white-space: nowrap; cursor: pointer; }
+    .copy-snippet:hover { border-color: var(--accent); color: var(--accent); }
+    .toast { position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: #fff; padding: 10px 18px; border-radius: 6px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      Assetto Corsa GT-Like Licenses - Replacement SVG Icons
+    </h1>
+    <button class="theme-toggle" id="btn-theme">Toggle Theme</button>
+  </header>
+
+  <div class="controls">
+    <input type="text" id="search" class="search-box" placeholder="Filter icons by name, category, or emoji...">
+    <div style="display:flex; gap:6px; align-items:center;">
+      <span style="font-size:13px; font-weight:600; color:var(--text);">Size:</span>
+      <button class="size-btn" data-size="16">16px</button>
+      <button class="size-btn" data-size="24">24px</button>
+      <button class="size-btn active" data-size="32">32px</button>
+      <button class="size-btn" data-size="48">48px</button>
+    </div>
+  </div>
+
+  <div id="gallery"></div>
+  <div id="toast" class="toast">Copied to clipboard!</div>
+
+  <script>
+    let icons = [];
+    let curSize = 32;
+
+    fetch('icons.json')
+      .then(res => res.json())
+      .then(data => {
+        icons = data;
+        renderGallery();
+      });
+
+    function renderGallery() {
+      const q = document.getElementById('search').value.toLowerCase();
+      const gallery = document.getElementById('gallery');
+      gallery.innerHTML = '';
+
+      const categories = {};
+      icons.forEach(icon => {
+        if (q && !icon.title.toLowerCase().includes(q) && !icon.id.toLowerCase().includes(q) && !icon.replaces_emoji.includes(q) && !icon.category.toLowerCase().includes(q)) {
+          return;
+        }
+        if (!categories[icon.category]) categories[icon.category] = [];
+        categories[icon.category].push(icon);
+      });
+
+      for (const [cat, catIcons] of Object.entries(categories)) {
+        const catHeader = document.createElement('h2');
+        catHeader.className = 'category-title';
+        catHeader.textContent = `${cat} (${catIcons.length})`;
+        gallery.appendChild(catHeader);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+
+        catIcons.forEach(icon => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div class="card-visual">
+              <div class="original-emoji">
+                <span>Original</span>
+                <div>${icon.replaces_emoji}</div>
+              </div>
+              <div class="arrow-divider">→</div>
+              <div class="svg-container">
+                <span>Vector SVG</span>
+                <div class="svg-host" style="width:${curSize}px; height:${curSize}px;">
+                  ${icon.inline_svg.replace('<svg ', `<svg class="svg-icon" style="width:${curSize}px; height:${curSize}px;" `)}
+                </div>
+              </div>
+            </div>
+            <div class="card-meta">
+              <div class="card-title">${icon.title}</div>
+              <div class="card-id">${icon.filename} (#${icon.symbol_id})</div>
+            </div>
+            <div class="copy-snippet" title="Click to copy HTML snippet" onclick="copySnippet(this)">
+              &lt;svg class="icon"&gt;&lt;use href="icons/icons.svg#${icon.symbol_id}"/&gt;&lt;/svg&gt;
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+        gallery.appendChild(grid);
+      }
+    }
+
+    document.getElementById('search').addEventListener('input', renderGallery);
+
+    document.querySelectorAll('.size-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        curSize = parseInt(e.target.dataset.size);
+        renderGallery();
+      });
+    });
+
+    document.getElementById('btn-theme').addEventListener('click', () => {
+      document.body.classList.toggle('light-theme');
+    });
+
+    function copySnippet(el) {
+      const text = el.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('toast');
+        toast.textContent = `Copied snippet for ${el.parentElement.querySelector('.card-id').textContent}`;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+      });
+    }
+  </script>
+</body>
+</html>

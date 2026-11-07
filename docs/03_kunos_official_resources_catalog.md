@@ -1,4 +1,4 @@
-# Kunos Official Resources Catalog (Assetto Corsa: Ultimate Edition)
+﻿# Kunos Official Resources Catalog (Assetto Corsa: Ultimate Edition)
 
 ## 1. Overview & DLC Architecture
 
@@ -35,25 +35,25 @@ Unless noted as synthetic or fictional, all real-world circuits were built using
 | Circuit Name | Track ID | Layout ID | Length | Surface Type | Laser-Scanned | Notable Characteristics |
 | :--- | :--- | :--- | :--- | :--- | :---: | :--- |
 | **Drag Strip** | `ks_drag` | `drag200`<br>`drag400`<br>`drag500`<br>`drag1000`<br>`drag2000` | 200 m<br>400 m<br>500 m<br>1,000 m<br>2,000 m | Drag asphalt | Synthetic | Flat straightaways with prepped surface grip; multiple length variations. |
-| **Autodromo di Magione** | `magione` | `default` | 2,507 m | Race circuit | ✅ Yes | Short, technical layout with heavy braking zones and low-speed hairpins. |
-| **Autodromo Vallelunga** | `ks_vallelunga` | `club_circuit`<br>`classic_circuit`<br>`extended_circuit` | 1,746 m<br>3,222 m<br>4,085 m | Race circuit | ✅ Yes | Italian test facility; Club layout offers a short technical loop, Extended includes fast curves. |
-| **Brands Hatch** | `ks_brands_hatch` | `indy`<br>`gp` | 1,929 m<br>3,908 m | Race circuit | ✅ Yes | Significant elevation drop at Paddock Hill Bend, off-camber hairpins, natural amphitheater flow. |
-| **Silverstone** | `ks_silverstone` | `national`<br>`international`<br>`gp` | 2,638 m<br>3,619 m<br>5,901 m | Race circuit | ✅ Yes | Modern GP layout features Maggotts-Becketts-Chapel high-speed S-curves; National offers short sprint loop. |
-| **Red Bull Ring** | `ks_red_bull_ring`| `layout_national`<br>`layout_gp` | 2,336 m<br>4,326 m | Race circuit | ✅ Yes | Uphill braking zones, heavy traction demands out of Remus hairpin, fast sweepers in Sector 3. |
-| **Nürburgring** | `ks_nurburgring` | `layout_sprint_a`<br>`layout_gp_a` | 3,629 m<br>5,148 m | Race circuit | ✅ Yes | Modern Grand Prix track featuring Castrol-S chicane, Mercedes Arena carousel, and Schumacher-S. |
-| **Circuit de Barcelona-Catalunya** | `ks_barcelona` | `layout_moto`<br>`layout_gp` | 4,727 m<br>4,655 m | Race circuit | ✅ Yes | Benchmark aerodynamic testing circuit; long Turn 3 high-g right sweeper and final sector chicane. |
-| **Autodromo Enzo e Dino Ferrari (Imola)** | `imola` | `default` | 4,909 m | Race circuit | ✅ Yes | Historic undulating track; aggressive curb hopping at chicane complexes and Acque Minerali compression. |
-| **Autodromo Nazionale Monza** | `monza` | `default` | 5,793 m | High-speed circuit | ✅ Yes | Temple of Speed; 340+ km/h straightaways, heavy chicane braking, Lesmo corners, and the Parabolica. |
-| **Autodromo del Mugello** | `mugello` | `default` | 5,245 m | Fast flowing circuit | ✅ Yes | High-speed medium/fast corner sequences, Casanova-Savelli downhill transition, blind Arrabbiata 1 & 2. |
-| **Circuit de Spa-Francorchamps** | `spa` | `default` | 7,004 m | High-speed circuit | ✅ Yes | Eau Rouge/Raidillon elevation compression, long Kemmel Straight, technical Pouhon double-left, Bus Stop chicane. |
-| **WeatherTech Raceway Laguna Seca** | `ks_laguna_seca` | `default` | 3,602 m | Elevation circuit | ✅ Yes | Andretti Hairpin, fast Turn 6 sweeper, and the iconic blind downhill **Corkscrew (Turns 8 & 8A)**. |
-| **Circuit Zandvoort** | `ks_zandvoort` | `default` | 4,307 m | Dunes circuit | ✅ Yes | Classic flowing track with natural sand dunes; heavy braking into Tarzan, blind Scheivlak crest. |
-| **Nürburgring Nordschleife** | `ks_nordschleife`| `nordschleife`<br>`endurance`<br>`touristenfahrten` | 20,832 m<br>25,378 m<br>19,100 m | Historic road circuit | ✅ Yes | The Green Hell: 154 corners, 300 meters of elevation change, banked Karussell, narrow armco proximity. |
+| **Autodromo di Magione** | `magione` | `default` | 2,507 m | Race circuit | Yes | Short, technical layout with heavy braking zones and low-speed hairpins. |
+| **Autodromo Vallelunga** | `ks_vallelunga` | `club_circuit`<br>`classic_circuit`<br>`extended_circuit` | 1,746 m<br>3,222 m<br>4,085 m | Race circuit | Yes | Italian test facility; Club layout offers a short technical loop, Extended includes fast curves. |
+| **Brands Hatch** | `ks_brands_hatch` | `indy`<br>`gp` | 1,929 m<br>3,908 m | Race circuit | Yes | Significant elevation drop at Paddock Hill Bend, off-camber hairpins, natural amphitheater flow. |
+| **Silverstone** | `ks_silverstone` | `national`<br>`international`<br>`gp` | 2,638 m<br>3,619 m<br>5,901 m | Race circuit | Yes | Modern GP layout features Maggotts-Becketts-Chapel high-speed S-curves; National offers short sprint loop. |
+| **Red Bull Ring** | `ks_red_bull_ring`| `layout_national`<br>`layout_gp` | 2,336 m<br>4,326 m | Race circuit | Yes | Uphill braking zones, heavy traction demands out of Remus hairpin, fast sweepers in Sector 3. |
+| **Nürburgring** | `ks_nurburgring` | `layout_sprint_a`<br>`layout_gp_a` | 3,629 m<br>5,148 m | Race circuit | Yes | Modern Grand Prix track featuring Castrol-S chicane, Mercedes Arena carousel, and Schumacher-S. |
+| **Circuit de Barcelona-Catalunya** | `ks_barcelona` | `layout_moto`<br>`layout_gp` | 4,727 m<br>4,655 m | Race circuit | Yes | Benchmark aerodynamic testing circuit; long Turn 3 high-g right sweeper and final sector chicane. |
+| **Autodromo Enzo e Dino Ferrari (Imola)** | `imola` | `default` | 4,909 m | Race circuit | Yes | Historic undulating track; aggressive curb hopping at chicane complexes and Acque Minerali compression. |
+| **Autodromo Nazionale Monza** | `monza` | `default` | 5,793 m | High-speed circuit | Yes | Temple of Speed; 340+ km/h straightaways, heavy chicane braking, Lesmo corners, and the Parabolica. |
+| **Autodromo del Mugello** | `mugello` | `default` | 5,245 m | Fast flowing circuit | Yes | High-speed medium/fast corner sequences, Casanova-Savelli downhill transition, blind Arrabbiata 1 & 2. |
+| **Circuit de Spa-Francorchamps** | `spa` | `default` | 7,004 m | High-speed circuit | Yes | Eau Rouge/Raidillon elevation compression, long Kemmel Straight, technical Pouhon double-left, Bus Stop chicane. |
+| **WeatherTech Raceway Laguna Seca** | `ks_laguna_seca` | `default` | 3,602 m | Elevation circuit | Yes | Andretti Hairpin, fast Turn 6 sweeper, and the iconic blind downhill **Corkscrew (Turns 8 & 8A)**. |
+| **Circuit Zandvoort** | `ks_zandvoort` | `default` | 4,307 m | Dunes circuit | Yes | Classic flowing track with natural sand dunes; heavy braking into Tarzan, blind Scheivlak crest. |
+| **Nürburgring Nordschleife** | `ks_nordschleife`| `nordschleife`<br>`endurance`<br>`touristenfahrten` | 20,832 m<br>25,378 m<br>19,100 m | Historic road circuit | Yes | The Green Hell: 154 corners, 300 meters of elevation change, banked Karussell, narrow armco proximity. |
 | **Highlands** | `ks_highlands` | `layout_short`<br>`layout_drift`<br>`layout_int`<br>`layout_long` | 1,714 m<br>5,167 m<br>8,152 m<br>12,191 m | Scottish road course | Fictional | Narrow Scottish town and countryside roads; stone wall margins and high-speed crest jumps. |
 | **Black Cat County** | `ks_black_cat_county` | `layout_short`<br>`layout_int`<br>`layout_long` | 6,542 m<br>6,478 m<br>11,244 m | US canyon highway | Fictional | Sweeping open asphalt highway winding through rugged rock canyons with rolling elevation. |
-| **Monza 1966** | `ks_monza66` | `junior`<br>`road`<br>`full` | 2,405 m<br>5,793 m<br>10,000 m | Historic circuit + Banking | ✅ Yes | High-speed banked concrete oval and historic road course layout with minimal runoffs. |
-| **Silverstone 1967** | `ks_silverstone1967` | `default` | 4,710 m | Historic open circuit | ✅ Yes | Pre-chicane airfield layout; high average speeds through Woodcote, Stowe, and Club. |
-| **Trento-Bondone** | `trento-bondone` | `default` | 17,619 m | Mountain hillclimb | ✅ Yes | Public road hillclimb course in the Italian Alps; over 40 tight hairpins and steep continuous ascent. |
+| **Monza 1966** | `ks_monza66` | `junior`<br>`road`<br>`full` | 2,405 m<br>5,793 m<br>10,000 m | Historic circuit + Banking | Yes | High-speed banked concrete oval and historic road course layout with minimal runoffs. |
+| **Silverstone 1967** | `ks_silverstone1967` | `default` | 4,710 m | Historic open circuit | Yes | Pre-chicane airfield layout; high average speeds through Woodcote, Stowe, and Club. |
+| **Trento-Bondone** | `trento-bondone` | `default` | 17,619 m | Mountain hillclimb | Yes | Public road hillclimb course in the Italian Alps; over 40 tight hairpins and steep continuous ascent. |
 | **Drift Track** | `drift` | `default` | 1,320 m | Skidpad & loop | Synthetic | Open asphalt skidpad, perimeter loop, and infield paved sections for car control exercises. |
 
 ---

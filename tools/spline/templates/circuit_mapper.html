@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1041,7 +1041,7 @@ function renderCandidatesList(candidates, track) {
       </div>
       <div class="card-title">Straight #${c.straightId} (${c.straightLength.toFixed(0)}m)</div>
       <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 4px; padding: 4px 8px; margin: 6px 0; font-size: 11.5px; display: flex; justify-content: space-between; align-items: center;">
-        <span style="color: var(--accent-green); font-weight: 700;">⚡ 95% AI Handover:</span>
+        <span style="color: var(--accent-green); font-weight: 700;">95% AI Handover:</span>
         <b style="font-family: monospace; color: #fff;">${c.targetSpeed.toFixed(1)} km/h (G${c.gear} @ ${c.rpm} RPM)</b>
       </div>
       <div class="card-meta">
@@ -1224,7 +1224,7 @@ function highlightCandidateOnMap(track, cand) {
   gateText.setAttribute("fill", "#ef4444");
   gateText.setAttribute("font-size", "14");
   gateText.setAttribute("font-weight", "bold");
-  gateText.textContent = `🏁 START GATE (s=${cand.startProgress.toFixed(3)})`;
+  gateText.textContent = `START GATE (s=${cand.startProgress.toFixed(3)})`;
   g.appendChild(gateText);
 
   circuitSvg.appendChild(g);

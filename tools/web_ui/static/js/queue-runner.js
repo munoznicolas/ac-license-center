@@ -1,4 +1,4 @@
-/**
+﻿/**
  * queue-runner.js
  * Assetto Corsa simulation execution, queue management, live evaluation, and telemetry handover.
  */
@@ -71,7 +71,7 @@ function applySpeedDataToTest(test, data) {
 function setSpeedButtonLoading(isLoading) {
   if (!dom.btnCalcSpeed) return;
   dom.btnCalcSpeed.disabled = isLoading;
-  dom.btnCalcSpeed.innerText = isLoading ? "⏳ Checking Cache..." : "⚡ Auto-Calculate from Game Engine";
+  dom.btnCalcSpeed.innerText = isLoading ? "Checking Cache..." : "Auto-Calculate from Game Engine";
 }
 
 /**
@@ -109,7 +109,7 @@ function handleQueuedSpeedJob(data) {
   pendingTelemetryJobId = data.job_id;
   pendingTelemetryTestId = getActiveTest()?.test_id ?? null;
 
-  showAISpeedStatus(`⏳ Recording full lap in Assetto Corsa in background... (Queue Job #${data.job_id})`);
+  showAISpeedStatus(`Recording full lap in Assetto Corsa in background... (Queue Job #${data.job_id})`);
   showToast(
     `No cached profile found. Recording full lap in Assetto Corsa in background (Job #${data.job_id}). Form will auto-fill on completion.`,
     "info"
@@ -180,7 +180,7 @@ function handleCompletedTelemetryJob(job) {
       `AI Telemetry: ${job.result.speed_kmh} km/h | Gear ${job.result.gear || "Auto"} @ ${job.result.rpm || "Auto"} RPM | Run-up: ${job.result.spawn_offset_m}m`
     );
     showToast(
-      `✨ 100% AI Telemetry recorded & applied to ${curTest.test_id}: ${job.result.speed_kmh} km/h (Gear ${job.result.gear})!`,
+      `100% AI Telemetry recorded & applied to ${curTest.test_id}: ${job.result.speed_kmh} km/h (Gear ${job.result.gear})!`,
       "success"
     );
   }
@@ -525,7 +525,7 @@ function updateMissingTelemetryUI(tier, data) {
       dom.btnTelemetryEnqueue.disabled = uniqueCombosCount === 0;
       dom.btnTelemetryEnqueue.innerHTML = uniqueCombosCount > 0
         ? `<span>▶ Run Telemetry for Missing Combos (${uniqueCombosCount} Jobs)</span>`
-        : "<span>✓ All Telemetry Recorded</span>";
+        : "<span>All Telemetry Recorded</span>";
     }
   }
 
@@ -552,14 +552,14 @@ export async function loadMissingTelemetryData() {
   const includeFlying = dom.checkIncludeFlying?.checked ?? true;
 
   if (dom.telemetrySummaryText) {
-    dom.telemetrySummaryText.innerHTML = "⏳ Scanning curriculum tests for missing telemetry profiles...";
+    dom.telemetrySummaryText.innerHTML = "Scanning curriculum tests for missing telemetry profiles...";
   }
   if (dom.btnTelemetryEnqueue) {
     if (isStaticHost()) {
       dom.btnTelemetryEnqueue.style.display = "none";
     } else {
       dom.btnTelemetryEnqueue.disabled = true;
-      dom.btnTelemetryEnqueue.innerHTML = "<span>⏳ Scanning...</span>";
+      dom.btnTelemetryEnqueue.innerHTML = "<span>Scanning...</span>";
     }
   }
 
@@ -605,7 +605,7 @@ export async function executeQueueMissingTelemetry() {
 
   if (dom.btnTelemetryEnqueue) {
     dom.btnTelemetryEnqueue.disabled = true;
-    dom.btnTelemetryEnqueue.innerHTML = "<span>⏳ Enqueuing recordings...</span>";
+    dom.btnTelemetryEnqueue.innerHTML = "<span>Enqueuing recordings...</span>";
   }
 
   try {
@@ -668,7 +668,7 @@ Write-Host "==================================================================" 
 # 1. Verify Python availability
 try {
     $pythonVer = python --version 2>&1
-    Write-Host "[✓] Python detected: $pythonVer" -ForegroundColor Green
+    Write-Host "[OK] Python detected: $pythonVer" -ForegroundColor Green
 } catch {
     Write-Error "Python was not found in PATH. Please install Python 3.8+ to record telemetry."
 }
@@ -695,7 +695,7 @@ if (-not (Test-Path "$AcRoot\\acs.exe")) {
         Write-Error "Assetto Corsa executable (acs.exe) not found at '$AcRoot'."
     }
 }
-Write-Host "[✓] Assetto Corsa Directory: $AcRoot" -ForegroundColor Green
+Write-Host "[OK] Assetto Corsa Directory: $AcRoot" -ForegroundColor Green
 
 # 3. Target Combinations
 $Jobs = @(
@@ -731,7 +731,7 @@ foreach ($job in $Jobs) {
     try {
         & python @cmdArgs
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "[✓] Successfully recorded telemetry for $($job.Car) @ $($job.Track)!" -ForegroundColor Green
+            Write-Host "[OK] Successfully recorded telemetry for $($job.Car) @ $($job.Track)!" -ForegroundColor Green
             $completed++
         } else {
             Write-Host "[!] Warning: telemetry recording returned exit code $LASTEXITCODE" -ForegroundColor Red

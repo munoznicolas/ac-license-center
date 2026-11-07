@@ -1,4 +1,4 @@
-/**
+﻿/**
  * worker.js
  * Cloudflare Worker Serverless Gateway for Assetto Corsa GT Licenses Telemetry PR Submission.
  *
@@ -232,14 +232,14 @@ function buildPrDescription({ contributorName, contributorEmail, validation, tar
   const sanitizedEmail = contributorEmail.replace(/(.{2})(.*)(@.*)/, "$1***$3");
   const layoutStr = validation.track_layout ? `\`${validation.track_layout}\`` : "*Default*";
 
-  return `## 📡 New AI Telemetry Profile Submission
+  return `## New AI Telemetry Profile Submission
 
-### 👤 Contributor Information
+### Contributor Information
 * **Submitted By:** ${contributorName} (\`${sanitizedEmail}\`)
 * **Timestamp:** ${new Date().toISOString()}
 * **Destination File:** \`${targetPath}\`
 
-### 🏎️ Circuit & Vehicle Summary
+### Circuit & Vehicle Summary
 | Parameter | Value |
 | :--- | :--- |
 | **Track ID** | \`${validation.track_id}\` |
@@ -247,7 +247,7 @@ function buildPrDescription({ contributorName, contributorEmail, validation, tar
 | **Car Model** | \`${validation.car_id}\` |
 | **AI Proficiency Level** | \`${validation.ai_level}%\` |
 
-### 📊 Telemetry Metrics
+### Telemetry Metrics
 | Metric | Recorded Value |
 | :--- | :--- |
 | **60 Hz Physics Frames** | **${validation.sample_count.toLocaleString()} samples** |
@@ -257,7 +257,7 @@ function buildPrDescription({ contributorName, contributorEmail, validation, tar
 
 ---
 
-### 🤖 Automated Validation Checklist
+### Automated Validation Checklist
 - [x] Schema structure verified (continuous 60 Hz coordinates, velocity vector, heading)
 - [x] Contributor identity authenticated via Google OAuth
 - [x] Dedicated staging branch created automatically

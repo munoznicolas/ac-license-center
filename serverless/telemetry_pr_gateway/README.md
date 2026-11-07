@@ -1,10 +1,10 @@
-# Assetto Corsa GT Licenses - Telemetry PR Gateway
+﻿# Assetto Corsa GT Licenses - Telemetry PR Gateway
 
 Lightweight, 100% free serverless Cloudflare Worker gateway that accepts AI telemetry submissions with verified Google OAuth logins and automatically opens autoformatted Pull Requests on the Assetto Corsa GT-Like Licenses GitHub repository.
 
 ---
 
-## ⚡ Deployment in 2 Minutes
+## Deployment in 2 Minutes
 
 ### 1. Prerequisites
 * A free [Cloudflare](https://dash.cloudflare.com/) account.

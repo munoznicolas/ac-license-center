@@ -1,4 +1,4 @@
-/**
+﻿/**
  * app.js
  * Assetto Corsa GT-Like License Test Designer - Root Orchestrator
  */
@@ -114,8 +114,8 @@ function setupGlobalEventListeners() {
 
         const rep = result.validation;
         const sizeMb = (result.size / (1024 * 1024)).toFixed(2);
-        let log = `✓ Content Manager package created successfully (${sizeMb} MB)!\n`;
-        log += `✓ Download started: AssettoCorsa_GT_License_Center.zip\n\n`;
+        let log = `Content Manager package created successfully (${sizeMb} MB)!\n`;
+        log += `Download started: AssettoCorsa_GT_License_Center.zip\n\n`;
         log += `--- VALIDATION AUDIT ---\n`;
         log += `Audited ${rep.total_files} tests across 5 license tiers: ${rep.passed} passed, 0 failed.\n`;
         log += `All Content Manager series.ini, event.ini, and test JSON definitions generated.\n\n`;

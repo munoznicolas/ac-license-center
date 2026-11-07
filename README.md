@@ -1,10 +1,10 @@
-# Assetto Corsa: GT License Center
+﻿# Assetto Corsa: GT License Center
 
 An open-source driving school and license challenge framework for **Assetto Corsa**, inspired by the iconic license tests of **Gran Turismo 2, 4, and 5**.
 
 ---
 
-## 🎯 Project Objective
+## Project Objective
 
 In the classic _Gran Turismo_ series, License Tests served as a masterclass in motorsport fundamentals. They taught players not just how to go fast, but _why_ cars behave the way they do—progressing from basic straight-line braking and low-power cornering up to high-downforce racing and full-circuit mastery.
 
@@ -18,7 +18,7 @@ This project replicates that experience inside **Assetto Corsa**, leveraging mod
 
 ---
 
-## 📚 Documentation Index
+## Documentation Index
 
 We have conducted a comprehensive investigation divided into two core research documents:
 
@@ -84,7 +84,7 @@ We have conducted a comprehensive investigation divided into two core research d
 
 ---
 
-## 🏗️ Proposed System Architecture
+## Proposed System Architecture
 
 ```
 +-------------------------------------------------------------+
@@ -111,17 +111,17 @@ We have conducted a comprehensive investigation divided into two core research d
 
 ---
 
-## 🚀 Project Status & Quick Start
+## Project Status & Quick Start
 
 The mod development is **100% complete across all 5 tiers (58 tests)**, fully integrated into Content Manager Career mode, and packaged as a ready-to-install archive.
 
-### 📦 Installation (Drag & Drop into Content Manager)
+### Installation (Drag & Drop into Content Manager)
 1. Locate the built archive: [`release/AssettoCorsa_GT_Licenses.zip`](file:///d:/Repositories/AssettoCorsa-GTLikeLicenses/release/AssettoCorsa_GT_Licenses.zip).
 2. Drag and drop the `.zip` archive into **Content Manager**.
 3. In the green installation pop-up in the top-right, click **Install**.
 4. Navigate to **Career $\rightarrow$ Gran Turismo Licenses** in Content Manager to begin!
 
-### 🧪 Automated Verification & Tooling
+### Automated Verification & Tooling
 To run the master validation suite locally:
 ```bash
 # Run the complete test suite (Curriculum schemas, Engine math, UI contracts, Ghost profiles, Simulation)
@@ -139,7 +139,7 @@ python tools/build_cm_package.py --validate
 
 ---
 
-## 🗺️ Completed Milestones
+## Completed Milestones
 
 - [x] **Phase 0: Schema Contracts & Specifications**: Formal JSON schemas (`test_definition.schema.json`, `career_manifest.schema.json`).
 - [x] **Phase 1: Simulation Engine & UI Layer**:

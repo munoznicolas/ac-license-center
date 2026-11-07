@@ -1,0 +1,299 @@
+﻿[
+    {
+        "id":  "flag-checkered",
+        "replaces_emoji":  "🏁",
+        "title":  "Checkered Flag / Gate",
+        "category":  "Racing \u0026 Navigation",
+        "filename":  "flag-checkered.svg",
+        "symbol_id":  "icon-flag-checkered",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z\"/\u003e\u003cline x1=\"4\" y1=\"22\" x2=\"4\" y2=\"15\"/\u003e\u003cline x1=\"4\" y1=\"9\" x2=\"20\" y2=\"9\" stroke-dasharray=\"2 2\"/\u003e\u003cline x1=\"12\" y1=\"3\" x2=\"12\" y2=\"16\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "alert-triangle",
+        "replaces_emoji":  "⚠️",
+        "title":  "Warning / Alert",
+        "category":  "Status \u0026 Feedback",
+        "filename":  "alert-triangle.svg",
+        "symbol_id":  "icon-alert-triangle",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"/\u003e\u003cline x1=\"12\" y1=\"9\" x2=\"12\" y2=\"13\"/\u003e\u003cline x1=\"12\" y1=\"17\" x2=\"12.01\" y2=\"17\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "download",
+        "replaces_emoji":  "📥",
+        "title":  "Download",
+        "category":  "Actions \u0026 Utility",
+        "filename":  "download.svg",
+        "symbol_id":  "icon-download",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/\u003e\u003cpolyline points=\"7 10 12 15 17 10\"/\u003e\u003cline x1=\"12\" y1=\"15\" x2=\"12\" y2=\"3\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "medal-gold",
+        "replaces_emoji":  "🥇",
+        "title":  "Gold Medal",
+        "category":  "Medals \u0026 Awards",
+        "filename":  "medal-gold.svg",
+        "symbol_id":  "icon-medal-gold",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M7.2 2l4.8 7.5L16.8 2\"/\u003e\u003cpath d=\"M2.5 2h4.7l4.8 7.5L7.2 2H2.5z\"/\u003e\u003cpath d=\"M21.5 2h-4.7l-4.8 7.5 4.8-7.5h4.7z\"/\u003e\u003ccircle cx=\"12\" cy=\"15.5\" r=\"5.5\" fill=\"currentColor\" fill-opacity=\"0.15\"/\u003e\u003ccircle cx=\"12\" cy=\"15.5\" r=\"5.5\"/\u003e\u003cpath d=\"M12 13v5\"/\u003e\u003cpath d=\"M10.5 14.5L12 13l1.5 1.5\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "medal-silver",
+        "replaces_emoji":  "🥈",
+        "title":  "Silver Medal",
+        "category":  "Medals \u0026 Awards",
+        "filename":  "medal-silver.svg",
+        "symbol_id":  "icon-medal-silver",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M7.2 2l4.8 7.5L16.8 2\"/\u003e\u003cpath d=\"M2.5 2h4.7l4.8 7.5L7.2 2H2.5z\"/\u003e\u003cpath d=\"M21.5 2h-4.7l-4.8 7.5 4.8-7.5h4.7z\"/\u003e\u003ccircle cx=\"12\" cy=\"15.5\" r=\"5.5\" fill=\"currentColor\" fill-opacity=\"0.15\"/\u003e\u003ccircle cx=\"12\" cy=\"15.5\" r=\"5.5\"/\u003e\u003cpath d=\"M10.5 14h3a1.5 1.5 0 0 1 0 3h-3v1h3\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "medal-bronze",
+        "replaces_emoji":  "🥉",
+        "title":  "Bronze Medal",
+        "category":  "Medals \u0026 Awards",
+        "filename":  "medal-bronze.svg",
+        "symbol_id":  "icon-medal-bronze",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M7.2 2l4.8 7.5L16.8 2\"/\u003e\u003cpath d=\"M2.5 2h4.7l4.8 7.5L7.2 2H2.5z\"/\u003e\u003cpath d=\"M21.5 2h-4.7l-4.8 7.5 4.8-7.5h4.7z\"/\u003e\u003ccircle cx=\"12\" cy=\"15.5\" r=\"5.5\" fill=\"currentColor\" fill-opacity=\"0.15\"/\u003e\u003ccircle cx=\"12\" cy=\"15.5\" r=\"5.5\"/\u003e\u003cpath d=\"M10.5 13.5h3a1.2 1.2 0 0 1 0 2.4h-2a1.2 1.2 0 0 1 0 2.4h2\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "antenna-telemetry",
+        "replaces_emoji":  "📡",
+        "title":  "Telemetry Radar / Antenna",
+        "category":  "Telemetry \u0026 Hardware",
+        "filename":  "antenna-telemetry.svg",
+        "symbol_id":  "icon-antenna-telemetry",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M4.93 19.07A10 10 0 0 1 12 2a10 10 0 0 1 7.07 17.07\"/\u003e\u003cpath d=\"M7.76 16.24A6 6 0 0 1 12 6a6 6 0 0 1 4.24 10.24\"/\u003e\u003ccircle cx=\"12\" cy=\"12\" r=\"2\"/\u003e\u003cpath d=\"M12 14v8\"/\u003e\u003cpath d=\"M9 22h6\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "folder",
+        "replaces_emoji":  "📁",
+        "title":  "Folder / Directory",
+        "category":  "Files \u0026 Storage",
+        "filename":  "folder.svg",
+        "symbol_id":  "icon-folder",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "party-popper",
+        "replaces_emoji":  "🎉",
+        "title":  "Celebration / Success",
+        "category":  "Status \u0026 Feedback",
+        "filename":  "party-popper.svg",
+        "symbol_id":  "icon-party-popper",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M5.8 11.3L2 22l10.7-3.8L5.8 11.3z\"/\u003e\u003cpath d=\"M4 14.8l7.2-2.5\"/\u003e\u003cpath d=\"M11 4l1 2\"/\u003e\u003cpath d=\"M18 6l2-1\"/\u003e\u003cpath d=\"M15 2v3\"/\u003e\u003cpath d=\"M19 11l2 1\"/\u003e\u003cpath d=\"M14 9l4 4\"/\u003e\u003ccircle cx=\"17\" cy=\"4\" r=\"0.8\" fill=\"currentColor\"/\u003e\u003ccircle cx=\"21\" cy=\"8\" r=\"0.8\" fill=\"currentColor\"/\u003e\u003ccircle cx=\"13\" cy=\"12\" r=\"0.8\" fill=\"currentColor\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "hourglass",
+        "replaces_emoji":  "⏳",
+        "title":  "Hourglass / Loading",
+        "category":  "Status \u0026 Feedback",
+        "filename":  "hourglass.svg",
+        "symbol_id":  "icon-hourglass",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M5 22h14\"/\u003e\u003cpath d=\"M5 2h14\"/\u003e\u003cpath d=\"M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22\"/\u003e\u003cpath d=\"M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "lightning-bolt",
+        "replaces_emoji":  "⚡",
+        "title":  "Lightning / Fast Action",
+        "category":  "Actions \u0026 Utility",
+        "filename":  "lightning-bolt.svg",
+        "symbol_id":  "icon-lightning-bolt",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpolygon points=\"13 2 3 14 12 14 11 22 21 10 12 10 13 2\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "sparkles",
+        "replaces_emoji":  "✨",
+        "title":  "Sparkles / AI Result",
+        "category":  "Status \u0026 Feedback",
+        "filename":  "sparkles.svg",
+        "symbol_id":  "icon-sparkles",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M12 3c0 4.5-3.5 8-8 8 4.5 0 8 3.5 8 8 0-4.5 3.5-8 8-8-4.5 0-8-3.5-8-8z\"/\u003e\u003cpath d=\"M19 3c0 1.5-1 2.5-2.5 2.5 1.5 0 2.5 1 2.5 2.5 0-1.5 1-2.5 2.5-2.5-1.5 0-2.5-1-2.5-2.5z\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "trophy",
+        "replaces_emoji":  "🏆",
+        "title":  "Championship Trophy",
+        "category":  "Medals \u0026 Awards",
+        "filename":  "trophy.svg",
+        "symbol_id":  "icon-trophy",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/\u003e\u003cpath d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/\u003e\u003cpath d=\"M4 4h16v6a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6V4z\"/\u003e\u003cpath d=\"M12 16v4\"/\u003e\u003cpath d=\"M8 20h8\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "handshake",
+        "replaces_emoji":  "🤝",
+        "title":  "Handshake / Community",
+        "category":  "Community \u0026 Social",
+        "filename":  "handshake.svg",
+        "symbol_id":  "icon-handshake",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M11 15h2\"/\u003e\u003cpath d=\"M7 11l4.5 4.5a2 2 0 0 0 2.8 0L19 11\"/\u003e\u003cpath d=\"M2 13l4-4a2 2 0 0 1 2.8 0l2.2 2.2\"/\u003e\u003cpath d=\"M22 13l-4-4a2 2 0 0 0-2.8 0l-1.2 1.2\"/\u003e\u003cpath d=\"M4 17l3-3\"/\u003e\u003cpath d=\"M20 17l-3-3\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "target",
+        "replaces_emoji":  "🎯",
+        "title":  "Target / Goal",
+        "category":  "Racing \u0026 Navigation",
+        "filename":  "target.svg",
+        "symbol_id":  "icon-target",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003ccircle cx=\"12\" cy=\"12\" r=\"10\"/\u003e\u003ccircle cx=\"12\" cy=\"12\" r=\"6\"/\u003e\u003ccircle cx=\"12\" cy=\"12\" r=\"2\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "book-open",
+        "replaces_emoji":  "📚",
+        "title":  "Documentation / Book",
+        "category":  "Documentation",
+        "filename":  "book-open.svg",
+        "symbol_id":  "icon-book-open",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z\"/\u003e\u003cpath d=\"M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "architecture",
+        "replaces_emoji":  "🏗️",
+        "title":  "System Architecture",
+        "category":  "Documentation",
+        "filename":  "architecture.svg",
+        "symbol_id":  "icon-architecture",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M2 22h20\"/\u003e\u003cpath d=\"M4 22V6l8-4 8 4v16\"/\u003e\u003cpath d=\"M8 22V10h8v12\"/\u003e\u003cpath d=\"M12 2v20\"/\u003e\u003cpath d=\"M4 14h16\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "rocket",
+        "replaces_emoji":  "🚀",
+        "title":  "Rocket / Quick Start",
+        "category":  "Actions \u0026 Utility",
+        "filename":  "rocket.svg",
+        "symbol_id":  "icon-rocket",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z\"/\u003e\u003cpath d=\"M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-4 11a22.35 22.35 0 0 1-4 2z\"/\u003e\u003cpath d=\"M9 12H4s.55-3.03 2-4.5c1.62-1.63 5-2 5-2\"/\u003e\u003cpath d=\"M12 9v5s3.03-.55 4.5-2c1.63-1.62 2-5 2-5\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "package",
+        "replaces_emoji":  "📦",
+        "title":  "Package / Installation",
+        "category":  "Files \u0026 Storage",
+        "filename":  "package.svg",
+        "symbol_id":  "icon-package",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cline x1=\"16.5\" y1=\"9.4\" x2=\"7.5\" y2=\"4.21\"/\u003e\u003cpath d=\"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\"/\u003e\u003cpolyline points=\"3.27 6.96 12 12.01 20.73 6.96\"/\u003e\u003cline x1=\"12\" y1=\"22.08\" x2=\"12\" y2=\"12\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "flask-test",
+        "replaces_emoji":  "🧪",
+        "title":  "Automated Testing / Flask",
+        "category":  "Telemetry \u0026 Hardware",
+        "filename":  "flask-test.svg",
+        "symbol_id":  "icon-flask-test",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M10 2v5.5L4.5 18a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 7.5V2\"/\u003e\u003cpath d=\"M8.5 2h7\"/\u003e\u003cpath d=\"M7 14h10\"/\u003e\u003ccircle cx=\"10\" cy=\"17\" r=\"0.8\" fill=\"currentColor\"/\u003e\u003ccircle cx=\"13\" cy=\"18\" r=\"0.8\" fill=\"currentColor\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "map-route",
+        "replaces_emoji":  "🗺️",
+        "title":  "Milestone Map / Road",
+        "category":  "Racing \u0026 Navigation",
+        "filename":  "map-route.svg",
+        "symbol_id":  "icon-map-route",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpolygon points=\"1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6\"/\u003e\u003cline x1=\"8\" y1=\"2\" x2=\"8\" y2=\"18\"/\u003e\u003cline x1=\"16\" y1=\"6\" x2=\"16\" y2=\"22\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "cross-circle",
+        "replaces_emoji":  "❌",
+        "title":  "Cross / Not Supported",
+        "category":  "Status \u0026 Feedback",
+        "filename":  "cross-circle.svg",
+        "symbol_id":  "icon-cross-circle",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003ccircle cx=\"12\" cy=\"12\" r=\"10\"/\u003e\u003cline x1=\"15\" y1=\"9\" x2=\"9\" y2=\"15\"/\u003e\u003cline x1=\"9\" y1=\"9\" x2=\"15\" y2=\"15\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "check-circle",
+        "replaces_emoji":  "✅",
+        "title":  "Check Circle / Supported",
+        "category":  "Status \u0026 Feedback",
+        "filename":  "check-circle.svg",
+        "symbol_id":  "icon-check-circle",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M22 11.08V12a10 10 0 1 1-5.93-9.14\"/\u003e\u003cpolyline points=\"22 4 12 14.01 9 11.01\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "car-sports",
+        "replaces_emoji":  "🚗",
+        "title":  "Sports Car / Vehicle",
+        "category":  "Racing \u0026 Navigation",
+        "filename":  "car-sports.svg",
+        "symbol_id":  "icon-car-sports",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M3 15h18v-2l-3-4H8L4 12v3z\"/\u003e\u003ccircle cx=\"7\" cy=\"16\" r=\"2.5\"/\u003e\u003ccircle cx=\"17\" cy=\"16\" r=\"2.5\"/\u003e\u003cline x1=\"9.5\" y1=\"16\" x2=\"14.5\" y2=\"16\"/\u003e\u003cpath d=\"M8 9l1.5-3h5.5l1.5 3\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "stopwatch",
+        "replaces_emoji":  "⏱️",
+        "title":  "Stopwatch / Timing",
+        "category":  "Telemetry \u0026 Hardware",
+        "filename":  "stopwatch.svg",
+        "symbol_id":  "icon-stopwatch",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003ccircle cx=\"12\" cy=\"14\" r=\"8\"/\u003e\u003cline x1=\"12\" y1=\"2\" x2=\"12\" y2=\"6\"/\u003e\u003cline x1=\"12\" y1=\"14\" x2=\"15\" y2=\"11\"/\u003e\u003cpath d=\"M10 2h4\"/\u003e\u003cline x1=\"19\" y1=\"7\" x2=\"17.5\" y2=\"8.5\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "user-circle",
+        "replaces_emoji":  "👤",
+        "title":  "Contributor / User",
+        "category":  "Community \u0026 Social",
+        "filename":  "user-circle.svg",
+        "symbol_id":  "icon-user-circle",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2\"/\u003e\u003ccircle cx=\"12\" cy=\"7\" r=\"4\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "racing-formula",
+        "replaces_emoji":  "🏎️",
+        "title":  "Racing / Track Vehicle",
+        "category":  "Racing \u0026 Navigation",
+        "filename":  "racing-formula.svg",
+        "symbol_id":  "icon-racing-formula",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M2 14h3l2-3h7l3 3h5v2H2z\"/\u003e\u003cpath d=\"M18 10h4v4h-4z\"/\u003e\u003ccircle cx=\"6.5\" cy=\"16.5\" r=\"2.5\"/\u003e\u003ccircle cx=\"17.5\" cy=\"16.5\" r=\"2.5\"/\u003e\u003cpath d=\"M10 11l2-4h2l-1 4\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "chart-telemetry",
+        "replaces_emoji":  "📊",
+        "title":  "Telemetry Histogram / Chart",
+        "category":  "Telemetry \u0026 Hardware",
+        "filename":  "chart-telemetry.svg",
+        "symbol_id":  "icon-chart-telemetry",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cline x1=\"18\" y1=\"20\" x2=\"18\" y2=\"6\"/\u003e\u003cline x1=\"12\" y1=\"20\" x2=\"12\" y2=\"10\"/\u003e\u003cline x1=\"6\" y1=\"20\" x2=\"6\" y2=\"14\"/\u003e\u003cline x1=\"2\" y1=\"20\" x2=\"22\" y2=\"20\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "robot-bot",
+        "replaces_emoji":  "🤖",
+        "title":  "Automated Robot Validator",
+        "category":  "Telemetry \u0026 Hardware",
+        "filename":  "robot-bot.svg",
+        "symbol_id":  "icon-robot-bot",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003crect x=\"3\" y=\"11\" width=\"18\" height=\"10\" rx=\"2\"/\u003e\u003ccircle cx=\"8.5\" cy=\"15.5\" r=\"1.5\" fill=\"currentColor\"/\u003e\u003ccircle cx=\"15.5\" cy=\"15.5\" r=\"1.5\" fill=\"currentColor\"/\u003e\u003cline x1=\"12\" y1=\"2\" x2=\"12\" y2=\"7\"/\u003e\u003ccircle cx=\"12\" cy=\"4\" r=\"1.5\"/\u003e\u003cline x1=\"1\" y1=\"15\" x2=\"3\" y2=\"15\"/\u003e\u003cline x1=\"21\" y1=\"15\" x2=\"23\" y2=\"15\"/\u003e\u003cline x1=\"9\" y1=\"19\" x2=\"15\" y2=\"19\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "star",
+        "replaces_emoji":  "★",
+        "title":  "Star / Award",
+        "category":  "Medals \u0026 Awards",
+        "filename":  "star.svg",
+        "symbol_id":  "icon-star",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpolygon points=\"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "check",
+        "replaces_emoji":  "✓",
+        "title":  "Check Mark",
+        "category":  "Status \u0026 Feedback",
+        "filename":  "check.svg",
+        "symbol_id":  "icon-check",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpolyline points=\"20 6 9 17 4 12\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "arrow-left-right",
+        "replaces_emoji":  "↔",
+        "title":  "Horizontal Swipe / Scroll",
+        "category":  "Actions \u0026 Utility",
+        "filename":  "arrow-left-right.svg",
+        "symbol_id":  "icon-arrow-left-right",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpolyline points=\"7 16 3 12 7 8\"/\u003e\u003cline x1=\"3\" y1=\"12\" x2=\"21\" y2=\"12\"/\u003e\u003cpolyline points=\"17 8 21 12 17 16\"/\u003e\u003c/svg\u003e"
+    },
+    {
+        "id":  "external-link",
+        "replaces_emoji":  "↗",
+        "title":  "External Link",
+        "category":  "Actions \u0026 Utility",
+        "filename":  "external-link.svg",
+        "symbol_id":  "icon-external-link",
+        "inline_svg":  "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003cpath d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/\u003e\u003cpolyline points=\"15 3 21 3 21 9\"/\u003e\u003cline x1=\"10\" y1=\"14\" x2=\"21\" y2=\"3\"/\u003e\u003c/svg\u003e"
+    }
+]

@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -315,7 +315,7 @@
 
           <div id="editor-empty" class="editor-empty" style="display: none">
             <div class="empty-state">
-              <span class="empty-icon">🏁</span>
+              <span class="empty-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></span>
               <h3>No Test Selected</h3>
               <p>
                 Select a test from the left panel to inspect or edit, or click
@@ -633,7 +633,7 @@
               <div class="form-grid cols-2 mt-3">
                 <div class="form-group gate-control-group gate-start">
                   <div class="gate-header">
-                    <span class="badge badge-success gate-badge">🏁 Start Gate</span>
+                    <span class="badge badge-success gate-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1px; margin-right: 3px;"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Start Gate</span>
                     <label for="slider-start-s" class="gate-label">
                       Position: <span id="disp-start-s">0.000</span> (<span id="disp-start-m">0 m</span>)
                     </label>
@@ -662,7 +662,7 @@
 
                 <div class="form-group gate-control-group gate-finish">
                   <div class="gate-header">
-                    <span class="badge badge-danger gate-badge">🏁 Finish Gate</span>
+                    <span class="badge badge-danger gate-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1px; margin-right: 3px;"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Finish Gate</span>
                     <label for="slider-finish-s" class="gate-label">
                       Position: <span id="disp-finish-s">1.000</span> (<span id="disp-finish-m">0 m</span>)
                     </label>
@@ -780,9 +780,9 @@
 
               <div id="telemetry-missing-card" class="mt-2" class="info-banner-warning mt-2" style="display: none;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                  <span style="font-size: 12px; font-weight: 600; color: var(--accent-gold);">⚠️ Missing AI Telemetry Profile</span>
+                  <span style="font-size: 12px; font-weight: 600; color: var(--accent-gold); display: inline-flex; align-items: center; gap: 5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Missing AI Telemetry Profile</span>
                   <button type="button" id="btn-download-record-script" class="btn btn-xs btn-secondary" style="font-size: 11px; border-color: var(--accent-gold); color: var(--accent-gold);">
-                    <span>📥 Download Recording Script (.ps1)</span>
+                    <span style="display: inline-flex; align-items: center; gap: 4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download Recording Script (.ps1)</span>
                   </button>
                 </div>
                 <div id="telemetry-dropzone-editor" class="dropzone-dashed" style="padding: 10px; text-align: center; cursor: pointer; margin-top: 8px;">
@@ -807,7 +807,7 @@
               <div class="card-title">Target Times</div>
               <div class="form-grid cols-3 target-times-grid">
                 <div class="form-group">
-                  <label for="target-gold" class="medal-label medal-gold">🥇 Gold</label>
+                  <label for="target-gold" class="medal-label medal-gold"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.2 2l4.8 7.5L16.8 2"/><path d="M2.5 2h4.7l4.8 7.5L7.2 2H2.5z"/><path d="M21.5 2h-4.7l-4.8 7.5 4.8-7.5h4.7z"/><circle cx="12" cy="15.5" r="5.5" fill="currentColor" fill-opacity="0.15"/><circle cx="12" cy="15.5" r="5.5"/><path d="M12 13v5"/><path d="M10.5 14.5L12 13l1.5 1.5"/></svg> Gold</label>
                   <div class="input-suffix-wrapper">
                     <input
                       type="number"
@@ -822,7 +822,7 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="target-silver" class="medal-label medal-silver">🥈 Silver</label>
+                  <label for="target-silver" class="medal-label medal-silver"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.2 2l4.8 7.5L16.8 2"/><path d="M2.5 2h4.7l4.8 7.5L7.2 2H2.5z"/><path d="M21.5 2h-4.7l-4.8 7.5 4.8-7.5h4.7z"/><circle cx="12" cy="15.5" r="5.5" fill="currentColor" fill-opacity="0.15"/><circle cx="12" cy="15.5" r="5.5"/><path d="M10.5 14h3a1.5 1.5 0 0 1 0 3h-3v1h3"/></svg> Silver</label>
                   <div class="input-suffix-wrapper">
                     <input
                       type="number"
@@ -837,7 +837,7 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="target-bronze" class="medal-label medal-bronze">🥉 Bronze</label>
+                  <label for="target-bronze" class="medal-label medal-bronze"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.2 2l4.8 7.5L16.8 2"/><path d="M2.5 2h4.7l4.8 7.5L7.2 2H2.5z"/><path d="M21.5 2h-4.7l-4.8 7.5 4.8-7.5h4.7z"/><circle cx="12" cy="15.5" r="5.5" fill="currentColor" fill-opacity="0.15"/><circle cx="12" cy="15.5" r="5.5"/><path d="M10.5 13.5h3a1.2 1.2 0 0 1 0 2.4h-2a1.2 1.2 0 0 1 0 2.4h2"/></svg> Bronze</label>
                   <div class="input-suffix-wrapper">
                     <input
                       type="number"
@@ -857,7 +857,7 @@
                 class="target-validation-error"
                 style="display: none"
               >
-                ⚠️ Logical error: Targets must satisfy Gold &lt; Silver &lt;
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 4px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Logical error: Targets must satisfy Gold &lt; Silver &lt;
                 Bronze.
               </div>
             </div>
@@ -1001,7 +1001,7 @@
                 <h3 id="title-chart-power">Average Power &amp; Power-to-Weight Ratio by Game</h3>
               </div>
               <div class="chart-legend-badges">
-                <span class="chart-badge chart-swipe-hint" title="Swipe horizontally to view all license tiers">SWIPE ↔</span>
+                <span class="chart-badge chart-swipe-hint" title="Swipe horizontally to view all license tiers">SWIPE <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 16 3 12 7 8"/><line x1="3" y1="12" x2="21" y2="12"/><polyline points="17 8 21 12 17 16"/></svg></span>
                 <button
                   type="button"
                   id="badge-toggle-pw"
@@ -1031,7 +1031,7 @@
                 <h3 id="title-chart-gold">Average Gold Medal Duration by Game</h3>
               </div>
               <div class="chart-legend-badges">
-                <span class="chart-badge chart-swipe-hint" title="Swipe horizontally to view all license tiers">SWIPE ↔</span>
+                <span class="chart-badge chart-swipe-hint" title="Swipe horizontally to view all license tiers">SWIPE <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 16 3 12 7 8"/><line x1="3" y1="12" x2="21" y2="12"/><polyline points="17 8 21 12 17 16"/></svg></span>
                 <button
                   type="button"
                   id="btn-toggle-gold-scale"
@@ -1169,7 +1169,7 @@
       <div id="telemetry-batch-modal" class="modal" style="display: none">
         <div class="modal-content" style="max-width: 720px;">
           <div class="modal-header">
-            <h3 id="telemetry-modal-title">📡 Record Missing Telemetry (Rolling Starts)</h3>
+            <h3 id="telemetry-modal-title" style="display: flex; align-items: center; gap: 8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.93 19.07A10 10 0 0 1 12 2a10 10 0 0 1 7.07 17.07"/><path d="M7.76 16.24A6 6 0 0 1 12 6a6 6 0 0 1 4.24 10.24"/><circle cx="12" cy="12" r="2"/><path d="M12 14v8"/><path d="M9 22h6"/></svg> Record Missing Telemetry (Rolling Starts)</h3>
             <button id="telemetry-modal-close" class="modal-close-btn">&times;</button>
           </div>
           <div class="modal-body">
@@ -1274,7 +1274,7 @@
                 2. Telemetry Result File (.json)
               </label>
               <div id="telemetry-dropzone" class="dropzone-dashed" style="padding: 24px 16px; text-align: center; cursor: pointer;">
-                <span style="font-size: 28px; display: block; margin-bottom: 6px;">📁</span>
+                <span style="display: flex; justify-content: center; margin-bottom: 6px; color: var(--text-muted);"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>
                 <span style="font-size: 13px; color: var(--text-main); font-weight: 500; display: block;">Drag & drop telemetry profile JSON here</span>
                 <span style="font-size: 11px; color: var(--text-dim); display: block; margin-top: 4px;">or click to browse from <code>data/telemetry_profiles/</code></span>
                 <input type="file" id="telemetry-file-input" accept=".json" style="display: none;" />
@@ -1284,7 +1284,7 @@
               <div id="telemetry-file-preview" class="info-banner-sky" style="display: none; margin-top: 12px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                   <strong id="preview-filename" style="color: var(--accent-sky); font-family: var(--font-mono); font-size: 12px;"></strong>
-                  <span id="preview-valid-badge" class="badge badge-success">✓ Valid Profile</span>
+                  <span id="preview-valid-badge" class="badge badge-success" style="display: inline-flex; align-items: center; gap: 4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Valid Profile</span>
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 11px; color: #cbd5e1;">
                   <div><strong>Track:</strong> <span id="preview-track">-</span></div>
@@ -1302,11 +1302,11 @@
 
             <!-- Success Card -->
             <div id="pr-success-card" class="info-banner-success" style="display: none; text-align: center;">
-              <span style="font-size: 32px; display: block; margin-bottom: 8px;">🎉</span>
+              <span style="display: flex; justify-content: center; margin-bottom: 8px; color: var(--accent-green);"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.8 11.3L2 22l10.7-3.8L5.8 11.3z"/><path d="M4 14.8l7.2-2.5"/><path d="M11 4l1 2"/><path d="M18 6l2-1"/><path d="M15 2v3"/><path d="M19 11l2 1"/><path d="M14 9l4 4"/><circle cx="17" cy="4" r="0.8" fill="currentColor"/><circle cx="21" cy="8" r="0.8" fill="currentColor"/><circle cx="13" cy="12" r="0.8" fill="currentColor"/></svg></span>
               <h4 style="color: var(--accent-green); margin-bottom: 6px;">Pull Request Created Successfully!</h4>
               <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Your telemetry profile has been submitted and autoformatted for maintainer review.</p>
               <a id="pr-link-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary" class="btn btn-success" style="font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-                <span>View Pull Request on GitHub</span> <span class="icon">↗</span>
+                <span>View Pull Request on GitHub</span> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
               </a>
             </div>
           </div>

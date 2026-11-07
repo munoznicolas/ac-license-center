@@ -1,4 +1,4 @@
---[[
+﻿--[[
     Gran Turismo Fullscreen Modal Overlays Subsystem
     Renders event overlays:
     1. 3-2-1-START! animated countdown
@@ -158,13 +158,13 @@ function GTModalOverlays.drawResultsScreen(screenW, screenH, finalTime, targets,
     local medalTitle = "BRONZE MEDAL"
     if medal == "gold" then
         headerCol = Theme.COLORS.GOLD
-        medalTitle = "★ GOLD MEDAL AWARDED ★"
+        medalTitle = "GOLD MEDAL AWARDED"
     elseif medal == "silver" then
         headerCol = Theme.COLORS.SILVER
-        medalTitle = "★ SILVER MEDAL AWARDED ★"
+        medalTitle = "SILVER MEDAL AWARDED"
     elseif medal == "bronze" then
         headerCol = Theme.COLORS.BRONZE
-        medalTitle = "★ BRONZE MEDAL AWARDED ★"
+        medalTitle = "BRONZE MEDAL AWARDED"
     else
         headerCol = Theme.COLORS.WHITE
         medalTitle = "TEST COMPLETED"

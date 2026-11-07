@@ -9,6 +9,24 @@ import { api } from "./api.js";
 import { formatTimeDisplay, escapeHtml } from "./ui-utils.js";
 
 let refTestsPromise = null;
+let chartLoadedPromise = null;
+
+/**
+ * Dynamically load Chart.js on-demand.
+ */
+export function ensureChartLoaded() {
+  if (typeof Chart !== "undefined") return Promise.resolve();
+  if (!chartLoadedPromise) {
+    chartLoadedPromise = new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = "chart.umd.min.js";
+      s.onload = () => resolve();
+      s.onerror = (err) => reject(new Error("Failed to load Chart.js: " + err));
+      document.head.appendChild(s);
+    });
+  }
+  return chartLoadedPromise;
+}
 
 /**
  * Load GT reference benchmark tests asynchronously.
@@ -213,10 +231,11 @@ export async function openReferenceView() {
     setTimeout(updateGamePillsScrollCues, 100);
   }
 
-  // Ensure reference benchmark data is loaded before rendering
-  if (!state.referenceTests || state.referenceTests.length === 0) {
-    await loadReferenceTests();
-  }
+  // Ensure reference benchmark data and Chart.js library are loaded before rendering
+  await Promise.all([
+    (!state.referenceTests || state.referenceTests.length === 0) ? loadReferenceTests() : Promise.resolve(),
+    ensureChartLoaded(),
+  ]);
 
   populateRefTierDropdown();
   renderReferenceView();
@@ -687,8 +706,9 @@ export function updateAggregationUiControls() {
  */
 export function renderReferenceCharts(list) {
   if (typeof Chart === "undefined") {
-    console.warn("Chart.js not loaded, retrying in 200ms...");
-    setTimeout(() => renderReferenceCharts(list), 200);
+    ensureChartLoaded()
+      .then(() => renderReferenceCharts(list))
+      .catch((err) => console.warn("Chart.js failed to load:", err));
     return;
   }
 

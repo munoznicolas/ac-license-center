@@ -3,7 +3,7 @@
  * Test definition editor, form validation, license tabs, and curriculum catalog manager.
  */
 
-import { state } from "./state.js";
+import { state, bumpCacheBuster } from "./state.js";
 import { dom } from "./dom.js";
 import { api, isStaticHost } from "./api.js";
 import { showToast, escapeHtml } from "./ui-utils.js";
@@ -83,33 +83,38 @@ function updateTestAISpeedDisplay(test) {
  */
 export async function loadInitialData() {
   try {
-    // 1. Start fetching reference benchmark tests in parallel with tracks/cars
-    const refTestsPromise = loadReferenceTests();
+    // 1. Fetch tracks, cars, and curriculum concurrently
+    const [trackData, carData, loadedCurriculum] = await Promise.all([
+      api.getTracks(),
+      api.getCars(),
+      loadCurriculum(),
+    ]);
 
-    // 2. Fetch Tracks
-    const trackData = await api.getTracks();
-    if (trackData.success) {
+    // 2. Populate Tracks
+    if (trackData?.success) {
       state.tracks = trackData.tracks;
       populateTrackDropdown();
     }
 
-    // 3. Fetch Cars
-    const carData = await api.getCars();
-    if (carData.success) {
+    // 3. Populate Cars
+    if (carData?.success) {
       state.cars = carData.cars;
       populateCarDropdown();
     }
 
-    // 4. Load Curriculum (LocalStorage source of truth with bundled fallback)
-    const loadedCurriculum = await loadCurriculum();
+    // 4. Populate Curriculum & Active Tier
     if (loadedCurriculum && loadedCurriculum.length > 0) {
       state.curriculum = loadedCurriculum;
       renderLicenseTabs();
       selectTier(0);
     }
 
-    // 5. Ensure reference benchmark tests are fully resolved
-    await refTestsPromise;
+    // 5. Schedule background prefetch of reference benchmark tests when browser is idle
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(() => loadReferenceTests(), { timeout: 4000 });
+    } else {
+      setTimeout(() => loadReferenceTests(), 2000);
+    }
   } catch (err) {
     console.error("Initialization failed:", err);
     showToast("Failed to load designer data: " + err.message, "error");
@@ -425,7 +430,7 @@ export function renderTestList() {
         </svg>
       </div>
       <div class="test-item-thumb">
-        <img src="${escapeHtml(previewUrl)}?t=${encodeURIComponent(state.cacheBuster)}" 
+        <img src="${escapeHtml(previewUrl)}${state.cacheBuster ? `?t=${encodeURIComponent(state.cacheBuster)}` : ""}" 
              alt="${escapeHtml(test.test_id)}" 
              loading="lazy" 
              onerror="this.style.display='none'">
@@ -1253,7 +1258,7 @@ async function handleFormSubmit(e) {
     }
 
     saveCurriculum(state.curriculum);
-    state.cacheBuster = Date.now();
+    bumpCacheBuster();
     renderLicenseTabs();
     renderTestList();
     showToast(`Saved test ${testId}! Track miniature updated.`);

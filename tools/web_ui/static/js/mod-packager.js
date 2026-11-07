@@ -261,7 +261,28 @@ export function formatTestJson(test, tier) {
  * @param {Array} curriculum In-memory curriculum catalog
  * @param {Function} onProgress Progress callback(percent, statusMessage)
  */
+let jszipLoadedPromise = null;
+
+/**
+ * Dynamically load JSZip compression engine on-demand.
+ */
+export function ensureJSZipLoaded() {
+  if (typeof JSZip !== "undefined") return Promise.resolve();
+  if (!jszipLoadedPromise) {
+    jszipLoadedPromise = new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = "jszip.min.js";
+      s.onload = () => resolve();
+      s.onerror = (err) => reject(new Error("Failed to load JSZip: " + err));
+      document.head.appendChild(s);
+    });
+  }
+  return jszipLoadedPromise;
+}
+
 export async function buildAndExportModZip(curriculum, onProgress = () => {}) {
+  onProgress(2, "Loading compression engine...");
+  await ensureJSZipLoaded();
   if (typeof JSZip === "undefined") {
     throw new Error("JSZip library is not loaded. Please ensure jszip.min.js is included.");
   }

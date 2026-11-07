@@ -131,21 +131,21 @@ def build_static_site(out_dir: str = "dist_site", clean: bool = True) -> str:
     # /api/curriculum
     curriculum = load_curriculum()
     with open(os.path.join(api_dir, "curriculum.json"), "w", encoding="utf-8") as f:
-        json.dump({"success": True, "curriculum": curriculum}, f, indent=2)
+        json.dump({"success": True, "curriculum": curriculum}, f, separators=(",", ":"))
 
     # /api/tracks
     tracks = get_available_tracks()
     if not tracks:
         tracks = _build_fallback_tracks(curriculum)
     with open(os.path.join(api_dir, "tracks.json"), "w", encoding="utf-8") as f:
-        json.dump({"success": True, "tracks": tracks, "kunos_only": True}, f, indent=2)
+        json.dump({"success": True, "tracks": tracks, "kunos_only": True}, f, separators=(",", ":"))
 
     # /api/cars
     cars = get_available_cars()
     if not cars:
         cars = _build_fallback_cars(curriculum)
     with open(os.path.join(api_dir, "cars.json"), "w", encoding="utf-8") as f:
-        json.dump({"success": True, "cars": cars, "kunos_only": True}, f, indent=2)
+        json.dump({"success": True, "cars": cars, "kunos_only": True}, f, separators=(",", ":"))
 
     # /api/reference_tests
     ref_gt_path = os.path.join(REPO_ROOT, "docs", "Gran_Turismo_License_Tests.json")
@@ -165,13 +165,13 @@ def build_static_site(out_dir: str = "dist_site", clean: bool = True) -> str:
                 "ac_count": len(ref_ac),
             },
             f,
-            indent=2,
+            separators=(",", ":"),
         )
 
     # /api/missing_telemetry
     missing_summary = get_missing_telemetry_summary()
     with open(os.path.join(api_dir, "missing_telemetry.json"), "w", encoding="utf-8") as f:
-        json.dump(missing_summary, f, indent=2)
+        json.dump(missing_summary, f, separators=(",", ":"))
 
     # Copy Pre-rendered Track Splines
     splines_src = os.path.join(REPO_ROOT, "data", "splines")

@@ -11,6 +11,30 @@ import { selectTier, loadTestIntoForm } from "./test-editor.js";
 import { showToast } from "./ui-utils.js";
 
 let activeDriver = null;
+let driverLoadedPromise = null;
+
+/**
+ * Dynamically load Driver.js and driver.css on-demand when starting a tour.
+ */
+export function ensureDriverLoaded() {
+  if (window.driver?.js?.driver) return Promise.resolve();
+  if (!driverLoadedPromise) {
+    driverLoadedPromise = new Promise((resolve, reject) => {
+      if (!document.querySelector('link[href*="driver.css"]')) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "driver.css";
+        document.head.appendChild(link);
+      }
+      const s = document.createElement("script");
+      s.src = "driver.js";
+      s.onload = () => resolve();
+      s.onerror = (err) => reject(new Error("Failed to load driver.js: " + err));
+      document.head.appendChild(s);
+    });
+  }
+  return driverLoadedPromise;
+}
 
 /**
  * Open the Welcome / Tour Selection Modal.
@@ -61,9 +85,16 @@ function ensureEditorReady() {
 /**
  * Launch Flow 1: Modifying an Existing Test.
  */
-export function startEditTestTour() {
+export async function startEditTestTour() {
   closeTourWelcomeModal();
   ensureEditorReady();
+
+  try {
+    await ensureDriverLoaded();
+  } catch (err) {
+    showToast("Tour engine failed to load: " + err.message, "error");
+    return;
+  }
 
   if (!window.driver?.js?.driver) {
     showToast("Tour engine not loaded.", "error");
@@ -180,9 +211,16 @@ export function startEditTestTour() {
 /**
  * Launch Flow 2: Generated Scripts for Car+Track Combinations Without Data.
  */
-export function startMissingTelemetryTour() {
+export async function startMissingTelemetryTour() {
   closeTourWelcomeModal();
   ensureEditorReady();
+
+  try {
+    await ensureDriverLoaded();
+  } catch (err) {
+    showToast("Tour engine failed to load: " + err.message, "error");
+    return;
+  }
 
   if (!window.driver?.js?.driver) {
     showToast("Tour engine not loaded.", "error");

@@ -17,8 +17,15 @@ export const state = {
   refChartsAggregateByLicense: true,
   goldScaleFocus: true,
   isReferenceViewActive: false,
-  cacheBuster: Date.now(),
+  cacheBuster: "",
 };
+
+/**
+ * Invalidate thumbnail and asset caches for the active session (e.g. after generation or save).
+ */
+export function bumpCacheBuster() {
+  state.cacheBuster = Date.now();
+}
 
 /**
  * Returns the currently active license tier object, or null.
@@ -38,4 +45,3 @@ export function getActiveTest() {
     ? tier.tests[state.activeTestIndex]
     : null;
 }
-

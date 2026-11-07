@@ -5,7 +5,65 @@
 
 import { state } from "./state.js";
 import { dom } from "./dom.js";
+import { api } from "./api.js";
 import { formatTimeDisplay, escapeHtml } from "./ui-utils.js";
+
+let refTestsPromise = null;
+
+/**
+ * Load GT reference benchmark tests asynchronously.
+ * Caches in-flight requests and triggers re-render if Reference View is active.
+ */
+export async function loadReferenceTests() {
+  if (state.referenceTests && state.referenceTests.length > 0) {
+    return state.referenceTests;
+  }
+  if (refTestsPromise) {
+    return refTestsPromise;
+  }
+  refTestsPromise = (async () => {
+    try {
+      const refData = await api.getReferenceTests();
+      if (refData?.success && Array.isArray(refData.tests)) {
+        state.referenceTests = refData.tests;
+        if (state.isReferenceViewActive) {
+          populateRefTierDropdown();
+          renderReferenceView();
+        }
+        return state.referenceTests;
+      }
+    } catch (err) {
+      console.warn("Could not load reference benchmark tests:", err);
+    } finally {
+      refTestsPromise = null;
+    }
+    return state.referenceTests || [];
+  })();
+  return refTestsPromise;
+}
+
+/**
+ * Update fade indicators for horizontal scroll overflow on game selector chips.
+ */
+export function updateGamePillsScrollCues() {
+  if (!dom.gamePillsContainer) return;
+  const container = dom.gamePillsContainer;
+  const scrollLeft = container.scrollLeft;
+  const maxScroll = container.scrollWidth - container.clientWidth;
+  const hasOverflow = maxScroll > 4;
+
+  if (!hasOverflow) {
+    container.classList.remove("has-fade-left", "has-fade-right", "has-fade-both");
+    return;
+  }
+
+  const canScrollLeft = scrollLeft > 6;
+  const canScrollRight = scrollLeft < maxScroll - 6;
+
+  container.classList.toggle("has-fade-left", canScrollLeft && !canScrollRight);
+  container.classList.toggle("has-fade-right", !canScrollLeft && canScrollRight);
+  container.classList.toggle("has-fade-both", canScrollLeft && canScrollRight);
+}
 
 /**
  * Register event listeners for reference view tabs, filter pills, search input, and tier dropdown.
@@ -17,25 +75,7 @@ export function setupReferenceViewListeners() {
     });
   }
 
-  const updateGamePillsScrollCues = () => {
-    if (!dom.gamePillsContainer) return;
-    const container = dom.gamePillsContainer;
-    const scrollLeft = container.scrollLeft;
-    const maxScroll = container.scrollWidth - container.clientWidth;
-    const hasOverflow = maxScroll > 4;
 
-    if (!hasOverflow) {
-      container.classList.remove("has-fade-left", "has-fade-right", "has-fade-both");
-      return;
-    }
-
-    const canScrollLeft = scrollLeft > 6;
-    const canScrollRight = scrollLeft < maxScroll - 6;
-
-    container.classList.toggle("has-fade-left", canScrollLeft && !canScrollRight);
-    container.classList.toggle("has-fade-right", !canScrollLeft && canScrollRight);
-    container.classList.toggle("has-fade-both", canScrollLeft && canScrollRight);
-  };
 
   if (dom.gamePillsContainer) {
     dom.gamePillsContainer.addEventListener("scroll", updateGamePillsScrollCues, { passive: true });
@@ -150,7 +190,7 @@ export function setupReferenceViewListeners() {
 /**
  * Open the Gran Turismo reference comparison view and hide the test editor workspace.
  */
-export function openReferenceView() {
+export async function openReferenceView() {
   state.isReferenceViewActive = true;
   if (dom.workspaceView) dom.workspaceView.style.display = "none";
   if (dom.referenceView) dom.referenceView.style.display = "flex";
@@ -171,6 +211,11 @@ export function openReferenceView() {
       }
     });
     setTimeout(updateGamePillsScrollCues, 100);
+  }
+
+  // Ensure reference benchmark data is loaded before rendering
+  if (!state.referenceTests || state.referenceTests.length === 0) {
+    await loadReferenceTests();
   }
 
   populateRefTierDropdown();

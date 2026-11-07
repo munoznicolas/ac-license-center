@@ -271,6 +271,25 @@ class TestDesignerServer(unittest.TestCase):
         self.assertIn("dom.btnBackToList", dom_js)
         self.assertIn("dom.btnHeaderMenu.addEventListener", app_js)
 
+    def test_reference_view_initial_load_contract(self):
+        """Verify reference view exports functions and loads benchmark tests on initial open without ReferenceError."""
+        ref_view_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "js", "reference-view.js")
+        editor_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "js", "test-editor.js")
+        with open(ref_view_js_path, "r", encoding="utf-8") as f:
+            ref_js = f.read()
+        with open(editor_js_path, "r", encoding="utf-8") as f:
+            editor_js = f.read()
+
+        # 1. updateGamePillsScrollCues must be defined and exported at module level (not scoped inside setupReferenceViewListeners)
+        self.assertIn("export function updateGamePillsScrollCues()", ref_js)
+        # 2. loadReferenceTests must be exported from reference-view.js
+        self.assertIn("export async function loadReferenceTests()", ref_js)
+        # 3. openReferenceView must ensure reference tests are loaded
+        self.assertIn("await loadReferenceTests()", ref_js)
+        # 4. test-editor.js imports loadReferenceTests and runs it concurrently
+        self.assertIn('import { loadReferenceTests } from "./reference-view.js";', editor_js)
+        self.assertIn("const refTestsPromise = loadReferenceTests();", editor_js)
+
     def test_mobile_reference_charts_per_game_logic(self):
         """Verify reference charts show per game when ALL games are selected and per license when a game is picked."""
         ref_view_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "js", "reference-view.js")

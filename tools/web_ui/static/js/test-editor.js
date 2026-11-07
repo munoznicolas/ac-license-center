@@ -23,6 +23,7 @@ import {
 import { loadCurriculum, saveCurriculum } from "./curriculum-store.js";
 import { resolveTelemetryEngine, saveCustomTelemetryProfile } from "./telemetry-store.js";
 import { generateMiniatureDataUrl } from "./miniature-builder.js";
+import { loadReferenceTests } from "./reference-view.js";
 
 /**
  * Filter tracks by search query across id, name, and layout names.
@@ -78,39 +79,28 @@ function updateTestAISpeedDisplay(test) {
 }
 
 /**
- * Load GT reference benchmark tests.
- */
-async function loadReferenceTests() {
-  try {
-    const refData = await api.getReferenceTests();
-    if (refData?.success) {
-      state.referenceTests = refData.tests;
-    }
-  } catch (err) {
-    console.warn("Could not load reference benchmark tests:", err);
-  }
-}
-
-/**
  * Initial load of curriculum, tracks, cars, and benchmark reference tests.
  */
 export async function loadInitialData() {
   try {
-    // 1. Fetch Tracks
+    // 1. Start fetching reference benchmark tests in parallel with tracks/cars
+    const refTestsPromise = loadReferenceTests();
+
+    // 2. Fetch Tracks
     const trackData = await api.getTracks();
     if (trackData.success) {
       state.tracks = trackData.tracks;
       populateTrackDropdown();
     }
 
-    // 2. Fetch Cars
+    // 3. Fetch Cars
     const carData = await api.getCars();
     if (carData.success) {
       state.cars = carData.cars;
       populateCarDropdown();
     }
 
-    // 3. Load Curriculum (LocalStorage source of truth with bundled fallback)
+    // 4. Load Curriculum (LocalStorage source of truth with bundled fallback)
     const loadedCurriculum = await loadCurriculum();
     if (loadedCurriculum && loadedCurriculum.length > 0) {
       state.curriculum = loadedCurriculum;
@@ -118,8 +108,8 @@ export async function loadInitialData() {
       selectTier(0);
     }
 
-    // 4. Fetch GT Reference Benchmark Tests
-    await loadReferenceTests();
+    // 5. Ensure reference benchmark tests are fully resolved
+    await refTestsPromise;
   } catch (err) {
     console.error("Initialization failed:", err);
     showToast("Failed to load designer data: " + err.message, "error");

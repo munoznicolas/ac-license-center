@@ -1,4 +1,4 @@
-﻿/**
+/**
  * worker.js
  * Cloudflare Worker Serverless Gateway for Assetto Corsa GT Licenses Telemetry PR Submission.
  *
@@ -9,19 +9,22 @@
  * Environment Variables / Secrets required:
  *   - GITHUB_TOKEN: GitHub Personal Access Token or GitHub App Token with 'contents:write' and 'pull_requests:write'
  *   - GITHUB_REPO: Repository path, e.g. "munoznicolas/ac-license-center" (or owner/repo)
- *   - ALLOWED_ORIGIN: Allowed CORS Origin (default: "*")
+ *   - ALLOWED_ORIGIN: Allowed CORS Origin (e.g. "https://munoznicolas.github.io" or "*")
+ *   - GOOGLE_CLIENT_ID: Optional Google OAuth Client ID to assert audience binding (aud)
+ *   - ENVIRONMENT: "production" or "development"
+ *   - DEV_TOKEN: Secret development mock token accepted only when ENVIRONMENT === "development"
  */
 
 export default {
   async fetch(request, env) {
-    const origin = request.headers.get("Origin") || "*";
+    const corsOrigin = resolveCorsOrigin(request, env);
 
     // Handle CORS Preflight
     if (request.method === "OPTIONS") {
       return new Response(null, {
         status: 204,
         headers: {
-          "Access-Control-Allow-Origin": origin,
+          "Access-Control-Allow-Origin": corsOrigin,
           "Access-Control-Allow-Methods": "POST, OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type, Authorization",
           "Access-Control-Max-Age": "86400",
@@ -30,56 +33,74 @@ export default {
     }
 
     if (request.method !== "POST") {
-      return jsonResponse({ success: false, error: "Method not allowed. Use POST /submit" }, 405, origin);
+      return jsonResponse({ success: false, error: "Method not allowed. Use POST /submit" }, 405, corsOrigin);
     }
 
     const url = new URL(request.url);
     if (url.pathname !== "/submit" && url.pathname !== "/") {
-      return jsonResponse({ success: false, error: "Not found" }, 404, origin);
+      return jsonResponse({ success: false, error: "Not found" }, 404, corsOrigin);
+    }
+
+    // Enforce request size bound (2 MB limit)
+    const contentLength = Number(request.headers.get("Content-Length") || 0);
+    if (contentLength > 2 * 1024 * 1024) {
+      return jsonResponse({ success: false, error: "Payload too large. Maximum size is 2MB." }, 413, corsOrigin);
     }
 
     try {
       const payload = await request.json();
-      const { google_token, filename, telemetry_data } = payload;
+      const { google_token, telemetry_data } = payload;
 
-      if (!filename || !telemetry_data) {
-        return jsonResponse({ success: false, error: "Missing filename or telemetry_data" }, 400, origin);
+      if (!telemetry_data) {
+        return jsonResponse({ success: false, error: "Missing telemetry_data payload" }, 400, corsOrigin);
       }
 
       // 1. Verify Google Identity
+      if (!google_token) {
+        return jsonResponse({ success: false, error: "Authentication required: missing google_token" }, 401, corsOrigin);
+      }
+
       let contributorName = "Community Contributor";
       let contributorEmail = "contributor@assetto-gt.local";
 
-      if (google_token && google_token !== "demo_token") {
+      const isDevMode = env.ENVIRONMENT === "development" && env.DEV_TOKEN && google_token === env.DEV_TOKEN;
+
+      if (isDevMode) {
+        contributorName = String(payload.contributor_name || "Development Tester").slice(0, 64);
+        contributorEmail = String(payload.contributor_email || "dev@assetto-gt.local").slice(0, 64);
+      } else {
+        if (google_token === "demo_token") {
+          return jsonResponse({ success: false, error: "Unauthenticated demo token is not accepted. Please sign in with Google." }, 401, corsOrigin);
+        }
+
         const verifyRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(google_token)}`);
         if (!verifyRes.ok) {
-          return jsonResponse({ success: false, error: "Invalid or expired Google login token" }, 401, origin);
+          return jsonResponse({ success: false, error: "Invalid or expired Google login token" }, 401, corsOrigin);
         }
+
         const googleUser = await verifyRes.json();
+
+        // Enforce OAuth Client ID audience binding if configured
+        if (env.GOOGLE_CLIENT_ID && googleUser.aud !== env.GOOGLE_CLIENT_ID) {
+          return jsonResponse({ success: false, error: "Unauthorized Google Client ID audience" }, 403, corsOrigin);
+        }
+
         contributorName = googleUser.name || contributorName;
         contributorEmail = googleUser.email || contributorEmail;
-      } else if (payload.contributor_name) {
-        contributorName = String(payload.contributor_name).slice(0, 64);
-        contributorEmail = String(payload.contributor_email || "").slice(0, 64) || contributorEmail;
       }
 
       // 2. Validate Telemetry Payload
       const validation = validateTelemetryData(telemetry_data);
       if (!validation.valid) {
-        return jsonResponse({ success: false, error: `Telemetry validation failed: ${validation.error}` }, 400, origin);
+        return jsonResponse({ success: false, error: `Telemetry validation failed: ${validation.error}` }, 400, corsOrigin);
       }
 
       // 3. GitHub API Credentials
       const githubToken = env.GITHUB_TOKEN;
       const repo = env.GITHUB_REPO || "munoznicolas/ac-license-center";
       if (!githubToken) {
-        return jsonResponse({ success: false, error: "Gateway configuration error: GITHUB_TOKEN secret is not set" }, 500, origin);
+        return jsonResponse({ success: false, error: "Gateway configuration error: GITHUB_TOKEN secret is not set" }, 500, corsOrigin);
       }
-
-      // 4. Create Git Branch
-      const safeTrack = validation.track_id.replace(/[^a-zA-Z0-9_-]/g, "");
-      const safeCar = validation.car_id.replace(/[^a-zA-Z0-9_-]/g, "");
-      const branchName = `telemetry/${safeTrack}-${safeCar}-${Date.now().toString().slice(-6)}`;
 
       const ghHeaders = {
         "Authorization": `Bearer ${githubToken}`,
@@ -87,11 +108,37 @@ export default {
         "Accept": "application/vnd.github.v3+json",
       };
 
+      // 4. Check for existing open PR to prevent duplicate spam
+      const safeTrack = validation.track_id.replace(/[^a-zA-Z0-9_-]/g, "");
+      const safeCar = validation.car_id.replace(/[^a-zA-Z0-9_-]/g, "");
+      const safeLayout = validation.track_layout ? validation.track_layout.replace(/[^a-zA-Z0-9_-]/g, "") : "";
+      const searchTitle = `feat(telemetry): add AI telemetry for ${validation.car_id} @ ${validation.track_id}`;
+
+      try {
+        const pullsRes = await fetch(`https://api.github.com/repos/${repo}/pulls?state=open&per_page=30`, { headers: ghHeaders });
+        if (pullsRes.ok) {
+          const openPulls = await pullsRes.json();
+          const existingPr = Array.isArray(openPulls) && openPulls.find(p => p.title && p.title.startsWith(searchTitle));
+          if (existingPr) {
+            return jsonResponse({
+              success: false,
+              error: `An open Pull Request already exists for ${validation.car_id} @ ${validation.track_id}: PR #${existingPr.number}`,
+              existing_pr_url: existingPr.html_url
+            }, 409, corsOrigin);
+          }
+        }
+      } catch {
+        // If GitHub search fails, proceed with creation
+      }
+
+      // 5. Create Git Branch
+      const branchName = `telemetry/${safeTrack}-${safeCar}-${Date.now().toString().slice(-6)}`;
+
       // Get default branch commit SHA
       const refRes = await fetch(`https://api.github.com/repos/${repo}/git/ref/heads/main`, { headers: ghHeaders });
       if (!refRes.ok) {
         const errText = await refRes.text();
-        return jsonResponse({ success: false, error: `Failed to fetch main branch ref: ${errText}` }, 502, origin);
+        return jsonResponse({ success: false, error: `Failed to fetch main branch ref: ${errText}` }, 502, corsOrigin);
       }
       const refData = await refRes.json();
       const baseSha = refData.object.sha;
@@ -104,12 +151,16 @@ export default {
       });
       if (!createBranchRes.ok) {
         const errText = await createBranchRes.text();
-        return jsonResponse({ success: false, error: `Failed to create branch ${branchName}: ${errText}` }, 502, origin);
+        return jsonResponse({ success: false, error: `Failed to create branch ${branchName}: ${errText}` }, 502, corsOrigin);
       }
 
-      // 5. Commit Telemetry JSON File
-      const safeFilename = filename.endsWith(".json") ? filename : `${filename}.json`;
-      const targetPath = `data/telemetry_profiles/${safeFilename}`;
+      // 6. Commit Telemetry JSON File
+      // Deterministically derive filename from validated track and car identifiers
+      const targetFilename = safeLayout
+        ? `${safeTrack}__${safeLayout}__${safeCar}__ai100.json`
+        : `${safeTrack}__${safeCar}__ai100.json`;
+      const targetPath = `data/telemetry_profiles/${targetFilename}`;
+
       const fileContentStr = JSON.stringify(telemetry_data, null, 2);
       const fileContentB64 = btoa(unescape(encodeURIComponent(fileContentStr)));
 
@@ -124,10 +175,10 @@ export default {
       });
       if (!commitRes.ok) {
         const errText = await commitRes.text();
-        return jsonResponse({ success: false, error: `Failed to commit file to ${targetPath}: ${errText}` }, 502, origin);
+        return jsonResponse({ success: false, error: `Failed to commit file to ${targetPath}: ${errText}` }, 502, corsOrigin);
       }
 
-      // 6. Create Pull Request
+      // 7. Create Pull Request
       const prTitle = `feat(telemetry): add AI telemetry for ${validation.car_id} @ ${validation.track_id}${validation.track_layout ? ` [${validation.track_layout}]` : ""}`;
       const prBody = buildPrDescription({
         contributorName,
@@ -149,7 +200,7 @@ export default {
 
       if (!prRes.ok) {
         const errText = await prRes.text();
-        return jsonResponse({ success: false, error: `Failed to open PR: ${errText}` }, 502, origin);
+        return jsonResponse({ success: false, error: `Failed to open PR: ${errText}` }, 502, corsOrigin);
       }
 
       const prData = await prRes.json();
@@ -159,13 +210,27 @@ export default {
         pr_url: prData.html_url,
         branch: branchName,
         message: `Successfully created Pull Request #${prData.number}!`,
-      }, 201, origin);
+      }, 201, corsOrigin);
 
     } catch (err) {
-      return jsonResponse({ success: false, error: `Internal Server Error: ${err.message}` }, 500, origin);
+      return jsonResponse({ success: false, error: `Internal Server Error: ${err.message}` }, 500, corsOrigin);
     }
   },
 };
+
+function resolveCorsOrigin(request, env) {
+  const allowed = env?.ALLOWED_ORIGIN || "*";
+  if (allowed === "*") return "*";
+
+  const requestOrigin = request.headers.get("Origin");
+  if (!requestOrigin) return allowed.split(",")[0].trim();
+
+  const allowedList = allowed.split(",").map(o => o.trim().toLowerCase());
+  if (allowedList.includes(requestOrigin.toLowerCase())) {
+    return requestOrigin;
+  }
+  return allowedList[0];
+}
 
 function jsonResponse(data, status = 200, origin = "*") {
   return new Response(JSON.stringify(data, null, 2), {

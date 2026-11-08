@@ -4,7 +4,12 @@ compatibility_date = "2024-01-01"
 
 [vars]
 GITHUB_REPO = "munoznicolas/ac-license-center"
-ALLOWED_ORIGIN = "*"
+ALLOWED_ORIGIN = "https://munoznicolas.github.io,http://localhost:8080,http://127.0.0.1:8080"
+ENVIRONMENT = "production"
+# Optional: restrict Google OAuth tokens to a specific Client ID
+# GOOGLE_CLIENT_ID = "526863751754-8g5p6v7h9k2m1n0p3q4r5s6t7u8v9w0x.apps.googleusercontent.com"
 
-# Set your GitHub Secret with:
-#   npx wrangler secret put GITHUB_TOKEN
+# Required Secrets (set with `npx wrangler secret put <NAME>`):
+#   - GITHUB_TOKEN: GitHub Personal Access Token or GitHub App Token with 'contents:write' and 'pull_requests:write'
+# Optional Secrets:
+#   - DEV_TOKEN: Secret development bypass token (only active when ENVIRONMENT = "development")

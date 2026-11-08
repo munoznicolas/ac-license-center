@@ -6,9 +6,24 @@
 export function sanitizeCurriculum(curriculum) {
   if (!Array.isArray(curriculum)) return curriculum;
   for (const tier of curriculum) {
+    if (tier && typeof tier.tier_name === "string") {
+      tier.tier_name = tier.tier_name.replace(/[^\w\s-]/g, "").slice(0, 64);
+    }
     for (const test of (tier?.tests || [])) {
       if (test.track_layout === "undefined" || test.track_layout === "null") {
         test.track_layout = "";
+      }
+      if (test.track_id) {
+        test.track_id = String(test.track_id).replace(/[^a-zA-Z0-9_-]/g, "");
+      }
+      if (test.track_layout) {
+        test.track_layout = String(test.track_layout).replace(/[^a-zA-Z0-9_-]/g, "");
+      }
+      if (test.car_id) {
+        test.car_id = String(test.car_id).replace(/[^a-zA-Z0-9_-]/g, "");
+      }
+      if (test.test_id) {
+        test.test_id = String(test.test_id).replace(/[^a-zA-Z0-9_-]/g, "");
       }
     }
   }
@@ -160,7 +175,7 @@ export async function importCurriculumJsonFile(file) {
     throw new Error(`Invalid JSON file: ${e.message}`);
   }
 
-  const curriculumData = parsed?.curriculum || parsed;
+  const curriculumData = sanitizeCurriculum(parsed?.curriculum || parsed);
   if (!isValidCurriculum(curriculumData)) {
     throw new Error("Imported file does not match curriculum structure (expected array of tiers with tests).");
   }

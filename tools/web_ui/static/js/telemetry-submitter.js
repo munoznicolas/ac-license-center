@@ -131,19 +131,7 @@ function closeSubmitModal() {
  * Prompt contributor for identity when GIS library is not loaded.
  */
 function promptContributorAuth() {
-  const defaultName = localStorage.getItem("gt_contributor_name") || "";
-  const name = prompt("Enter your Name or Nickname for the Pull Request credit:", defaultName);
-  if (!name || !name.trim()) return;
-
-  const defaultEmail = localStorage.getItem("gt_contributor_email") || "";
-  const email = prompt("Enter your Email (for GitHub contribution credit):", defaultEmail);
-  if (!email || !email.trim()) return;
-
-  setAuthenticatedUser({
-    name: name.trim(),
-    email: email.trim(),
-    token: "demo_token",
-  });
+  alert("Google Sign-In is required to authenticate submissions to the Telemetry PR Gateway. Please click 'Sign in with Google' to log in.");
 }
 
 /**
@@ -152,11 +140,12 @@ function promptContributorAuth() {
 function restoreSavedAuth() {
   const savedName = localStorage.getItem("gt_contributor_name");
   const savedEmail = localStorage.getItem("gt_contributor_email");
-  if (savedName && savedEmail) {
+  const savedToken = localStorage.getItem("gt_google_id_token");
+  if (savedName && savedEmail && savedToken && savedToken !== "demo_token") {
     setAuthenticatedUser({
       name: savedName,
       email: savedEmail,
-      token: "demo_token",
+      token: savedToken,
     });
   }
 }
@@ -337,7 +326,9 @@ async function executeSubmitPR() {
       if (statusDiv) statusDiv.style.display = "none";
       if (successCard && prLinkBtn) {
         successCard.style.display = "block";
-        prLinkBtn.href = res.pr_url;
+        if (res.pr_url && (res.pr_url.startsWith("https://github.com/") || res.pr_url.startsWith("http://localhost"))) {
+          prLinkBtn.href = res.pr_url;
+        }
       }
       showToast(`Pull Request #${res.pr_number} created successfully.`, "success");
       if (btnSubmit) {

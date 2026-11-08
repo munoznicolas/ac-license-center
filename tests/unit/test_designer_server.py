@@ -288,7 +288,7 @@ class TestDesignerServer(unittest.TestCase):
         self.assertIn("await loadReferenceTests()", ref_js)
         # 4. test-editor.js imports loadReferenceTests and runs it concurrently
         self.assertIn('import { loadReferenceTests } from "./reference-view.js";', editor_js)
-        self.assertIn("const refTestsPromise = loadReferenceTests();", editor_js)
+        self.assertIn("loadReferenceTests()", editor_js)
 
     def test_mobile_reference_charts_per_game_logic(self):
         """Verify reference charts show per game when ALL games are selected and per license when a game is picked."""

@@ -637,11 +637,12 @@ export function generatePowerShellRecordingScript(combos, options = {}) {
   const aiLevel = options.aiLevel || 100;
   const defaultAcRoot = "D:\\SteamLibrary\\steamapps\\common\\assettocorsa";
 
+  const cleanToken = (val) => String(val || "").replace(/[^a-zA-Z0-9_-]/g, "");
   const jobsPsArray = combos.map(c => {
-    const track = c.track_id || "";
-    const layout = c.track_layout || "";
-    const car = c.car_id || "";
-    return `    @{ Track = "${track}"; Layout = "${layout}"; Car = "${car}" }`;
+    const track = cleanToken(c.track_id);
+    const layout = cleanToken(c.track_layout);
+    const car = cleanToken(c.car_id);
+    return `    @{ Track = '${track}'; Layout = '${layout}'; Car = '${car}' }`;
   }).join(",\n");
 
   return `<#

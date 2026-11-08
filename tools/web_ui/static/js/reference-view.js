@@ -232,10 +232,10 @@ export async function openReferenceView() {
   }
 
   // Ensure reference benchmark data and Chart.js library are loaded before rendering
-  await Promise.all([
-    (!state.referenceTests || state.referenceTests.length === 0) ? loadReferenceTests() : Promise.resolve(),
-    ensureChartLoaded(),
-  ]);
+  if (!state.referenceTests || state.referenceTests.length === 0) {
+    await loadReferenceTests();
+  }
+  await ensureChartLoaded();
 
   populateRefTierDropdown();
   renderReferenceView();

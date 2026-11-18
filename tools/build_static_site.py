@@ -12,11 +12,15 @@ Usage:
 """
 
 import argparse
+from datetime import datetime, timezone
 import json
 import os
+import re
 import shutil
 import sys
 from typing import Any, Dict, List
+
+CANONICAL_BASE_URL = "https://munoznicolas.github.io/ac-license-center/"
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if REPO_ROOT not in sys.path:
@@ -90,6 +94,44 @@ def _build_fallback_cars(curriculum: List[Dict[str, Any]]) -> List[Dict[str, Any
             }
 
     return sorted(cars_map.values(), key=lambda x: x["name"])
+
+
+def _bundle_static_css(dist_path: str, idx_content: str) -> str:
+    """Bundles static css/*.css links in index.html into a single minified css/bundle.min.css."""
+    link_re = re.compile(r'[ \t]*<link\s+rel="stylesheet"\s+href="(css/[^"?]+\.css)(?:\?v=([^"]+))?"\s*/>\r?\n?')
+    matches = list(link_re.finditer(idx_content))
+    if not matches:
+        return idx_content
+
+    chunks: List[str] = []
+    version = ""
+    for m in matches:
+        rel_css = m.group(1)
+        if not version and m.group(2):
+            version = m.group(2)
+        css_file = os.path.join(dist_path, rel_css.replace("/", os.sep))
+        if os.path.isfile(css_file):
+            with open(css_file, "r", encoding="utf-8") as f:
+                raw = f.read()
+            # Strip CSS comments and collapse whitespace for smaller transfer size.
+            stripped = re.sub(r"/\*.*?\*/", "", raw, flags=re.S)
+            stripped = re.sub(r"\s+", " ", stripped).strip()
+            chunks.append(stripped)
+
+    if not chunks:
+        return idx_content
+
+    bundle_path = os.path.join(dist_path, "css", "bundle.min.css")
+    os.makedirs(os.path.dirname(bundle_path), exist_ok=True)
+    with open(bundle_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(chunks))
+
+    suffix = f"?v={version}" if version else ""
+    bundle_tag = f'    <link rel="stylesheet" href="css/bundle.min.css{suffix}" />\n'
+    first_start = matches[0].start()
+    last_end = matches[-1].end()
+    print(f"  [OK] Bundled {len(chunks)} CSS files into css/bundle.min.css ({os.path.getsize(bundle_path)} bytes)")
+    return idx_content[:first_start] + bundle_tag + idx_content[last_end:]
 
 
 def build_static_site(out_dir: str = "dist_site", clean: bool = True) -> str:
@@ -257,7 +299,34 @@ def build_static_site(out_dir: str = "dist_site", clean: bool = True) -> str:
     with open(os.path.join(dist_path, ".nojekyll"), "w") as f:
         f.write("")
 
-    # 7. Explicitly flag runtime environment as static in pre-rendered index.html
+    # 6b. Generate SEO crawl directives (robots.txt & sitemap.xml)
+    robots_txt = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "Disallow: /reports/\n"
+        "Disallow: /api/\n\n"
+        f"Sitemap: {CANONICAL_BASE_URL}sitemap.xml\n"
+    )
+    with open(os.path.join(dist_path, "robots.txt"), "w", encoding="utf-8") as f:
+        f.write(robots_txt)
+
+    lastmod = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    sitemap_xml = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        "  <url>\n"
+        f"    <loc>{CANONICAL_BASE_URL}</loc>\n"
+        f"    <lastmod>{lastmod}</lastmod>\n"
+        "    <changefreq>weekly</changefreq>\n"
+        "    <priority>1.0</priority>\n"
+        "  </url>\n"
+        "</urlset>\n"
+    )
+    with open(os.path.join(dist_path, "sitemap.xml"), "w", encoding="utf-8") as f:
+        f.write(sitemap_xml)
+    print("  [OK] Generated robots.txt and sitemap.xml")
+
+    # 7. Explicitly flag runtime environment as static & bundle CSS in pre-rendered index.html
     index_html_path = os.path.join(dist_path, "index.html")
     if os.path.isfile(index_html_path):
         with open(index_html_path, "r", encoding="utf-8") as f:
@@ -268,8 +337,9 @@ def build_static_site(out_dir: str = "dist_site", clean: bool = True) -> str:
                 "<head>\n    <script>window.IS_STATIC_HOST = true;</script>",
                 1
             )
-            with open(index_html_path, "w", encoding="utf-8") as f:
-                f.write(idx_content)
+        idx_content = _bundle_static_css(dist_path, idx_content)
+        with open(index_html_path, "w", encoding="utf-8") as f:
+            f.write(idx_content)
         print("  [OK] Injected window.IS_STATIC_HOST = true into index.html")
 
     print(f"\n[DONE] Static site build complete! Artifacts staged in: {dist_path}")

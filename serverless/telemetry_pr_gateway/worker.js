@@ -33,13 +33,136 @@ export default {
     }
 
     if (request.method !== "POST") {
-      return jsonResponse({ success: false, error: "Method not allowed. Use POST /submit" }, 405, corsOrigin);
+      return jsonResponse({ success: false, error: "Method not allowed. Use POST /submit or POST /contact" }, 405, corsOrigin);
     }
 
     const url = new URL(request.url);
-    if (url.pathname !== "/submit" && url.pathname !== "/") {
-      return jsonResponse({ success: false, error: "Not found" }, 404, corsOrigin);
+    if (url.pathname === "/contact") {
+      return handleContactSubmit(request, env, corsOrigin);
     }
+    if (url.pathname === "/submit" || url.pathname === "/") {
+      return handleTelemetrySubmit(request, env, corsOrigin);
+    }
+    return jsonResponse({ success: false, error: "Not found" }, 404, corsOrigin);
+  },
+};
+
+function getGitHubContext(env, corsOrigin) {
+  const githubToken = env.GITHUB_TOKEN;
+  const repo = env.GITHUB_REPO || "munoznicolas/ac-license-center";
+  if (!githubToken) {
+    return {
+      errorResponse: jsonResponse(
+        { success: false, error: "Gateway configuration error: GITHUB_TOKEN secret is not set" },
+        500,
+        corsOrigin
+      ),
+    };
+  }
+  return {
+    repo,
+    ghHeaders: {
+      "Authorization": `Bearer ${githubToken}`,
+      "User-Agent": "AC-GT-Licenses-Telemetry-Gateway",
+      "Accept": "application/vnd.github.v3+json",
+    },
+  };
+}
+
+const CONTACT_TOPICS = {
+  bug: "Bug / Issue",
+  feedback: "Feedback",
+  question: "Question",
+};
+
+async function handleContactSubmit(request, env, corsOrigin) {
+  const contentLength = Number(request.headers.get("Content-Length") || 0);
+  if (contentLength > 32 * 1024) {
+    return jsonResponse({ success: false, error: "Payload too large. Maximum size is 32KB." }, 413, corsOrigin);
+  }
+
+  try {
+    const raw = await request.text();
+    if (raw.length > 32 * 1024) {
+      return jsonResponse({ success: false, error: "Payload too large. Maximum size is 32KB." }, 413, corsOrigin);
+    }
+
+    const payload = JSON.parse(raw);
+    if (typeof payload !== "object" || payload === null) {
+      return jsonResponse({ success: false, error: "Invalid JSON payload" }, 400, corsOrigin);
+    }
+
+    // Honeypot field: silently succeed for bots without touching GitHub
+    if (typeof payload.website === "string" && payload.website.trim().length > 0) {
+      return jsonResponse({ success: true, message: "Message received." }, 200, corsOrigin);
+    }
+
+    const name = typeof payload.name === "string" ? payload.name.trim() : "";
+    const email = typeof payload.email === "string" ? payload.email.trim() : "";
+    const topicKey = typeof payload.topic === "string" && CONTACT_TOPICS[payload.topic] ? payload.topic : "feedback";
+    const message = typeof payload.message === "string" ? payload.message.trim() : "";
+
+    if (name.length < 1 || name.length > 80) {
+      return jsonResponse({ success: false, error: "Name must be between 1 and 80 characters." }, 400, corsOrigin);
+    }
+    if (email.length > 120 || (email.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+      return jsonResponse({ success: false, error: "Please provide a valid email address or leave it blank." }, 400, corsOrigin);
+    }
+    if (message.length < 10 || message.length > 2000) {
+      return jsonResponse({ success: false, error: "Message must be between 10 and 2000 characters." }, 400, corsOrigin);
+    }
+
+    const gh = getGitHubContext(env, corsOrigin);
+    if (gh.errorResponse) return gh.errorResponse;
+
+    const topicLabel = CONTACT_TOPICS[topicKey];
+    const firstLine = message.split(/\r?\n/)[0].slice(0, 60);
+    const issueTitle = `[${topicLabel}] ${firstLine}${firstLine.length === 60 ? "..." : ""}`;
+    const maskedEmail = email ? email.replace(/(.{2})(.*)(@.*)/, "$1***$3") : "Not provided";
+    const safePageUrl = typeof payload.page_url === "string" ? payload.page_url.slice(0, 200) : "Web UI";
+
+    const issueBody = [
+      `## Developer Contact / ${topicLabel}`,
+      "",
+      `* **From:** ${name}`,
+      `* **Email (masked):** \`${maskedEmail}\``,
+      `* **Topic:** ${topicLabel}`,
+      `* **Source:** ${safePageUrl}`,
+      `* **Timestamp:** ${new Date().toISOString()}`,
+      "",
+      "### Message",
+      "",
+      message,
+    ].join("\n");
+
+    const issueRes = await fetch(`https://api.github.com/repos/${gh.repo}/issues`, {
+      method: "POST",
+      headers: gh.ghHeaders,
+      body: JSON.stringify({
+        title: issueTitle,
+        body: issueBody,
+        labels: ["user-feedback", topicKey],
+      }),
+    });
+
+    if (!issueRes.ok) {
+      const errText = await issueRes.text();
+      return jsonResponse({ success: false, error: `Failed to create GitHub issue: ${errText}` }, 502, corsOrigin);
+    }
+
+    const issueData = await issueRes.json();
+    return jsonResponse({
+      success: true,
+      issue_number: issueData.number,
+      issue_url: issueData.html_url,
+      message: `Message sent! Created GitHub Issue #${issueData.number}.`,
+    }, 201, corsOrigin);
+  } catch (err) {
+    return jsonResponse({ success: false, error: `Invalid request: ${err.message}` }, 400, corsOrigin);
+  }
+}
+
+async function handleTelemetrySubmit(request, env, corsOrigin) {
 
     // Enforce request size bound (2 MB limit)
     const contentLength = Number(request.headers.get("Content-Length") || 0);
@@ -96,17 +219,9 @@ export default {
       }
 
       // 3. GitHub API Credentials
-      const githubToken = env.GITHUB_TOKEN;
-      const repo = env.GITHUB_REPO || "munoznicolas/ac-license-center";
-      if (!githubToken) {
-        return jsonResponse({ success: false, error: "Gateway configuration error: GITHUB_TOKEN secret is not set" }, 500, corsOrigin);
-      }
-
-      const ghHeaders = {
-        "Authorization": `Bearer ${githubToken}`,
-        "User-Agent": "AC-GT-Licenses-Telemetry-Gateway",
-        "Accept": "application/vnd.github.v3+json",
-      };
+      const gh = getGitHubContext(env, corsOrigin);
+      if (gh.errorResponse) return gh.errorResponse;
+      const { repo, ghHeaders } = gh;
 
       // 4. Check for existing open PR to prevent duplicate spam
       const safeTrack = validation.track_id.replace(/[^a-zA-Z0-9_-]/g, "");
@@ -215,8 +330,7 @@ export default {
     } catch (err) {
       return jsonResponse({ success: false, error: `Internal Server Error: ${err.message}` }, 500, corsOrigin);
     }
-  },
-};
+}
 
 function resolveCorsOrigin(request, env) {
   const allowed = env?.ALLOWED_ORIGIN || "*";

@@ -132,6 +132,17 @@
               </svg>
               <span>Tour</span>
             </button>
+            <button
+              id="btn-contact-dev"
+              class="btn btn-ghost btn-sm"
+              title="Contact Developer / Report an Issue"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <span>Contact</span>
+            </button>
 
             <!-- Secondary Actions -->
             <button
@@ -1386,6 +1397,82 @@
               Skip for now
             </button>
           </div>
+        </div>
+      </div>
+
+      <!-- Modal: Contact Developer / Report Issue -->
+      <div id="modal-contact-dev" class="modal" style="display: none">
+        <div class="modal-content" style="max-width: 560px;">
+          <div class="modal-header">
+            <h3>Contact Developer &amp; Report Issue</h3>
+            <button type="button" id="modal-contact-close" class="modal-close-btn" aria-label="Close">&times;</button>
+          </div>
+          <form id="form-contact-dev" novalidate>
+            <div class="modal-body">
+              <div class="form-card" style="margin-bottom: 14px; padding: 12px 14px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--bg-card);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                  <div>
+                    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 600;">Developer</div>
+                    <div id="contact-dev-name" style="font-size: 14px; font-weight: 600; color: var(--text-main);">Nicolas Munoz</div>
+                  </div>
+                  <a href="https://github.com/munoznicolas/ac-license-center/issues/new" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-xs" style="text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+                    <span>GitHub Issues</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  </a>
+                </div>
+                <div id="contact-dev-email-row" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-subtle); align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+                  <a id="contact-dev-email-link" href="#" style="font-size: 12.5px; font-family: var(--font-mono); color: var(--accent-sky); text-decoration: none;"></a>
+                  <button type="button" id="btn-copy-dev-email" class="btn btn-secondary btn-xs">Copy Email</button>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                <div>
+                  <label for="contact-name" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px;">Your Name *</label>
+                  <input type="text" id="contact-name" maxlength="80" required placeholder="e.g. Alex" style="width: 100%; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); background: var(--bg-input, var(--bg-card)); color: var(--text-main); font-size: 13px;" />
+                </div>
+                <div>
+                  <label for="contact-email" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px;">Your Email (optional)</label>
+                  <input type="email" id="contact-email" maxlength="120" placeholder="you@example.com" style="width: 100%; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); background: var(--bg-input, var(--bg-card)); color: var(--text-main); font-size: 13px;" />
+                </div>
+              </div>
+
+              <div style="margin-bottom: 10px;">
+                <label for="contact-topic" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px;">Topic</label>
+                <select id="contact-topic" style="width: 100%; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); background: var(--bg-input, var(--bg-card)); color: var(--text-main); font-size: 13px;">
+                  <option value="bug">Bug / Issue</option>
+                  <option value="feedback">Feedback / Suggestion</option>
+                  <option value="question">Question</option>
+                </select>
+              </div>
+
+              <div style="margin-bottom: 10px;">
+                <label for="contact-message" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px;">Message *</label>
+                <textarea id="contact-message" rows="4" minlength="10" maxlength="2000" required placeholder="Describe the issue, test ID, or message (min. 10 characters)..." style="width: 100%; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); background: var(--bg-input, var(--bg-card)); color: var(--text-main); font-size: 13px; resize: vertical;"></textarea>
+              </div>
+
+              <!-- Honeypot for basic bot filtering -->
+              <input type="text" id="contact-website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0;" />
+
+              <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;">
+                Messages are submitted as public GitHub Issues on the repository (any email entered is masked).
+              </p>
+
+              <div id="contact-status-banner" style="display: none; padding: 9px 12px; border-radius: 6px; font-size: 12.5px; margin-bottom: 10px;"></div>
+
+              <div id="contact-success-card" class="info-banner-success" style="display: none; text-align: center; padding: 12px;">
+                <h4 style="color: var(--accent-green); margin-bottom: 4px;">Message Sent!</h4>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Your message has been logged as a GitHub Issue for the developer.</p>
+                <a id="contact-issue-link" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>View Issue on GitHub</span>
+                </a>
+              </div>
+            </div>
+            <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+              <button type="button" id="btn-contact-cancel" class="btn btn-secondary">Close</button>
+              <button type="submit" id="btn-contact-submit" class="btn btn-primary" style="font-weight: 600;">Send Message</button>
+            </div>
+          </form>
         </div>
       </div>
 

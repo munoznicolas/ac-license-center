@@ -10,7 +10,7 @@ Lightweight, serverless Cloudflare Worker gateway that accepts AI telemetry subm
 * A free [Cloudflare](https://dash.cloudflare.com/) account.
 * Node.js 18+ installed on your machine.
 * A GitHub Fine-Grained Personal Access Token with:
-  - Repository permissions: `Contents: Read and write`, `Pull requests: Read and write`.
+  - Repository permissions: `Contents: Read and write`, `Pull requests: Read and write`, `Issues: Read and write` (for `POST /contact`).
 
 ### 2. Configure & Deploy
 ```bash
@@ -31,6 +31,22 @@ npx wrangler deploy
 ```
 
 Your worker will be live at `https://ac-telemetry-pr-gateway.<your-subdomain>.workers.dev`.
+
+### 3. Automated Deployment (GitHub Actions)
+Pushes to `main` touching `serverless/telemetry_pr_gateway/**` automatically deploy via `.github/workflows/deploy-worker.yml`.
+
+### 4. Secrets & Environment Variables Reference
+
+| Name | Where Configured | Required | Purpose |
+| :--- | :--- | :--- | :--- |
+| `CLOUDFLARE_API_TOKEN` | GitHub Actions Secret | Yes (CI/CD) | Cloudflare API token (*Workers Scripts: Edit*) for `wrangler-action` |
+| `CLOUDFLARE_ACCOUNT_ID` | GitHub Actions Secret | Yes (CI/CD) | Cloudflare Account ID for `wrangler-action` |
+| `GITHUB_TOKEN` | Cloudflare Worker Secret | Yes | GitHub token (`contents:write`, `pull_requests:write`, `issues:write`) |
+| `GOOGLE_CLIENT_ID` | Cloudflare Worker Var/Secret | Optional | Enforces Google OAuth `aud` claim on `/submit` |
+| `DEV_TOKEN` | Cloudflare Worker Secret | Optional (dev) | Bypass token accepted only when `ENVIRONMENT = "development"` |
+| `GITHUB_REPO` | `wrangler.toml` `[vars]` | Yes | Target `owner/repo` (`munoznicolas/ac-license-center`) |
+| `ALLOWED_ORIGIN` | `wrangler.toml` `[vars]` | Yes | Comma-separated CORS origins |
+| `ENVIRONMENT` | `wrangler.toml` `[vars]` | Yes | `"production"` or `"development"` |
 
 ---
 

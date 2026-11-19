@@ -3103,7 +3103,7 @@ select optgroup {
   }
 
   .table-card {
-    padding: 12px;
+    display: none;
   }
 
   .table-filters {

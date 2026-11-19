@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy — AC License Center</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2" />
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: #0a0c10;
+        color: #e2e8f0;
+        line-height: 1.6;
+      }
+      main {
+        max-width: 760px;
+        margin: 48px auto;
+        padding: 0 20px 48px;
+      }
+      h1 {
+        font-size: 1.75rem;
+        margin-bottom: 4px;
+      }
+      h2 {
+        font-size: 1.1rem;
+        margin-top: 28px;
+        color: #f8fafc;
+        border-bottom: 1px solid #1e293b;
+        padding-bottom: 6px;
+      }
+      p, li {
+        color: #cbd5e1;
+        font-size: 0.95rem;
+      }
+      a {
+        color: #f87171;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .meta {
+        color: #94a3b8;
+        font-size: 0.85rem;
+        margin-bottom: 24px;
+      }
+      .nav-back {
+        display: inline-block;
+        margin-bottom: 16px;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a class="nav-back" href="./">&larr; Back to AC License Center</a>
+      <h1>Privacy Policy</h1>
+      <p class="meta">Last updated: November 19, 2026 &middot; AC License Center (<code>munoznicolas/ac-license-center</code>)</p>
+
+      <p>
+        AC License Center is an open-source driving school and telemetry tool for Assetto Corsa.
+        This policy explains what information is processed when you use the web app and Google Sign-In.
+      </p>
+
+      <h2>1. Data We Collect</h2>
+      <ul>
+        <li>
+          <strong>Google Sign-In (OAuth):</strong> When you sign in with Google to submit a telemetry profile,
+          we receive your basic Google profile (name, email address, and Google ID token) via Google Identity Services.
+        </li>
+        <li>
+          <strong>Telemetry Submissions:</strong> Vehicle/track telemetry JSON files you choose to upload.
+        </li>
+        <li>
+          <strong>Contact Form:</strong> Your name, optional email address, topic, and message when you submit feedback or a bug report.
+        </li>
+      </ul>
+
+      <h2>2. How Data Is Used</h2>
+      <ul>
+        <li>
+          Your Google ID token is verified via Google's <code>tokeninfo</code> endpoint by our Cloudflare Worker gateway
+          solely to authenticate telemetry Pull Request submissions and prevent automated spam.
+        </li>
+        <li>
+          Submitted telemetry profiles and your contributor name/email are published in a
+          <strong>public GitHub Pull Request</strong> on <code>munoznicolas/ac-license-center</code>.
+        </li>
+        <li>
+          Contact form submissions create a <strong>public GitHub Issue</strong> on <code>munoznicolas/ac-license-center</code>
+          (do not include sensitive personal information in contact messages).
+        </li>
+        <li>
+          We do <strong>not</strong> sell, rent, or share your data with third-party advertisers or analytics trackers.
+        </li>
+      </ul>
+
+      <h2>3. Local Browser Storage</h2>
+      <p>
+        Your name, email, and Google ID token are stored in your browser's <code>localStorage</code> to keep you signed in
+        between page reloads. You can remove this data at any time by clicking <strong>Sign out</strong> or clearing site data in your browser.
+      </p>
+
+      <h2>4. Data Retention &amp; Deletion</h2>
+      <p>
+        Because telemetry submissions and contact messages become public GitHub Pull Requests or Issues, they remain in the
+        repository history unless removed. To request removal of personal contact details from an issue or PR, please open an issue at
+        <a href="https://github.com/munoznicolas/ac-license-center/issues" target="_blank" rel="noopener noreferrer">github.com/munoznicolas/ac-license-center/issues</a>.
+      </p>
+
+      <h2>5. Contact</h2>
+      <p>
+        Questions about this Privacy Policy can be submitted through the in-app <strong>Contact</strong> form or on
+        <a href="https://github.com/munoznicolas/ac-license-center/issues" target="_blank" rel="noopener noreferrer">GitHub Issues</a>.
+      </p>
+    </main>
+  </body>
+</html>

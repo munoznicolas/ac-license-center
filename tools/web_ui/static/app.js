@@ -27,6 +27,7 @@ import {
 import { renderLicenseTabs, selectTier } from "./js/test-editor.js";
 import { initTour } from "./js/tour.js";
 import { initTheme } from "./js/theme.js";
+import { initContactModal } from "./js/contact.js";
 
 /**
  * Global operational event listeners (Rebuild, Sync, Modal close).
@@ -235,6 +236,7 @@ async function init() {
   setupReferenceViewListeners();
   setupGlobalEventListeners();
   initTelemetrySubmitter();
+  initContactModal();
   initTour();
   initTheme();
 

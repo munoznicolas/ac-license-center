@@ -302,6 +302,18 @@ export const api = {
   },
 
   /**
+   * Resolves the serverless gateway endpoint URL for a given route.
+   * @param {string} route - e.g. "/submit" or "/contact"
+   * @param {string} [gatewayUrl] - Optional custom gateway URL
+   */
+  _resolveGatewayUrl(route, gatewayUrl) {
+    const base = (gatewayUrl || localStorage.getItem("gt_pr_gateway_url") || "https://ac-telemetry-pr-gateway.workers.dev")
+      .replace(/\/(submit|contact)\/?$/, "")
+      .replace(/\/$/, "");
+    return `${base}${route}`;
+  },
+
+  /**
    * Submits a recorded telemetry JSON file and Google ID token to the serverless gateway to create a PR.
    * @param {Object} params
    * @param {string} params.googleToken - Google OAuth JWT
@@ -310,8 +322,7 @@ export const api = {
    * @param {string} [params.gatewayUrl] - Optional custom gateway URL
    */
   async submitTelemetryProfile({ googleToken, filename, telemetryData, gatewayUrl }) {
-    const defaultGateway = "https://ac-telemetry-pr-gateway.workers.dev/submit";
-    const url = gatewayUrl || localStorage.getItem("gt_pr_gateway_url") || defaultGateway;
+    const url = this._resolveGatewayUrl("/submit", gatewayUrl);
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -319,6 +330,33 @@ export const api = {
         google_token: googleToken,
         filename,
         telemetry_data: telemetryData,
+      }),
+    });
+    return await safeParseJson(res);
+  },
+
+  /**
+   * Submits a developer contact / issue-report message to the serverless gateway.
+   * @param {Object} params
+   * @param {string} params.name
+   * @param {string} [params.email]
+   * @param {"bug"|"feedback"|"question"} params.topic
+   * @param {string} params.message
+   * @param {string} [params.website] - Honeypot field
+   * @param {string} [params.gatewayUrl] - Optional custom gateway URL
+   */
+  async submitContactMessage({ name, email = "", topic = "feedback", message, website = "", gatewayUrl }) {
+    const url = this._resolveGatewayUrl("/contact", gatewayUrl);
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name,
+        email,
+        topic,
+        message,
+        website,
+        page_url: window.location.href,
       }),
     });
     return await safeParseJson(res);

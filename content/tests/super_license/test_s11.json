@@ -7,7 +7,7 @@
   "car_id": "ks_toyota_ts040",
   "track_id": "ks_red_bull_ring",
   "track_layout": "layout_gp",
-  "start_mode": "FLYING_LAP",
+  "start_mode": "ROLLING",
   "spawn": {
     "position": [
       292.192,

@@ -13,7 +13,6 @@ interface Props {
 export const BatchTelemetryModal: React.FC<Props> = ({ isOpen, onClose, onShowToast }) => {
   const [combos, setCombos] = useState<TelemetryMissingCombo[]>([]);
   const [selectedTier, setSelectedTier] = useState("ALL");
-  const [includeFlying, setIncludeFlying] = useState(true);
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
@@ -33,7 +32,7 @@ export const BatchTelemetryModal: React.FC<Props> = ({ isOpen, onClose, onShowTo
   const handleRunQueue = async () => {
     setIsRunning(true);
     try {
-      const res = await api.queueMissingTelemetry(selectedTier, includeFlying);
+      const res = await api.queueMissingTelemetry(selectedTier);
       onShowToast(`Enqueued ${res.queued_count} telemetry jobs!`, "success");
       onClose();
     } catch (err: any) {
@@ -87,17 +86,6 @@ export const BatchTelemetryModal: React.FC<Props> = ({ isOpen, onClose, onShowTo
                 <option value="International A">International A</option>
                 <option value="Super License">Super License</option>
               </select>
-            </div>
-
-            <div style={{ marginTop: 18 }}>
-              <label className="checkbox-label" style={{ display: "inline-flex", alignItems: "center", gap: 6, cursor: "pointer", fontSize: "12px" }}>
-                <input
-                  type="checkbox"
-                  checked={includeFlying}
-                  onChange={(e) => setIncludeFlying(e.target.checked)}
-                />
-                <span>Include Flying Lap tests</span>
-              </label>
             </div>
           </div>
 

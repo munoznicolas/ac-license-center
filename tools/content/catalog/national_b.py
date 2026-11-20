@@ -217,7 +217,7 @@ NATIONAL_B_TESTS = [
         "car_id": 'ks_toyota_gt86',
         "track_id": 'magione',
         "track_layout": '',
-        "start_mode": 'FLYING_LAP',
+        "start_mode": 'ROLLING',
         "start_s": 0.0,
         "finish_s": 0.999,
         "spawn_offset": 50.0,

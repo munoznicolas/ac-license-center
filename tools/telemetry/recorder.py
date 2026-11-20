@@ -253,11 +253,7 @@ class TelemetryProfile:
         start_dist = s0 * tot
         finish_dist = s1 * tot
 
-        is_full_lap = (
-            start_mode == "FLYING_LAP"
-            or (s0 <= 0.005 and s1 >= 0.99)
-            or (abs(s0 - s1) < 0.002 and start_mode in ("FLYING_LAP", "STANDING"))
-        )
+        is_full_lap = (s0 <= 0.005 and s1 >= 0.99) or abs(s0 - s1) < 0.002
 
         if is_full_lap:
             sec_len = tot
@@ -327,7 +323,7 @@ class TelemetryProfile:
     @staticmethod
     def _calculate_medal_targets(t_accum: float, start_mode: str) -> Tuple[float, float, float]:
         # Gran Turismo balance target calculation
-        if start_mode in ("ROLLING", "FLYING_LAP"):
+        if start_mode == "ROLLING":
             gold = math.ceil(round(t_accum * 0.98, 4) * 10.0) / 10.0
             silver = math.ceil(round(t_accum * 1.05, 4) * 10.0) / 10.0
             bronze = math.ceil(round(t_accum * 1.15, 4) * 10.0) / 10.0
@@ -594,7 +590,7 @@ def _prepare_recording_environment(
         "test_id": "AI_TELEMETRY_RECORDER",
         "is_telemetry_recording": True,
         "title": f"{ai_level}% AI Telemetry Lap Profiler",
-        "start_mode": "FLYING_LAP",
+        "start_mode": "ROLLING",
         "car_id": car_id,
         "track_id": track_id,
         "track_layout": layout,

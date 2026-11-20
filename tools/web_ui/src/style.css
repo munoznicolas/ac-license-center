@@ -751,11 +751,6 @@ body {
   border: 1px solid var(--accent-danger-border);
   background-color: var(--accent-danger-bg);
 }
-.test-item-mode.flying_lap {
-  color: var(--accent-green);
-  border: 1px solid var(--accent-green-border);
-  background-color: var(--accent-green-bg);
-}
 
 .test-item-title {
   font-weight: 600;

@@ -263,7 +263,7 @@ INTERNATIONAL_B_TESTS = [
         "car_id": 'ks_porsche_911_gt3_rs',
         "track_id": 'ks_red_bull_ring',
         "track_layout": 'layout_gp',
-        "start_mode": 'FLYING_LAP',
+        "start_mode": 'ROLLING',
         "start_s": 0.0,
         "finish_s": 0.999,
         "spawn_offset": 60.0,

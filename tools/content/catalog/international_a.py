@@ -263,7 +263,7 @@ INTERNATIONAL_A_TESTS = [
         "car_id": 'ks_mercedes_190_evo2',
         "track_id": 'ks_nordschleife',
         "track_layout": 'nordschleife',
-        "start_mode": 'FLYING_LAP',
+        "start_mode": 'ROLLING',
         "start_s": 0.0,
         "finish_s": 0.999,
         "spawn_offset": 60.0,

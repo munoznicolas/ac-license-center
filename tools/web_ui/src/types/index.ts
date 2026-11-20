@@ -18,7 +18,7 @@ export interface LicenseTest {
   track_id: string;
   track_layout?: string;
   car_id: string;
-  start_mode: "STANDING" | "ROLLING" | "FLYING_LAP";
+  start_mode: "STANDING" | "ROLLING";
   start_s?: number;
   finish_s?: number;
   with_stop_box?: boolean;

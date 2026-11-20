@@ -7,7 +7,7 @@
   "car_id": "ks_mazda_787b",
   "track_id": "ks_silverstone",
   "track_layout": "gp",
-  "start_mode": "FLYING_LAP",
+  "start_mode": "ROLLING",
   "spawn": {
     "position": [
       -421.087,

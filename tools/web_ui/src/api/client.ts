@@ -211,13 +211,13 @@ export const api = {
       }>;
     }>(`/api/telemetry/missing?tier=${encodeURIComponent(tier)}`),
 
-  queueMissingTelemetry: (tier = "ALL", includeFlying = true) => {
+  queueMissingTelemetry: (tier = "ALL") => {
     if (isStaticHost()) {
       return Promise.reject(new Error("Batch recording requires local Assetto Corsa environment"));
     }
     return fetchJson<{ success: boolean; queued_count: number }>("/api/telemetry/queue_missing", {
       method: "POST",
-      body: JSON.stringify({ tier, include_flying: includeFlying }),
+      body: JSON.stringify({ tier }),
     });
   },
 

@@ -42,8 +42,19 @@ function Adjudicator:init(testConfig)
   self.finishGate = timing.finish_gate
   self.stopBox = timing.stop_box
 
+  -- Full-lap detection: start and finish gates coincide at the start/finish line
+  self.isFullLap = false
+  if self.startGate and self.finishGate and self.startGate.p1 and self.startGate.p2 and self.finishGate.p1 and self.finishGate.p2 then
+    local smx = ((self.startGate.p1.x or self.startGate.p1[1]) + (self.startGate.p2.x or self.startGate.p2[1])) * 0.5
+    local smz = ((self.startGate.p1.z or self.startGate.p1[3]) + (self.startGate.p2.z or self.startGate.p2[3])) * 0.5
+    local fmx = ((self.finishGate.p1.x or self.finishGate.p1[1]) + (self.finishGate.p2.x or self.finishGate.p2[1])) * 0.5
+    local fmz = ((self.finishGate.p1.z or self.finishGate.p1[3]) + (self.finishGate.p2.z or self.finishGate.p2[3])) * 0.5
+    self.isFullLap = math.sqrt((smx - fmx)^2 + (smz - fmz)^2) < 30.0
+  end
+
   -- Runtime state
   self.hasPassedStartGate = true
+  self.hasLeftStartArea = not self.isFullLap
   self.hasCrossedFinishGate = false
   self.hasLaunched = false
   self.stoppedInBox = false
@@ -321,6 +332,13 @@ function Adjudicator:checkGateCrossings(currPos, sessionTime)
     local midX = ((p1.x or p1[1]) + (p2.x or p2[1])) * 0.5
     local midZ = ((p1.z or p1[3]) + (p2.z or p2[3])) * 0.5
     local distToFinish = math.sqrt((currPos.x - midX)^2 + (currPos.z - midZ)^2)
+
+    if not self.hasLeftStartArea then
+      if distToFinish > 30.0 then
+        self.hasLeftStartArea = true
+      end
+      return false
+    end
 
     local ep1, ep2 = getExtendedGate(self.finishGate, 15.0)
     local crossedSegment = false

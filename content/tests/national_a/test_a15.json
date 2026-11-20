@@ -7,7 +7,7 @@
   "car_id": "ks_porsche_718_cayman_s",
   "track_id": "ks_brands_hatch",
   "track_layout": "gp",
-  "start_mode": "FLYING_LAP",
+  "start_mode": "ROLLING",
   "spawn": {
     "position": [
       -185.032,

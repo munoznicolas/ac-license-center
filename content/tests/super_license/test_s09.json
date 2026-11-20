@@ -7,7 +7,7 @@
   "car_id": "ks_porsche_962c_shorttail",
   "track_id": "imola",
   "track_layout": "",
-  "start_mode": "FLYING_LAP",
+  "start_mode": "ROLLING",
   "spawn": {
     "position": [
       269.545,

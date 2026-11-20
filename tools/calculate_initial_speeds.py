@@ -233,9 +233,9 @@ def main() -> int:
         if not tier_name or tier_name not in TESTS_BY_TIER:
             print(f"[!] Invalid tier: {args.tier}. Choose from: {list(TIER_FOLDER_MAP.values())}")
             return 1
-        targets = [t for t in TESTS_BY_TIER[tier_name] if t.get("start_mode") in ("ROLLING", "FLYING_LAP")]
+        targets = [t for t in TESTS_BY_TIER[tier_name] if t.get("start_mode") == "ROLLING"]
     elif args.all:
-        targets = [t for t in TEST_CATALOG if t.get("start_mode") in ("ROLLING", "FLYING_LAP")]
+        targets = [t for t in TEST_CATALOG if t.get("start_mode") == "ROLLING"]
     else:
         parser.print_help()
         return 0

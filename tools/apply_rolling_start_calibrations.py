@@ -183,7 +183,7 @@ def calibrate_single_test(test_info: Dict[str, Any], cfg: Dict[str, Any]) -> Dic
 def compute_calibrations() -> Dict[str, Dict[str, Any]]:
     """Calculates all 40 calibrated configurations."""
     calibrations = {}
-    rolling_tests = [t for t in TEST_CATALOG if t.get("start_mode") == "ROLLING"]
+    rolling_tests = [t for t in TEST_CATALOG if t.get("start_mode") == "ROLLING" and t["test_id"] in CONFIG_40]
     for t in rolling_tests:
         t_id = t["test_id"]
         cfg = CONFIG_40[t_id]

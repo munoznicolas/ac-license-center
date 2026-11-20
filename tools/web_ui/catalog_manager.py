@@ -202,10 +202,11 @@ def _resolve_rolling_physics(t: Dict[str, Any]) -> None:
         pass
 
 
-def _normalize_rolling_test(t: Dict[str, Any], start_mode: str) -> None:
+def _normalize_rolling_test(t: Dict[str, Any]) -> None:
     _resolve_rolling_physics(t)
     if float(t.get("speed") or 0.0) <= 0.0:
-        t["speed"] = 140.0 if start_mode == "FLYING_LAP" else 75.0
+        is_full_lap = float(t.get("start_s", 0.0)) <= 0.005 and float(t.get("finish_s", 0.0)) >= 0.99
+        t["speed"] = 140.0 if is_full_lap else 75.0
 
     spd = float(t.get("speed", 75.0))
     if not t.get("spawn_offset") or float(t.get("spawn_offset", 0.0)) <= 0.0:
@@ -226,7 +227,8 @@ def _normalize_test_definition(t: Dict[str, Any], prefix: str, idx: int) -> None
     if start_mode == "STANDING":
         _normalize_standing_test(t)
     else:
-        _normalize_rolling_test(t, start_mode)
+        t["start_mode"] = "ROLLING"
+        _normalize_rolling_test(t)
 
 
 def save_tier_catalog(tier_name: str, tests: List[Dict[str, Any]]) -> str:
@@ -1206,7 +1208,6 @@ def _update_combo_entry(
 
 def get_missing_telemetry_summary(
     tier: Optional[str] = None,
-    include_flying: bool = True,
 ) -> Dict[str, Any]:
     """
     Scans curriculum for rolling start tests that lack a recorded 100% AI telemetry profile
@@ -1217,12 +1218,11 @@ def get_missing_telemetry_summary(
     from tools.web_ui.runner import queue_mgr
 
     curriculum = load_curriculum()
-    valid_modes = {"ROLLING", "FLYING_LAP"} if include_flying else {"ROLLING"}
     queued_combos = _get_queued_telemetry_combos(queue_mgr.get_status())
 
     combos_map: Dict[Tuple[str, str, str], Dict[str, Any]] = {}
     missing_tests: List[Dict[str, Any]] = []
-    rolling_tests = _collect_rolling_tests(curriculum, tier, valid_modes)
+    rolling_tests = _collect_rolling_tests(curriculum, tier, {"ROLLING"})
 
     for t, tier_name in rolling_tests:
         track_id = t.get("track_id", "")
@@ -1252,7 +1252,6 @@ def get_missing_telemetry_summary(
     return {
         "success": True,
         "tier": tier or "ALL",
-        "include_flying": include_flying,
         "total_rolling_tests": len(rolling_tests),
         "missing_tests_count": len(missing_tests),
         "unique_combos_count": len(unique_missing_combos),
@@ -1263,7 +1262,6 @@ def get_missing_telemetry_summary(
 
 def enqueue_missing_telemetry_jobs(
     tier: Optional[str] = None,
-    include_flying: bool = True,
 ) -> Dict[str, Any]:
     """
     Enqueues live in-engine telemetry recording sessions into queue_mgr
@@ -1271,7 +1269,7 @@ def enqueue_missing_telemetry_jobs(
     """
     from tools.web_ui.runner import queue_mgr
 
-    summary = get_missing_telemetry_summary(tier=tier, include_flying=include_flying)
+    summary = get_missing_telemetry_summary(tier=tier)
     missing_combos = [c for c in summary["unique_missing_combos"] if not c["is_queued"]]
 
     enqueued_jobs = []

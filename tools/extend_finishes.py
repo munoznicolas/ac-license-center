@@ -25,7 +25,7 @@ parsers = {}
 new_finishes = {}
 
 for tdef in TEST_CATALOG:
-    if tdef.get('with_stop_box', False) or tdef['start_mode'] == 'FLYING_LAP':
+    if tdef.get('with_stop_box', False) or (tdef.get('start_s', 0.0) <= 0.005 and tdef.get('finish_s', 0.0) >= 0.99):
         continue
         
     t_id = tdef['test_id']

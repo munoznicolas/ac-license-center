@@ -51,7 +51,7 @@
     },
     "start_mode": {
       "type": "string",
-      "enum": ["STANDING", "ROLLING", "FLYING_LAP"]
+      "enum": ["STANDING", "ROLLING"]
     },
     "spawn": {
       "type": "object",

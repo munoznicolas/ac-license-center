@@ -158,10 +158,7 @@ export class TelemetryEngine {
     const startDist = s0 * tot;
     const finishDist = s1 * tot;
 
-    const isFullLap =
-      startMode === "FLYING_LAP" ||
-      (s0 <= 0.005 && s1 >= 0.99) ||
-      (Math.abs(s0 - s1) < 0.002 && (startMode === "FLYING_LAP" || startMode === "STANDING"));
+    const isFullLap = (s0 <= 0.005 && s1 >= 0.99) || Math.abs(s0 - s1) < 0.002;
 
     let secLen = isFullLap ? tot : s1 >= s0 ? finishDist - startDist : tot - startDist + finishDist;
     if (secLen <= 1.0) {
@@ -228,7 +225,7 @@ export class TelemetryEngine {
   }
 
   private _calculateMedalTargets(tAccum: number, startMode: string) {
-    if (startMode === "ROLLING" || startMode === "FLYING_LAP") {
+    if (startMode === "ROLLING") {
       const gold = Math.ceil(Number((tAccum * 0.98).toFixed(4)) * 10.0) / 10.0;
       const silver = Math.ceil(Number((tAccum * 1.05).toFixed(4)) * 10.0) / 10.0;
       const bronze = Math.ceil(Number((tAccum * 1.15).toFixed(4)) * 10.0) / 10.0;

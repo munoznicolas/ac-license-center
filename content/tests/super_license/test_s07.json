@@ -7,7 +7,7 @@
   "car_id": "ks_mercedes_c9",
   "track_id": "monza",
   "track_layout": "",
-  "start_mode": "FLYING_LAP",
+  "start_mode": "ROLLING",
   "spawn": {
     "position": [
       -210.788,

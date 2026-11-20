@@ -7,7 +7,7 @@
   "car_id": "ks_ferrari_f2004",
   "track_id": "ks_barcelona",
   "track_layout": "layout_gp",
-  "start_mode": "FLYING_LAP",
+  "start_mode": "ROLLING",
   "spawn": {
     "position": [
       411.931,

@@ -78,6 +78,42 @@ console.log(JSON.stringify({ physics, targets }));
         self.assertEqual(js_res["physics"]["spawn_offset_m"], py_res["physics"]["spawn_offset_m"])
         self.assertEqual(js_res["physics"]["gear"], py_res["physics"]["gear"])
 
+    def test_full_lap_rolling_parity(self):
+        """Verifies full-lap ROLLING (start_s=0.0, finish_s=0.999) computes full track length in both Python and JS."""
+        py_res = get_or_calculate_targets(
+            track_id="magione",
+            layout="",
+            car_id="ks_toyota_gt86",
+            start_s=0.0,
+            finish_s=0.999,
+            start_mode="ROLLING",
+            with_stop_box=False,
+            countdown_sec=3.0,
+            allow_live_engine=False,
+        )
+
+        node_script = """
+import fs from 'fs';
+import { TelemetryEngine } from './tools/web_ui/src/utils/telemetryEngine.ts';
+const profile = JSON.parse(fs.readFileSync('data/telemetry_profiles/magione__ks_toyota_gt86__ai100.json', 'utf-8'));
+const engine = new TelemetryEngine(profile);
+const targets = engine.calculateSectorTargets(0.0, 0.999, 'ROLLING', false);
+console.log(JSON.stringify({ targets, totalLen: engine.totalTrackLengthM }));
+"""
+        proc = subprocess.run(
+            ["node", "--input-type=module", "-e", node_script],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(proc.returncode, 0, f"Node.js script failed: {proc.stderr}")
+        js_res = json.loads(proc.stdout)
+
+        self.assertAlmostEqual(js_res["targets"]["sector_distance_m"], round(js_res["totalLen"], 1), places=1)
+        self.assertEqual(js_res["targets"]["gold_seconds"], py_res["targets"]["gold_seconds"])
+        self.assertEqual(js_res["targets"]["silver_seconds"], py_res["targets"]["silver_seconds"])
+        self.assertEqual(js_res["targets"]["bronze_seconds"], py_res["targets"]["bronze_seconds"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -7,7 +7,7 @@
   "car_id": "ks_porsche_919_hybrid_2016",
   "track_id": "spa",
   "track_layout": "",
-  "start_mode": "FLYING_LAP",
+  "start_mode": "ROLLING",
   "spawn": {
     "position": [
       -201.393,

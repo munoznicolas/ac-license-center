@@ -176,7 +176,7 @@ function ConfigLoader.loadTestConfig(filepath)
       test_id = "AI_TELEMETRY_RECORDER",
       is_telemetry_recording = true,
       title = "100% AI Telemetry Lap Profiler",
-      start_mode = "FLYING_LAP",
+      start_mode = "ROLLING",
     }
   end
 

@@ -440,7 +440,7 @@ class CurriculumValidator:
                     test_id=test_id,
                     file_path=filepath
                 ))
-            elif start_mode in ("ROLLING", "FLYING_LAP") and spd < 1.0:
+            elif start_mode == "ROLLING" and spd < 1.0:
                 issues.append(ValidationIssue(
                     severity="WARNING",
                     category="START_MODE",

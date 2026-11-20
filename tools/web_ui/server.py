@@ -319,9 +319,8 @@ class DesignerRequestHandler(SimpleHTTPRequestHandler):
 
     def _handle_get_telemetry_missing(self, query: Dict[str, list]) -> None:
         tier = query.get("tier", ["ALL"])[0]
-        include_flying = query.get("include_flying", ["1"])[0].lower() in ("1", "true", "yes")
         try:
-            res = get_missing_telemetry_summary(tier=tier, include_flying=include_flying)
+            res = get_missing_telemetry_summary(tier=tier)
             self.send_json_response(res)
         except Exception as e:
             self.send_json_response({"success": False, "error": str(e)}, status=500)
@@ -558,9 +557,8 @@ class DesignerRequestHandler(SimpleHTTPRequestHandler):
 
     def _handle_post_telemetry_queue_missing(self, payload: Dict[str, Any]) -> None:
         tier = payload.get("tier", "ALL")
-        include_flying = bool(payload.get("include_flying", True))
         try:
-            res = enqueue_missing_telemetry_jobs(tier=tier, include_flying=include_flying)
+            res = enqueue_missing_telemetry_jobs(tier=tier)
             self.send_json_response(res)
         except Exception as e:
             self.send_json_response({"success": False, "error": str(e)}, status=500)

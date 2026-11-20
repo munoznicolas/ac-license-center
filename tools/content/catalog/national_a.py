@@ -280,7 +280,7 @@ NATIONAL_A_TESTS = [
         "car_id": 'ks_porsche_718_cayman_s',
         "track_id": 'ks_brands_hatch',
         "track_layout": 'gp',
-        "start_mode": 'FLYING_LAP',
+        "start_mode": 'ROLLING',
         "start_s": 0.0,
         "finish_s": 0.999,
         "spawn_offset": 50.0,

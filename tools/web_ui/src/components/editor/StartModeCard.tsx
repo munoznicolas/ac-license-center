@@ -1,13 +1,13 @@
 import React from "react";
-import { CircleDot, Gauge, Zap } from "lucide-react";
+import { CircleDot, Gauge } from "lucide-react";
 
 interface Props {
-  startMode: "STANDING" | "ROLLING" | "FLYING_LAP";
+  startMode: "STANDING" | "ROLLING";
   withStopBox: boolean;
   rollingSpeedKmh?: number;
   initialGear?: number;
   initialRpm?: number;
-  onStartModeChange: (mode: "STANDING" | "ROLLING" | "FLYING_LAP") => void;
+  onStartModeChange: (mode: "STANDING" | "ROLLING") => void;
   onStopBoxToggle: (checked: boolean) => void;
 }
 
@@ -64,28 +64,6 @@ export const StartModeCard: React.FC<Props> = ({
             </span>
             <div className="mode-text">
               <strong>Rolling Start</strong>
-            </div>
-          </div>
-        </label>
-
-        {/* Flying Lap */}
-        <label
-          className={`mode-card ${startMode === "FLYING_LAP" ? "active" : ""}`}
-          onClick={() => onStartModeChange("FLYING_LAP")}
-        >
-          <input
-            type="radio"
-            name="start_mode"
-            value="FLYING_LAP"
-            checked={startMode === "FLYING_LAP"}
-            onChange={() => onStartModeChange("FLYING_LAP")}
-          />
-          <div className="mode-body">
-            <span className="mode-icon">
-              <Zap size={18} strokeWidth={1.75} />
-            </span>
-            <div className="mode-text">
-              <strong>Flying Lap</strong>
             </div>
           </div>
         </label>

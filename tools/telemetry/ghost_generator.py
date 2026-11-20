@@ -138,8 +138,9 @@ def generate_ghost_profile(
 
         idx_start = min(range(n_wps), key=lambda i: dist_sq(spline_waypoints[i], spawn_pos))
 
+        gate_dist_sq = (p_start_center[0] - p_finish_center[0]) ** 2 + (p_start_center[2] - p_finish_center[2]) ** 2
         is_full_lap = (
-            start_mode == "FLYING_LAP"
+            gate_dist_sq < 30.0 ** 2
             or "Full Lap" in test_data.get("title", "")
             or "Graduation" in test_data.get("title", "")
             or test_id.startswith("S-")

@@ -55,7 +55,7 @@ export function resolveGatewayUrl(route: string, gatewayUrl?: string): string {
   } catch {
     stored = "";
   }
-  const base = (gatewayUrl || stored || "https://ac-telemetry-pr-gateway.workers.dev")
+  const base = (gatewayUrl || stored || "https://ac-telemetry-pr-gateway.munoznicolas.workers.dev")
     .replace(/\/(submit|contact)\/?$/, "")
     .replace(/\/$/, "");
   return `${base}${route}`;

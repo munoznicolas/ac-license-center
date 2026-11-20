@@ -33,6 +33,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: tools/web_ui/package-lock.json
+
+      - name: Build Vite Web UI
+        working-directory: tools/web_ui
+        run: |
+          npm ci
+          npm run build
+
       - name: Pre-render static site & API payloads
         run: |
           python tools/build_static_site.py --out-dir dist_site

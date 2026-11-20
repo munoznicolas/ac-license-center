@@ -10,14 +10,14 @@ import unittest
 from tools.validate_web_ui import StrictHTMLValidator, validate_html_file, validate_web_ui_structure
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-INDEX_HTML_PATH = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "index.html")
+INDEX_HTML_PATH = os.path.join(REPO_ROOT, "tools", "web_ui", "index.html")
 
 
 class TestWebUIStructure(unittest.TestCase):
     """Test suite ensuring index.html structural integrity and tag balance."""
 
     def test_index_html_exists(self):
-        """Verify index.html exists in tools/web_ui/static."""
+        """Verify index.html exists in tools/web_ui."""
         self.assertTrue(os.path.isfile(INDEX_HTML_PATH), f"Missing index.html at {INDEX_HTML_PATH}")
 
     def test_index_html_strict_validation(self):

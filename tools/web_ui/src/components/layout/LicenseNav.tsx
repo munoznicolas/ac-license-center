@@ -46,13 +46,11 @@ export const LicenseNav: React.FC<Props> = ({ activeView, onSelectView, onSelect
                 {badgeFile && (
                   <img
                     className="tab-badge-img"
-                    src={`/assets/career_ui/${badgeFile}`}
+                    src={`./assets/career_ui/${badgeFile}`}
                     alt={tier.tier_name || tier.name}
                     loading="eager"
                   />
                 )}
-                <span className="tab-label">{tier.tier_name || tier.name}</span>
-                <span className="tab-count">{tier.tests.length}</span>
               </button>
             );
           })}

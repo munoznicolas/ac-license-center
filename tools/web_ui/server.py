@@ -67,7 +67,7 @@ from tools.web_ui.catalog_manager import (
 )
 
 DIST_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dist")
-STATIC_DIR = DIST_DIR if os.path.exists(DIST_DIR) else os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
+STATIC_DIR = DIST_DIR
 ASSETS_DIR = os.path.join(REPO_ROOT, "assets")
 
 

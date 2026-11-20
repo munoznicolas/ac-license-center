@@ -15,7 +15,6 @@ import argparse
 from datetime import datetime, timezone
 import json
 import os
-import re
 import shutil
 import sys
 from typing import Any, Dict, List
@@ -96,44 +95,6 @@ def _build_fallback_cars(curriculum: List[Dict[str, Any]]) -> List[Dict[str, Any
     return sorted(cars_map.values(), key=lambda x: x["name"])
 
 
-def _bundle_static_css(dist_path: str, idx_content: str) -> str:
-    """Bundles static css/*.css links in index.html into a single minified css/bundle.min.css."""
-    link_re = re.compile(r'[ \t]*<link\s+rel="stylesheet"\s+href="(css/[^"?]+\.css)(?:\?v=([^"]+))?"\s*/>\r?\n?')
-    matches = list(link_re.finditer(idx_content))
-    if not matches:
-        return idx_content
-
-    chunks: List[str] = []
-    version = ""
-    for m in matches:
-        rel_css = m.group(1)
-        if not version and m.group(2):
-            version = m.group(2)
-        css_file = os.path.join(dist_path, rel_css.replace("/", os.sep))
-        if os.path.isfile(css_file):
-            with open(css_file, "r", encoding="utf-8") as f:
-                raw = f.read()
-            # Strip CSS comments and collapse whitespace for smaller transfer size.
-            stripped = re.sub(r"/\*.*?\*/", "", raw, flags=re.S)
-            stripped = re.sub(r"\s+", " ", stripped).strip()
-            chunks.append(stripped)
-
-    if not chunks:
-        return idx_content
-
-    bundle_path = os.path.join(dist_path, "css", "bundle.min.css")
-    os.makedirs(os.path.dirname(bundle_path), exist_ok=True)
-    with open(bundle_path, "w", encoding="utf-8") as f:
-        f.write("\n".join(chunks))
-
-    suffix = f"?v={version}" if version else ""
-    bundle_tag = f'    <link rel="stylesheet" href="css/bundle.min.css{suffix}" />\n'
-    first_start = matches[0].start()
-    last_end = matches[-1].end()
-    print(f"  [OK] Bundled {len(chunks)} CSS files into css/bundle.min.css ({os.path.getsize(bundle_path)} bytes)")
-    return idx_content[:first_start] + bundle_tag + idx_content[last_end:]
-
-
 def build_static_site(out_dir: str = "dist_site", clean: bool = True) -> str:
     """Builds the complete static site distribution for GitHub Pages."""
     dist_path = os.path.abspath(out_dir)
@@ -144,26 +105,30 @@ def build_static_site(out_dir: str = "dist_site", clean: bool = True) -> str:
     os.makedirs(dist_path, exist_ok=True)
 
     # 0. Validate Web UI Structural Integrity
-    index_html = os.path.join(REPO_ROOT, 'tools', 'web_ui', 'static', 'index.html')
+    dist_src = os.path.join(REPO_ROOT, "tools", "web_ui", "dist")
+    if not os.path.isdir(dist_src):
+        raise FileNotFoundError(
+            f"Vite build output not found at {dist_src}. Run 'npm run build' in tools/web_ui first."
+        )
+
+    index_html = os.path.join(dist_src, "index.html")
     ui_errors = validate_web_ui_structure(index_html)
     if ui_errors:
         print('[ERROR] Web UI structural validation failed before build:')
         for e in ui_errors:
             print(f'  - {e}')
         raise ValueError(f'Cannot build static site with {len(ui_errors)} structural HTML errors')
-    print('  [OK] Web UI HTML structure and DOM containment verified')
+    print('  [OK] Web UI HTML structure and tag balance verified')
 
-    # 1. Copy Frontend Static Assets
-    static_src = os.path.join(REPO_ROOT, "tools", "web_ui", "static")
-    if os.path.isdir(static_src):
-        for item in os.listdir(static_src):
-            s_item = os.path.join(static_src, item)
-            d_item = os.path.join(dist_path, item)
-            if os.path.isdir(s_item):
-                shutil.copytree(s_item, d_item, dirs_exist_ok=True)
-            else:
-                shutil.copy2(s_item, d_item)
-        print("  [OK] Copied web UI frontend assets (HTML, CSS, JS)")
+    # 1. Copy Built Vite Frontend Assets
+    for item in os.listdir(dist_src):
+        s_item = os.path.join(dist_src, item)
+        d_item = os.path.join(dist_path, item)
+        if os.path.isdir(s_item):
+            shutil.copytree(s_item, d_item, dirs_exist_ok=True)
+        else:
+            shutil.copy2(s_item, d_item)
+    print("  [OK] Copied Vite web UI frontend bundle (dist/)")
 
     # 2. Pre-render Static JSON API Payloads
     api_dir = os.path.join(dist_path, "api")
@@ -337,7 +302,6 @@ def build_static_site(out_dir: str = "dist_site", clean: bool = True) -> str:
                 "<head>\n    <script>window.IS_STATIC_HOST = true;</script>",
                 1
             )
-        idx_content = _bundle_static_css(dist_path, idx_content)
         with open(index_html_path, "w", encoding="utf-8") as f:
             f.write(idx_content)
         print("  [OK] Injected window.IS_STATIC_HOST = true into index.html")

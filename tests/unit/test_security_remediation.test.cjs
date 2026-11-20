@@ -4,7 +4,7 @@ const path = require("node:path");
 
 // Test Web UI queue runner PowerShell script generator
 test("generatePowerShellRecordingScript defuses command injection payloads", async () => {
-  const queueRunnerPath = path.resolve(__dirname, "../../tools/web_ui/static/js/queue-runner.js");
+  const queueRunnerPath = path.resolve(__dirname, "../../tools/web_ui/src/utils/queueRunner.ts");
   const { generatePowerShellRecordingScript } = await import("file://" + queueRunnerPath.replace(/\\/g, "/"));
 
   const maliciousCombos = [
@@ -38,7 +38,7 @@ test("generatePowerShellRecordingScript defuses command injection payloads", asy
 
 // Test Curriculum Store sanitization
 test("sanitizeCurriculum strips unsafe characters from curriculum identifiers", async () => {
-  const storePath = path.resolve(__dirname, "../../tools/web_ui/static/js/curriculum-store.js");
+  const storePath = path.resolve(__dirname, "../../tools/web_ui/src/utils/curriculumStore.ts");
   const { sanitizeCurriculum } = await import("file://" + storePath.replace(/\\/g, "/"));
 
   const rawCurriculum = [

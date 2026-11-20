@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { X, Play } from "lucide-react";
+import { Play, Download } from "lucide-react";
 import { api } from "../../api/client";
 import { TelemetryMissingCombo } from "../../types";
+import { generatePowerShellRecordingScript, triggerScriptDownload } from "../../utils/queueRunner";
 
 interface Props {
   isOpen: boolean;
@@ -13,12 +14,10 @@ export const BatchTelemetryModal: React.FC<Props> = ({ isOpen, onClose, onShowTo
   const [combos, setCombos] = useState<TelemetryMissingCombo[]>([]);
   const [selectedTier, setSelectedTier] = useState("ALL");
   const [includeFlying, setIncludeFlying] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
-    setIsLoading(true);
     api
       .getMissingTelemetry(selectedTier)
       .then((data) => {
@@ -26,8 +25,7 @@ export const BatchTelemetryModal: React.FC<Props> = ({ isOpen, onClose, onShowTo
       })
       .catch((err) => {
         onShowToast(`Failed to load missing combos: ${err.message}`, "error");
-      })
-      .finally(() => setIsLoading(false));
+      });
   }, [isOpen, selectedTier, onShowToast]);
 
   if (!isOpen) return null;
@@ -133,15 +131,32 @@ export const BatchTelemetryModal: React.FC<Props> = ({ isOpen, onClose, onShowTo
           <button type="button" className="btn btn-secondary" onClick={onClose}>
             Close
           </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            disabled={isRunning || combos.length === 0}
-            onClick={handleRunQueue}
-          >
-            <Play size={14} />
-            <span>{isRunning ? "Queuing..." : `Run Telemetry for ${combos.length} Missing Combos`}</span>
-          </button>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              disabled={combos.length === 0}
+              onClick={() => {
+                const safeTier = selectedTier.toLowerCase().replace(/\s+/g, "_");
+                const filename = `record_telemetry_${safeTier}.ps1`;
+                const script = generatePowerShellRecordingScript(combos, { aiLevel: 100 });
+                triggerScriptDownload(filename, script);
+                onShowToast(`Downloaded ${filename} (${combos.length} jobs)!`, "success");
+              }}
+            >
+              <Download size={14} />
+              <span>Export PowerShell Script (.ps1)</span>
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={isRunning || combos.length === 0}
+              onClick={handleRunQueue}
+            >
+              <Play size={14} />
+              <span>{isRunning ? "Queuing..." : `Run Telemetry for ${combos.length} Missing Combos`}</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

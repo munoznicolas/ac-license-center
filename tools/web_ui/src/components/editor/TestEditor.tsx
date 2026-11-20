@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useCurriculum } from "../../context/CurriculumContext";
 import { FormHeader } from "./FormHeader";
 import { LessonCard } from "./LessonCard";
@@ -25,15 +25,6 @@ export const TestEditor: React.FC<Props> = ({ onShowToast, onBack }) => {
     isSaving,
   } = useCurriculum();
 
-  const [isFullLap, setIsFullLap] = useState(false);
-
-  useEffect(() => {
-    if (activeTest) {
-      const full = (activeTest.start_s ?? 0) === 0 && (activeTest.finish_s ?? 1) === 1;
-      setIsFullLap(full);
-    }
-  }, [activeTest?.test_id]);
-
   if (!activeTest) {
     return (
       <main className="editor-pane">
@@ -45,16 +36,57 @@ export const TestEditor: React.FC<Props> = ({ onShowToast, onBack }) => {
     );
   }
 
+  const recalculateTelemetry = async (overrides: Partial<typeof activeTest> = {}) => {
+    const merged = { ...activeTest, ...overrides };
+    if (!merged.track_id || !merged.car_id) return;
+    const layout = merged.track_layout || "";
+    const startS = merged.start_s ?? 0;
+    const finishS = merged.finish_s ?? 1;
+    const mode = merged.start_mode || "STANDING";
+    const stopBox = Boolean(merged.with_stop_box);
+
+    try {
+      const [targets, speedInfo] = await Promise.all([
+        api.calculateTargets(merged.track_id, layout, startS, finishS, merged.car_id, mode, stopBox).catch(() => null),
+        mode !== "STANDING"
+          ? api.calculateInitialSpeed(merged.track_id, layout, startS, merged.car_id).catch(() => null)
+          : Promise.resolve(null),
+      ]);
+
+      const nextUpdates: Partial<typeof activeTest> = {};
+      if (targets && targets.gold_seconds && targets.silver_seconds && targets.bronze_seconds) {
+        nextUpdates.targets = targets;
+      }
+      if (speedInfo && speedInfo.telemetry_available && speedInfo.speed_kmh !== undefined) {
+        nextUpdates.rolling_speed_kmh = speedInfo.speed_kmh;
+        nextUpdates.initial_gear = speedInfo.initial_gear;
+        nextUpdates.initial_rpm = speedInfo.initial_rpm;
+        nextUpdates.spawn_offset_meters = speedInfo.spawn_offset_meters;
+      }
+      if (Object.keys(nextUpdates).length > 0) {
+        updateActiveTest(nextUpdates);
+      }
+    } catch {
+      // Ignore telemetry calculation errors when profile is absent
+    }
+  };
+
   const handleTrackChange = async (newTrackId: string) => {
-    updateActiveTest({ track_id: newTrackId, track_layout: "" });
+    const patch = { track_id: newTrackId, track_layout: "" };
+    updateActiveTest(patch);
+    void recalculateTelemetry(patch);
   };
 
   const handleLayoutChange = (newLayout: string) => {
-    updateActiveTest({ track_layout: newLayout });
+    const patch = { track_layout: newLayout };
+    updateActiveTest(patch);
+    void recalculateTelemetry(patch);
   };
 
   const handleCarChange = (newCarId: string) => {
-    updateActiveTest({ car_id: newCarId });
+    const patch = { car_id: newCarId };
+    updateActiveTest(patch);
+    void recalculateTelemetry(patch);
   };
 
   const handleSave = async () => {
@@ -127,14 +159,13 @@ export const TestEditor: React.FC<Props> = ({ onShowToast, onBack }) => {
           spline={currentSpline}
           startS={activeTest.start_s ?? 0}
           finishS={activeTest.finish_s ?? 1}
-          isFullLap={isFullLap}
-          onStartChange={(start_s) => updateActiveTest({ start_s })}
-          onFinishChange={(finish_s) => updateActiveTest({ finish_s })}
-          onFullLapToggle={(full) => {
-            setIsFullLap(full);
-            if (full) {
-              updateActiveTest({ start_s: 0.0, finish_s: 1.0 });
-            }
+          onStartChange={(start_s) => {
+            updateActiveTest({ start_s });
+            void recalculateTelemetry({ start_s });
+          }}
+          onFinishChange={(finish_s) => {
+            updateActiveTest({ finish_s });
+            void recalculateTelemetry({ finish_s });
           }}
         />
 
@@ -145,8 +176,14 @@ export const TestEditor: React.FC<Props> = ({ onShowToast, onBack }) => {
           rollingSpeedKmh={activeTest.rolling_speed_kmh}
           initialGear={activeTest.initial_gear}
           initialRpm={activeTest.initial_rpm}
-          onStartModeChange={(start_mode) => updateActiveTest({ start_mode })}
-          onStopBoxToggle={(with_stop_box) => updateActiveTest({ with_stop_box })}
+          onStartModeChange={(start_mode) => {
+            updateActiveTest({ start_mode });
+            void recalculateTelemetry({ start_mode });
+          }}
+          onStopBoxToggle={(with_stop_box) => {
+            updateActiveTest({ with_stop_box });
+            void recalculateTelemetry({ with_stop_box });
+          }}
         />
 
         {/* Section 5: Target Times */}

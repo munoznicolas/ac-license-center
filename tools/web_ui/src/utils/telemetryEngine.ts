@@ -1,20 +1,34 @@
-/**
- * telemetry-engine.js
- * Client-Side Telemetry & Target Physics Calculator.
- *
- * Implements mathematical parity with Assetto Corsa AI Telemetry Profile calculations
- * without requiring any Python backend:
- *   - Continuous trajectory query and linear interpolation
- *   - Backward distance integration for vehicle countdown run-up (spawn_offset)
- *   - Forward traversal integration under launch acceleration & stop-box braking
- *   - Gran Turismo medal ceiling derivation (Gold/Silver/Bronze)
- */
+export interface TelemetrySample {
+  distance_m: number;
+  speed_kmh: number;
+  gear: number;
+  rpm: number;
+}
+
+export interface TelemetryProfileInput {
+  track_id?: string;
+  track_layout?: string;
+  car_id?: string;
+  ai_level?: number;
+  source?: string;
+  recorded_at?: string;
+  total_track_length_m?: number;
+  lap_time_s?: number;
+  samples: TelemetrySample[];
+}
 
 export class TelemetryEngine {
-  /**
-   * @param {Object} profile Telemetry profile data matching TelemetryProfile JSON schema
-   */
-  constructor(profile) {
+  trackId: string;
+  trackLayout: string;
+  carId: string;
+  aiLevel: number;
+  source: string;
+  recordedAt: string;
+  totalTrackLengthM: number;
+  lapTimeS: number;
+  samples: TelemetrySample[];
+
+  constructor(profile: TelemetryProfileInput) {
     if (!profile || !Array.isArray(profile.samples) || profile.samples.length === 0) {
       throw new Error("Invalid telemetry profile: missing or empty samples array");
     }
@@ -28,7 +42,6 @@ export class TelemetryEngine {
     this.totalTrackLengthM = Number(profile.total_track_length_m || 0);
     this.lapTimeS = Number(profile.lap_time_s || 0);
 
-    // Sort samples strictly by distance_m
     this.samples = profile.samples.slice().sort((a, b) => a.distance_m - b.distance_m);
 
     if (this.totalTrackLengthM <= 0) {
@@ -37,12 +50,7 @@ export class TelemetryEngine {
     }
   }
 
-  /**
-   * Queries speed (km/h), gear, and RPM at exact distance along the track spline.
-   * @param {number} distanceM Distance from start line in meters
-   * @returns {{ speedKmh: number, gear: number, rpm: number }}
-   */
-  querySample(distanceM) {
+  querySample(distanceM: number): { speedKmh: number; gear: number; rpm: number } {
     const tot = this.totalTrackLengthM;
     const d = ((distanceM % tot) + tot) % tot;
     const n = this.samples.length;
@@ -71,7 +79,6 @@ export class TelemetryEngine {
       };
     }
 
-    // Binary search for interval
     let low = 0;
     let high = n - 1;
     while (low <= high) {
@@ -97,14 +104,7 @@ export class TelemetryEngine {
     };
   }
 
-  /**
-   * Numerically integrates backward along the velocity curve to find spawn position.
-   * @param {number} gateDistM Distance at the start gate
-   * @param {number} countdownSec Seconds to integrate backward
-   * @param {number} stepDt Time step in seconds (default 0.05s)
-   * @returns {number} Spawn distance along the track in meters
-   */
-  integrateDistanceBackward(gateDistM, countdownSec = 3.0, stepDt = 0.05) {
+  integrateDistanceBackward(gateDistM: number, countdownSec = 3.0, stepDt = 0.05): number {
     const tot = this.totalTrackLengthM;
     let currDist = gateDistM;
     let tAccum = 0.0;
@@ -121,20 +121,14 @@ export class TelemetryEngine {
     return currDist;
   }
 
-  /**
-   * Calculates countdown run-up distance (spawn_offset) and handover physics.
-   * @param {number} gateProgress Normalized progress [0..1] of the start gate
-   * @param {number} countdownSec Countdown duration in seconds (default 3.0)
-   * @returns {Object} Gate and spawn physics object
-   */
-  calculateGatePhysics(gateProgress, countdownSec = 3.0) {
+  calculateGatePhysics(gateProgress: number, countdownSec = 3.0) {
     const tot = this.totalTrackLengthM;
     const gateProgNorm = ((gateProgress % 1.0) + 1.0) % 1.0;
     const gateDist = (gateProgNorm * tot) % tot;
     const gateSample = this.querySample(gateDist);
 
     const spawnDist = this.integrateDistanceBackward(gateDist, countdownSec);
-    const spawnOffset = ((gateDist - spawnDist + tot) % tot);
+    const spawnOffset = (gateDist - spawnDist + tot) % tot;
     const spawnSample = this.querySample(spawnDist);
     const spawnProg = tot > 0 ? spawnDist / tot : 0.0;
 
@@ -157,11 +151,7 @@ export class TelemetryEngine {
     };
   }
 
-  /**
-   * Computes start distance and sector length handling wrap-around and full lap conditions.
-   * @private
-   */
-  _computeSectorLength(startS, finishS, startMode) {
+  private _computeSectorLength(startS: number, finishS: number, startMode: string) {
     const tot = this.totalTrackLengthM;
     const s0 = ((startS % 1.0) + 1.0) % 1.0;
     const s1 = Math.abs(finishS - 1.0) < 1e-4 ? 1.0 : ((finishS % 1.0) + 1.0) % 1.0;
@@ -174,19 +164,21 @@ export class TelemetryEngine {
       (Math.abs(s0 - s1) < 0.002 && (startMode === "FLYING_LAP" || startMode === "STANDING"));
 
     let secLen = isFullLap ? tot : s1 >= s0 ? finishDist - startDist : tot - startDist + finishDist;
-
     if (secLen <= 1.0) {
       secLen = isFullLap ? tot : 100.0;
     }
-
     return { startDist, secLen };
   }
 
-  /**
-   * Computes effective speed accounting for standing start launch and stop box deceleration.
-   * @private
-   */
-  _effectiveSpeed(vFlyingMs, distTraveled, secLen, startMode, withStopBox, aLaunch = 6.0, aBrake = 9.0) {
+  private _effectiveSpeed(
+    vFlyingMs: number,
+    distTraveled: number,
+    secLen: number,
+    startMode: string,
+    withStopBox: boolean,
+    aLaunch = 6.0,
+    aBrake = 9.0
+  ) {
     if (startMode !== "STANDING") {
       return vFlyingMs;
     }
@@ -203,11 +195,13 @@ export class TelemetryEngine {
     return Math.max(2.5, vEff);
   }
 
-  /**
-   * Numerically integrates elapsed time across sector length.
-   * @private
-   */
-  _integrateTraversalTime(startDist, secLen, startMode, withStopBox, stepM = 1.0) {
+  private _integrateTraversalTime(
+    startDist: number,
+    secLen: number,
+    startMode: string,
+    withStopBox: boolean,
+    stepM = 1.0
+  ) {
     const tot = this.totalTrackLengthM;
     const step = Math.max(0.5, Math.min(stepM, secLen / 500.0));
     let tAccum = 0.0;
@@ -228,17 +222,12 @@ export class TelemetryEngine {
     }
 
     if (startMode === "STANDING" && withStopBox) {
-      tAccum += 0.5; // 0.5s pause to verify complete standstill
+      tAccum += 0.5;
     }
-
     return tAccum;
   }
 
-  /**
-   * Derives Gran Turismo Gold, Silver, and Bronze target times.
-   * @private
-   */
-  _calculateMedalTargets(tAccum, startMode) {
+  private _calculateMedalTargets(tAccum: number, startMode: string) {
     if (startMode === "ROLLING" || startMode === "FLYING_LAP") {
       const gold = Math.ceil(Number((tAccum * 0.98).toFixed(4)) * 10.0) / 10.0;
       const silver = Math.ceil(Number((tAccum * 1.05).toFixed(4)) * 10.0) / 10.0;
@@ -252,16 +241,13 @@ export class TelemetryEngine {
     return { gold, silver, bronze };
   }
 
-  /**
-   * Numerically integrates traversal time and calculates Gold/Silver/Bronze medal times.
-   * @param {number} startS Normalized sector start [0..1]
-   * @param {number} finishS Normalized sector finish [0..1]
-   * @param {string} startMode "ROLLING" | "STANDING" | "FLYING_LAP"
-   * @param {boolean} withStopBox Whether vehicle must come to complete halt inside stop box
-   * @param {number} stepM Integration step size in meters (default 1.0m)
-   * @returns {Object} Target calculation result
-   */
-  calculateSectorTargets(startS, finishS, startMode = "ROLLING", withStopBox = false, stepM = 1.0) {
+  calculateSectorTargets(
+    startS: number,
+    finishS: number,
+    startMode = "ROLLING",
+    withStopBox = false,
+    stepM = 1.0
+  ) {
     const { startDist, secLen } = this._computeSectorLength(startS, finishS, startMode);
     const tAccum = this._integrateTraversalTime(startDist, secLen, startMode, withStopBox, stepM);
     const { gold, silver, bronze } = this._calculateMedalTargets(tAccum, startMode);
@@ -270,9 +256,9 @@ export class TelemetryEngine {
       gold_seconds: gold,
       silver_seconds: silver,
       bronze_seconds: bronze,
-      sector_time_s: Number(tAccum.toFixed(3)),
-      sector_length_m: Number(secLen.toFixed(1)),
-      start_dist_m: Number(startDist.toFixed(1)),
+      sector_distance_m: Number(secLen.toFixed(1)),
+      ai_lap_time_s: Number(tAccum.toFixed(2)),
+      source: this.source,
     };
   }
 }

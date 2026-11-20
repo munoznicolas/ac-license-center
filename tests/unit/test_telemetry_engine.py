@@ -50,7 +50,7 @@ class TestTelemetryEngineParity(unittest.TestCase):
         node_script = """
 import fs from 'fs';
 import path from 'path';
-import { TelemetryEngine } from './tools/web_ui/static/js/telemetry-engine.js';
+import { TelemetryEngine } from './tools/web_ui/src/utils/telemetryEngine.ts';
 
 const profile = JSON.parse(fs.readFileSync('data/telemetry_profiles/magione__ks_toyota_gt86__ai100.json', 'utf-8'));
 const engine = new TelemetryEngine(profile);

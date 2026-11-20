@@ -1,27 +1,14 @@
-/**
- * telemetry-store.js
- * Dual-Source Telemetry Resolution & IndexedDB Cache.
- *
- * Resolves AI telemetry profiles on-demand:
- *   1. Local IndexedDB cache for user-uploaded custom telemetry recordings.
- *   2. Precalculated static telemetry JSON files from repository / GitHub CDN.
- */
-
-import { TelemetryEngine } from "./telemetry-engine.js";
-import { resolveApiPath } from "./api.js";
+import { TelemetryEngine, type TelemetryProfileInput } from "./telemetryEngine.ts";
+import { resolveApiPath } from "../api/client.ts";
 
 const DB_NAME = "gt_telemetry_db";
 const DB_VERSION = 1;
 const STORE_NAME = "custom_profiles";
 
-let dbInstance = null;
-const memoryProfileCache = new Map();
+let dbInstance: IDBDatabase | null = null;
+const memoryProfileCache = new Map<string, TelemetryProfileInput>();
 
-/**
- * Initializes and returns the IndexedDB instance for custom telemetry recordings.
- * @returns {Promise<IDBDatabase>}
- */
-function openTelemetryDb() {
+function openTelemetryDb(): Promise<IDBDatabase> {
   if (dbInstance) return Promise.resolve(dbInstance);
 
   return new Promise((resolve, reject) => {
@@ -32,34 +19,30 @@ function openTelemetryDb() {
 
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
-    request.onupgradeneeded = (e) => {
-      const db = e.target.result;
+    request.onupgradeneeded = () => {
+      const db = request.result;
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         db.createObjectStore(STORE_NAME, { keyPath: "key" });
       }
     };
 
-    request.onsuccess = (e) => {
-      dbInstance = e.target.result;
+    request.onsuccess = () => {
+      dbInstance = request.result;
       resolve(dbInstance);
     };
 
-    request.onerror = (e) => {
-      reject(e.target.error || new Error("Failed to open IndexedDB"));
+    request.onerror = () => {
+      reject(request.error || new Error("Failed to open IndexedDB"));
     };
   });
 }
 
-/**
- * Derives canonical filename/key for telemetry combination.
- * Matches tools/telemetry/recorder.py profile_filename() exactly.
- * @param {string} trackId
- * @param {string} layout
- * @param {string} carId
- * @param {number} [aiLevel=100]
- * @returns {string} Filename, e.g. "magione__ks_toyota_gt86__ai100.json"
- */
-export function getTelemetryFilename(trackId, layout, carId, aiLevel = 100) {
+export function getTelemetryFilename(
+  trackId: string,
+  layout: string,
+  carId: string,
+  aiLevel = 100
+): string {
   const cleanTrack = String(trackId || "").trim().toLowerCase();
   let cleanLayout = String(layout || "").trim().toLowerCase();
   if (cleanLayout === "undefined" || cleanLayout === "null") {
@@ -74,12 +57,11 @@ export function getTelemetryFilename(trackId, layout, carId, aiLevel = 100) {
   return `${cleanTrack}__${cleanCar}__ai${level}.json`;
 }
 
-/**
- * Stores a user-uploaded custom telemetry profile into IndexedDB.
- * @param {Object} profileData Parsed TelemetryProfile JSON object
- * @returns {Promise<{ key: string, filename: string, profile: Object }>}
- */
-export async function saveCustomTelemetryProfile(profileData) {
+export async function saveCustomTelemetryProfile(profileData: TelemetryProfileInput): Promise<{
+  key: string;
+  filename: string;
+  profile: TelemetryProfileInput;
+}> {
   if (!profileData || !profileData.track_id || !profileData.car_id) {
     throw new Error("Invalid telemetry profile: missing track_id or car_id");
   }
@@ -104,34 +86,29 @@ export async function saveCustomTelemetryProfile(profileData) {
 
   try {
     const db = await openTelemetryDb();
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, "readwrite");
       const store = tx.objectStore(STORE_NAME);
       const req = store.put(entry);
       req.onsuccess = () => resolve();
       req.onerror = () => reject(req.error);
     });
-  } catch (err) {
-    console.warn("IndexedDB save failed, falling back to session memory:", err);
+  } catch {
+    // Fall back to in-memory cache when IndexedDB is unavailable
   }
 
   memoryProfileCache.set(key, profileData);
   return { key, filename: key, profile: profileData };
 }
 
-/**
- * Fetches a custom profile from IndexedDB or memory cache.
- * @param {string} key
- * @returns {Promise<Object|null>}
- */
-export async function getCustomTelemetryProfile(key) {
+export async function getCustomTelemetryProfile(key: string): Promise<TelemetryProfileInput | null> {
   if (memoryProfileCache.has(key)) {
-    return memoryProfileCache.get(key);
+    return memoryProfileCache.get(key) || null;
   }
 
   try {
     const db = await openTelemetryDb();
-    const entry = await new Promise((resolve, reject) => {
+    const entry = await new Promise<{ data?: TelemetryProfileInput } | null>((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, "readonly");
       const store = tx.objectStore(STORE_NAME);
       const req = store.get(key);
@@ -143,27 +120,23 @@ export async function getCustomTelemetryProfile(key) {
       memoryProfileCache.set(key, entry.data);
       return entry.data;
     }
-  } catch (err) {
-    console.warn("IndexedDB read error:", err);
+  } catch {
+    // Ignore IndexedDB errors
   }
 
   return null;
 }
 
-/**
- * Fetches precalculated telemetry profile from static paths or GitHub raw CDN.
- * @param {string} filename
- * @returns {Promise<Object|null>}
- */
-async function fetchPrecalculatedProfile(filename) {
+async function fetchPrecalculatedProfile(filename: string): Promise<TelemetryProfileInput | null> {
   if (memoryProfileCache.has(filename)) {
-    return memoryProfileCache.get(filename);
+    return memoryProfileCache.get(filename) || null;
   }
+
+  if (typeof fetch === "undefined") return null;
 
   const candidateUrls = [
     resolveApiPath(`api/telemetry_profiles/${encodeURIComponent(filename)}`),
     `./data/telemetry_profiles/${encodeURIComponent(filename)}`,
-    `data/telemetry_profiles/${encodeURIComponent(filename)}`,
     `https://raw.githubusercontent.com/munoznicolas/ac-license-center/main/data/telemetry_profiles/${encodeURIComponent(filename)}`,
   ];
 
@@ -188,21 +161,16 @@ async function fetchPrecalculatedProfile(filename) {
   return null;
 }
 
-/**
- * Resolves a TelemetryEngine instance for a track, layout, and car combination.
- * Checks IndexedDB custom store first, then repository precalculated profiles.
- * @param {string} trackId
- * @param {string} layout
- * @param {string} carId
- * @param {number} [aiLevel=100]
- * @returns {Promise<{ engine: TelemetryEngine, source: string, filename: string } | null>}
- */
-export async function resolveTelemetryEngine(trackId, layout, carId, aiLevel = 100) {
+export async function resolveTelemetryEngine(
+  trackId: string,
+  layout: string,
+  carId: string,
+  aiLevel = 100
+): Promise<{ engine: TelemetryEngine; source: string; filename: string } | null> {
   if (!trackId || !carId) return null;
 
   const filename = getTelemetryFilename(trackId, layout, carId, aiLevel);
 
-  // 1. Check custom uploaded profile (IndexedDB / Memory)
   const customData = await getCustomTelemetryProfile(filename);
   if (customData) {
     return {
@@ -212,7 +180,6 @@ export async function resolveTelemetryEngine(trackId, layout, carId, aiLevel = 1
     };
   }
 
-  // 2. Check precalculated profile from repository / CDN
   const precalcData = await fetchPrecalculatedProfile(filename);
   if (precalcData) {
     return {
@@ -222,7 +189,6 @@ export async function resolveTelemetryEngine(trackId, layout, carId, aiLevel = 1
     };
   }
 
-  // 3. Fallback: Check if there's an ai95 profile available for this combination
   if (aiLevel !== 95) {
     const fn95 = getTelemetryFilename(trackId, layout, carId, 95);
     const precalc95 = await fetchPrecalculatedProfile(fn95);
@@ -230,7 +196,7 @@ export async function resolveTelemetryEngine(trackId, layout, carId, aiLevel = 1
       return {
         engine: new TelemetryEngine(precalc95),
         source: "precalculated_ai95",
-        filename: fn95,
+        filename,
       };
     }
   }

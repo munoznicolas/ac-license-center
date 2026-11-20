@@ -108,7 +108,6 @@ class TestDesignerServer(unittest.TestCase):
             original_code = f.read()
 
         try:
-            # Save original tests through catalog manager
             saved_file = save_tier_catalog(tier_name, tests)
             self.assertTrue(os.path.isfile(saved_file))
             with open(saved_file, "r", encoding="utf-8") as f:
@@ -128,355 +127,56 @@ class TestDesignerServer(unittest.TestCase):
         self.assertIn("queue_length", data)
 
     def test_static_host_client_guards(self):
-        static_js_dir = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "js")
-        with open(os.path.join(static_js_dir, "api.js"), "r", encoding="utf-8") as f:
-            api_js = f.read()
-        with open(os.path.join(static_js_dir, "queue-runner.js"), "r", encoding="utf-8") as f:
-            queue_runner_js = f.read()
-        with open(os.path.join(REPO_ROOT, "tools", "web_ui", "static", "app.js"), "r", encoding="utf-8") as f:
-            app_js = f.read()
+        client_ts_path = os.path.join(REPO_ROOT, "tools", "web_ui", "src", "api", "client.ts")
+        with open(client_ts_path, "r", encoding="utf-8") as f:
+            client_ts = f.read()
 
-        # Verify api.js guards getQueueStatus on static hosts
-        self.assertIn("if (isStaticHost())", api_js)
-        self.assertIn("async getQueueStatus()", api_js)
-
-        # Verify queue-runner.js stops pollQueueStatus on static hosts
-        self.assertIn("export async function pollQueueStatus()", queue_runner_js)
-        self.assertIn("if (isStaticHost())", queue_runner_js)
-
-        # Verify window focus & visibility listeners are conditioned on !isStaticHost()
-        self.assertIn("if (!isStaticHost())", queue_runner_js)
-        self.assertIn('window.addEventListener("focus", () => void pollQueueStatus());', queue_runner_js)
-
-        # Verify app.js bootstraps pollQueueStatus only when !isStaticHost()
-        self.assertIn("if (!isStaticHost())", app_js)
-        self.assertIn("pollQueueStatus();", app_js)
-
-
+        self.assertIn("export function isStaticHost()", client_ts)
+        self.assertIn("export function resolveApiPath(", client_ts)
+        self.assertIn("if (isStaticHost())", client_ts)
 
     def test_tour_titles_no_emojis(self):
-        tour_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "js", "tour.js")
-        with open(tour_js_path, "r", encoding="utf-8") as f:
-            tour_js = f.read()
+        tour_ts_path = os.path.join(REPO_ROOT, "tools", "web_ui", "src", "utils", "tour.ts")
+        with open(tour_ts_path, "r", encoding="utf-8") as f:
+            tour_ts = f.read()
 
-        # Find all title properties inside popovers
-        title_matches = re.findall(r'title:\s*([^\r\n,]+)', tour_js)
+        title_matches = re.findall(r'title:\s*"([^"]+)"', tour_ts)
         self.assertGreater(len(title_matches), 0)
 
-        # Emoji detection regex for astral symbols and common emoji code points
-        emoji_pattern = re.compile(r'[𐀀-􏿿☀-⛿✀-➿⌀-⏿]')
+        emoji_pattern = re.compile(r'[\U00010000-\U0010ffff\u2600-\u27bf]')
         for raw_title in title_matches:
-            self.assertFalse(
-                emoji_pattern.search(raw_title),
-                f"Tour title contains emoji: {raw_title}"
-            )
-
-        # Verify done button has no emoji
-        done_matches = re.findall(r'doneBtnText:\s*"([^"]+)"', tour_js)
-        for done_text in done_matches:
-            self.assertFalse(
-                emoji_pattern.search(done_text),
-                f"Done button text contains emoji: {done_text}"
-            )
-
-        # Verify tour steps dynamically adapt to static vs local host
-        self.assertIn('isStaticHost() ? "Save & Export" : "Save, Test Drive & Sync"', tour_js)
-        self.assertIn('isStaticHost() ? "#btn-open-submit-pr-modal" : "#btn-sync"', tour_js)
+            self.assertFalse(emoji_pattern.search(raw_title), f"Tour title contains emoji: {raw_title}")
 
     def test_dynamic_host_button_visibility(self):
-        app_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "app.js")
-        with open(app_js_path, "r", encoding="utf-8") as f:
-            app_js = f.read()
-        qr_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "js", "queue-runner.js")
-        with open(qr_js_path, "r", encoding="utf-8") as f:
-            qr_js = f.read()
+        drawer_path = os.path.join(REPO_ROOT, "tools", "web_ui", "src", "components", "layout", "DrawerMenu.tsx")
+        with open(drawer_path, "r", encoding="utf-8") as f:
+            drawer_tsx = f.read()
 
-        # Verify applyHostVisibility adjusts button visibility dynamically
-        self.assertIn("export function applyHostVisibility()", app_js)
-        self.assertIn('dom.btnSync.style.display = isStatic ? "none" : ""', app_js)
-        self.assertIn('dom.btnRunLive.style.display = isStatic ? "none" : ""', app_js)
-        self.assertIn('dom.btnRunMissingTelemetry.style.display = isStatic ? "none" : ""', app_js)
-        self.assertIn('dom.btnOpenSubmitPrModal.style.display = isStatic ? "" : "none"', app_js)
-
-        # Verify queue runner conditions btnRunMissingTelemetry listener on isStaticHost()
-        self.assertIn("if (dom.btnRunMissingTelemetry)", qr_js)
-        self.assertIn('dom.btnRunMissingTelemetry.style.display = "none"', qr_js)
-
-    def test_mobile_friendly_responsive_markup(self):
-        index_html_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "index.html")
-        with open(index_html_path, "r", encoding="utf-8") as f:
-            html = f.read()
-
-        # Verify mobile header actions drawer toggle and backdrop
-        self.assertIn('id="btn-header-menu"', html)
-        self.assertIn('class="btn btn-secondary btn-icon-only mobile-menu-toggle"', html)
-        self.assertIn('id="actions-menu-backdrop"', html)
-        self.assertIn('id="header-actions"', html)
-
-        # Verify mobile master-detail back button
-        self.assertIn('id="btn-back-to-list"', html)
-        self.assertIn('mobile-back-btn', html)
-
-        # Verify target times grid
-        self.assertIn('target-times-grid', html)
-        self.assertIn('input-suffix', html)
-
-        # Verify modular CSS links
-        self.assertIn('href="css/variables.css', html)
-        self.assertIn('href="css/responsive.css', html)
+        self.assertIn("isStaticHost()", drawer_tsx)
+        self.assertIn('id="btn-rebuild"', drawer_tsx)
+        self.assertIn('id="btn-sync"', drawer_tsx)
+        self.assertIn('id="btn-run-missing-telemetry"', drawer_tsx)
+        self.assertIn('id="btn-open-submit-pr-modal"', drawer_tsx)
+        self.assertIn('id="btn-contact-dev"', drawer_tsx)
 
     def test_mobile_friendly_css_rules(self):
-        style_css_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "style.css")
-        css_dir = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "css")
-        css_parts = []
-        if os.path.isfile(style_css_path):
-            with open(style_css_path, "r", encoding="utf-8") as f:
-                css_parts.append(f.read())
-        if os.path.isdir(css_dir):
-            for fname in sorted(os.listdir(css_dir)):
-                if fname.endswith(".css"):
-                    with open(os.path.join(css_dir, fname), "r", encoding="utf-8") as f:
-                        css_parts.append(f.read())
-        css = "\n".join(css_parts)
+        style_css_path = os.path.join(REPO_ROOT, "tools", "web_ui", "src", "style.css")
+        with open(style_css_path, "r", encoding="utf-8") as f:
+            css = f.read()
 
-        # Dynamic viewport unit for mobile browser address bars
         self.assertIn("100dvh", css)
-
-        # Master-detail screen switcher for mobile
         self.assertIn(".workspace.view-editor", css)
         self.assertIn(".mobile-back-btn", css)
 
-        # Color scheme dark and high-contrast option styling
-        self.assertIn("color-scheme: dark;", css)
-        self.assertIn("select option", css)
+    def test_legal_pages_and_footer_links(self):
+        app_tsx_path = os.path.join(REPO_ROOT, "tools", "web_ui", "src", "App.tsx")
+        with open(app_tsx_path, "r", encoding="utf-8") as f:
+            app_tsx = f.read()
 
-        # Modular CSS file integrity
-        expected_modules = [
-            "variables.css", "base.css", "layout.css", "catalog.css",
-            "editor.css", "canvas.css", "components.css", "telemetry.css",
-            "tour.css", "responsive.css"
-        ]
-        for mod in expected_modules:
-            self.assertTrue(os.path.isfile(os.path.join(css_dir, mod)), f"Missing CSS module: {mod}")
-
-    def test_mobile_drawer_and_back_navigation_integration(self):
-        dom_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "js", "dom.js")
-        with open(dom_js_path, "r", encoding="utf-8") as f:
-            dom_js = f.read()
-        app_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "app.js")
-        with open(app_js_path, "r", encoding="utf-8") as f:
-            app_js = f.read()
-
-        self.assertIn("dom.btnHeaderMenu", dom_js)
-        self.assertIn("dom.btnBackToList", dom_js)
-        self.assertIn("dom.btnHeaderMenu.addEventListener", app_js)
-
-    def test_reference_view_initial_load_contract(self):
-        """Verify reference view exports functions and loads benchmark tests on initial open without ReferenceError."""
-        ref_view_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "js", "reference-view.js")
-        editor_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "js", "test-editor.js")
-        with open(ref_view_js_path, "r", encoding="utf-8") as f:
-            ref_js = f.read()
-        with open(editor_js_path, "r", encoding="utf-8") as f:
-            editor_js = f.read()
-
-        # 1. updateGamePillsScrollCues must be defined and exported at module level (not scoped inside setupReferenceViewListeners)
-        self.assertIn("export function updateGamePillsScrollCues()", ref_js)
-        # 2. loadReferenceTests must be exported from reference-view.js
-        self.assertIn("export async function loadReferenceTests()", ref_js)
-        # 3. openReferenceView must ensure reference tests are loaded
-        self.assertIn("await loadReferenceTests()", ref_js)
-        # 4. test-editor.js imports loadReferenceTests and runs it concurrently
-        self.assertIn('import { loadReferenceTests } from "./reference-view.js";', editor_js)
-        self.assertIn("loadReferenceTests()", editor_js)
-
-    def test_mobile_reference_charts_per_game_logic(self):
-        """Verify reference charts show per game when ALL games are selected and per license when a game is picked."""
-        ref_view_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "js", "reference-view.js")
-        with open(ref_view_js_path, "r", encoding="utf-8") as f:
-            js = f.read()
-
-        # 1. Functions must be exported and defined
-        self.assertIn("export function isMobileChartViewport()", js)
-        self.assertIn("export function shouldShowPerGameChart(", js)
-        self.assertIn("export function aggregateTestsByGame(", js)
-
-        # 2. shouldShowPerGameChart conditions on activeGame == 'ALL'
-        self.assertIn("innerWidth <= 768", js)
-        self.assertIn('activeGame === "ALL"', js)
-
-        # 3. Both charts (Power/PW and Gold) branch on showPerGame
-        self.assertIn("const showPerGame = shouldShowPerGameChart(state.activeRefGame);", js)
-        self.assertIn("aggregates = aggregateTestsByGame(list);", js)
-        self.assertIn("aggregates = aggregateTestsByLicense(list, state.activeRefGame);", js)
-
-        # 4. updateAggregationUiControls adapts button and title text to Avg by Game vs Avg by License
-        self.assertIn('const aggLabel = showPerGame ? "Avg by Game" : "Avg by License";', js)
-        self.assertIn('"Average Power & Power-to-Weight Ratio by Game"', js)
-        self.assertIn('"Average Gold Medal Duration by Game"', js)
-
-        # 5. Modular stylesheet includes no-scroll adaptation for compact charts
-        resp_css_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "css", "responsive.css")
-        with open(resp_css_path, "r", encoding="utf-8") as f:
-            css = f.read()
-        self.assertIn(".chart-canvas-wrapper.chart-scrollable.no-scroll", css)
-
-
-    def test_track_autocomplete_hides_track_id(self):
-        """Verify that track_id is hidden from the track autocomplete dropdown items and search input."""
-        editor_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "js", "test-editor.js")
-        with open(editor_js_path, "r", encoding="utf-8") as f:
-            js = f.read()
-
-        # In initTrackAutocomplete, items must not render track_id
-        self.assertNotIn('<span class="mui-item-sub">${escapeHtml(t.track_id)}</span>', js)
-        self.assertIn('<span class="mui-item-title">${escapeHtml(t.name)}</span>', js)
-
-        # In selectTrackItem, input.value must be t.name only
-        self.assertIn("input.value = t.name;", js)
-        self.assertNotIn("input.value = `${t.name} (${t.track_id})`;", js)
-
-        # In populateTrackDropdown, input.value must be found.name only
-        self.assertIn("dom.inputSearchTrack.value = found.name;", js)
-        self.assertNotIn("dom.inputSearchTrack.value = `${found.name} (${found.track_id})`;", js)
-
-
-    def test_car_autocomplete_only_shows_name(self):
-        """Verify that manufacturer and carid are removed from car autocomplete dropdown and search input."""
-        editor_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "js", "test-editor.js")
-        with open(editor_js_path, "r", encoding="utf-8") as f:
-            js = f.read()
-
-        # In initCarAutocomplete, items must only render car name (no car_id or brand sub-item or badge)
-        self.assertNotIn('<span class="mui-item-sub">${escapeHtml(c.car_id)}', js)
-        self.assertNotIn('<span class="mui-item-badge">${escapeHtml(badge)}</span>', js)
-        self.assertIn('<span class="mui-item-title">${escapeHtml(c.name)}</span>', js)
-
-        # In selectCarItem, input.value must be c.name only
-        self.assertIn("input.value = c.name;", js)
-        self.assertNotIn("input.value = `${c.name}${brandStr}`;", js)
-
-        # In populateCarDropdown, input.value must be found.name only
-        self.assertIn("dom.inputSearchCar.value = found.name;", js)
-        self.assertNotIn("dom.inputSearchCar.value = `${found.name}${brandStr}`;", js)
-
-
-    def test_layout_autocomplete_integration(self):
-        """Verify that track layout dropdown uses the same MUI autocomplete pattern as track and car."""
-        index_html_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "index.html")
-        with open(index_html_path, "r", encoding="utf-8") as f:
-            html = f.read()
-        dom_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "js", "dom.js")
-        with open(dom_js_path, "r", encoding="utf-8") as f:
-            dom_js = f.read()
-        editor_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "js", "test-editor.js")
-        with open(editor_js_path, "r", encoding="utf-8") as f:
-            editor_js = f.read()
-
-        # 1. HTML markup includes autocomplete-layout and layout-options-list
-        self.assertIn('id="autocomplete-layout"', html)
-        self.assertIn('id="layout-options-list"', html)
-        self.assertIn('id="input-search-layout"', html)
-
-        # 2. dom.js references inputSearchLayout
-        self.assertIn('dom.inputSearchLayout = document.getElementById("input-search-layout");', dom_js)
-
-        # 3. test-editor.js initializes layout autocomplete
-        self.assertIn("function initLayoutAutocomplete()", editor_js)
-        self.assertIn("initLayoutAutocomplete();", editor_js)
-        self.assertIn("dom.inputSearchLayout.value = activeName;", editor_js)
-
-
-    def test_spatial_positions_precision_and_no_percentage(self):
-        """Verify that gate positions show decimal up to 3 decimal places and no percentages."""
-        editor_js_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "js", "test-editor.js")
-        with open(editor_js_path, "r", encoding="utf-8") as f:
-            editor_js = f.read()
-        index_html_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "index.html")
-        with open(index_html_path, "r", encoding="utf-8") as f:
-            index_html = f.read()
-
-        # 1. No percentage formatting in test-editor.js
-        self.assertNotIn('(startS * 100).toFixed(2) + "%"', editor_js)
-        self.assertNotIn('(finishS * 100).toFixed(2) + "%"', editor_js)
-
-        # 2. 3 decimal places formatting
-        self.assertIn("dom.inputStart.value = startS.toFixed(3);", editor_js)
-        self.assertIn("dom.inputFinish.value = finishS.toFixed(3);", editor_js)
-        self.assertIn("dom.dispStartS.textContent = startS.toFixed(3);", editor_js)
-        self.assertIn("dom.dispFinishS.textContent = finishS.toFixed(3);", editor_js)
-
-        # 3. HTML inputs use step 0.001 and default to 3 decimal places
-        self.assertIn('id="input-start-s"', index_html)
-        self.assertIn('step="0.001"', index_html)
-        self.assertNotIn('0.00%', index_html)
-        self.assertNotIn('100.00%', index_html)
-    def test_menu_button_hierarchy_design_system(self):
-        index_html_path = os.path.join(REPO_ROOT, "tools", "web_ui", "static", "index.html")
-        with open(index_html_path, "r", encoding="utf-8") as f:
-            html = f.read()
-
-        # Extract header-actions container block
-        header_actions_match = re.search(r'<div id="header-actions"[^>]*>(.*?)</div>\s*</div>', html, re.DOTALL)
-        self.assertIsNotNone(header_actions_match, "header-actions container found in index.html")
-        actions_html = header_actions_match.group(1)
-
-        # 1. Primary CTA: Export Package must be the ONLY solid primary button
-        self.assertIn('id="btn-rebuild"', actions_html)
-        self.assertIn('class="btn btn-primary btn-export-main"', actions_html)
-        primary_buttons = re.findall(r'class="[^"]*btn-primary[^"]*"', actions_html)
-        self.assertEqual(len(primary_buttons), 1, "There must be exactly one primary solid CTA in header actions")
-
-        # 2. Secondary Actions: Sync to AC must NOT be btn-primary, must be secondary
-        self.assertIn('id="btn-sync"', actions_html)
-        sync_match = re.search(r'<button[^>]*id="btn-sync"[^>]*class="([^"]*)"', actions_html)
-        self.assertIsNotNone(sync_match)
-        sync_classes = sync_match.group(1).split()
-        self.assertIn("btn-secondary", sync_classes)
-        self.assertNotIn("btn-primary", sync_classes, "Sync to AC must not compete as solid primary CTA")
-        self.assertIn("btn-sync-action", sync_classes)
-
-        # 3. File Operations & Utility: Import JSON and Record Missing are secondary
-        self.assertIn('id="btn-import-json"', actions_html)
-        self.assertIn('id="btn-run-missing-telemetry"', actions_html)
-
-        # 4. Destructive / Warning: Reset Defaults must have warning intent
-        self.assertIn('id="btn-reset-defaults"', actions_html)
-        reset_match = re.search(r'<button[^>]*id="btn-reset-defaults"[^>]*class="([^"]*)"', actions_html)
-        self.assertIsNotNone(reset_match)
-        reset_classes = reset_match.group(1).split()
-        self.assertIn("btn-warning", reset_classes)
-        self.assertNotIn("btn-secondary", reset_classes)
-
-        # 5. Ghost / Utility: Take Tour & Theme Toggle are ghost buttons
-        tour_match = re.search(r'<button[^>]*id="btn-tour-help"[^>]*class="([^"]*)"', actions_html)
-        self.assertIsNotNone(tour_match)
-        self.assertIn("btn-ghost", tour_match.group(1).split())
-
-        theme_match = re.search(r'<button[^>]*id="btn-theme-toggle"[^>]*class="([^"]*)"', actions_html)
-        self.assertIsNotNone(theme_match)
-        self.assertIn("btn-ghost", theme_match.group(1).split())
-
-        # 6. Button Ordering in the Actions Menu:
-        # Take Tour -> Sync -> Import -> Record Missing -> [divider] -> Export Package -> [divider] -> Reset -> Dark Theme
-        pos_tour = actions_html.find('id="btn-tour-help"')
-        pos_sync = actions_html.find('id="btn-sync"')
-        pos_import = actions_html.find('id="btn-import-json"')
-        pos_record = actions_html.find('id="btn-run-missing-telemetry"')
-        pos_export = actions_html.find('id="btn-rebuild"')
-        pos_reset = actions_html.find('id="btn-reset-defaults"')
-        pos_theme = actions_html.find('id="btn-theme-toggle"')
-
-        self.assertLess(pos_tour, pos_sync)
-        self.assertLess(pos_sync, pos_import)
-        self.assertLess(pos_import, pos_record)
-        self.assertLess(pos_record, pos_export)
-        self.assertLess(pos_export, pos_reset)
-        self.assertLess(pos_reset, pos_theme)
-
-        # 7. Dividers: At least two dividers separating groups in header actions
-        dividers = re.findall(r'class="menu-divider[^"]*"', actions_html)
-        self.assertGreaterEqual(len(dividers), 2)
+        self.assertIn('href="privacy.html"', app_tsx)
+        self.assertIn('href="terms.html"', app_tsx)
+        self.assertTrue(os.path.isfile(os.path.join(REPO_ROOT, "tools", "web_ui", "public", "privacy.html")))
+        self.assertTrue(os.path.isfile(os.path.join(REPO_ROOT, "tools", "web_ui", "public", "terms.html")))
 
 
 if __name__ == "__main__":

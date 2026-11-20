@@ -103,10 +103,23 @@ export const getDesignTokens = (mode: "light" | "dark"): ThemeOptions => ({
         },
       },
     },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          fontSize: "12px",
+          fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          transform: "translate(12px, 8px) scale(1)",
+          "&.MuiInputLabel-shrink": {
+            transform: "translate(12px, -7px) scale(0.75)",
+          },
+        },
+      },
+    },
     MuiOutlinedInput: {
       styleOverrides: {
         root: ({ theme }) => ({
           backgroundColor: theme.palette.mode === "dark" ? "#232325" : "#f4f4f5",
+          fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
           fontSize: "13px",
           "& .MuiOutlinedInput-notchedOutline": {
             borderColor: theme.palette.divider,
@@ -121,23 +134,27 @@ export const getDesignTokens = (mode: "light" | "dark"): ThemeOptions => ({
         }),
         input: {
           padding: "7px 12px",
+          fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          fontSize: "13px",
+          lineHeight: "18px",
+          height: "18px",
         },
         multiline: {
+          padding: "7px 12px",
+          fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          fontSize: "13px",
+          lineHeight: "18px",
+        },
+        inputMultiline: {
           padding: 0,
+          fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          fontSize: "13px",
+          lineHeight: "18px",
         },
       },
     },
     MuiAutocomplete: {
       styleOverrides: {
-        root: {
-          "& .MuiInputLabel-root": {
-            fontSize: "12px",
-            transform: "translate(12px, 8px) scale(1)",
-            "&.MuiInputLabel-shrink": {
-              transform: "translate(12px, -7px) scale(0.75)",
-            },
-          },
-        },
         paper: ({ theme }) => ({
           backgroundColor: theme.palette.mode === "dark" ? "#19191b" : "#ffffff",
           border: `1px solid ${theme.palette.divider}`,

@@ -5,26 +5,23 @@ interface Props {
   spline: SplineData | null;
   startS: number;
   finishS: number;
-  isFullLap: boolean;
   onStartChange: (s: number) => void;
   onFinishChange: (s: number) => void;
-  onFullLapToggle: (full: boolean) => void;
 }
 
 export const SplineCanvas: React.FC<Props> = ({
   spline,
   startS,
   finishS,
-  isFullLap,
   onStartChange,
   onFinishChange,
-  onFullLapToggle,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [canvasSize, setCanvasSize] = useState({ width: 700, height: 300 });
   const [startDraft, setStartDraft] = useState<string | null>(null);
   const [finishDraft, setFinishDraft] = useState<string | null>(null);
   const [activeThumb, setActiveThumb] = useState<"start" | "finish">("start");
+  const isFullLap = startS === 0 && finishS === 1;
 
   // Sector distance calculation
   const totalLengthM = spline?.total_length_m || 0;

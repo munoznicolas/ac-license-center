@@ -1,11 +1,6 @@
-/**
- * mod-packager.js
- * Pure Client-Side Content Manager Package (.zip) Builder & Curriculum Validator.
- * Generates Kunos-compliant series.ini, event.ini, and calibrated test JSONs
- * directly in the browser and exports a ready-to-install ZIP archive.
- */
+import type { LicenseTier, LicenseTest } from "../types";
 
-const TIER_FOLDER_MAP = {
+const TIER_FOLDER_MAP: Record<string, string> = {
   "National B": "series_gt_license_b",
   "National A": "series_gt_license_a",
   "International B": "series_gt_license_ib",
@@ -13,7 +8,7 @@ const TIER_FOLDER_MAP = {
   "Super License": "series_gt_license_s",
 };
 
-const TIER_TESTS_FOLDER_MAP = {
+const TIER_TESTS_FOLDER_MAP: Record<string, string> = {
   "National B": "national_b",
   "National A": "national_a",
   "International B": "international_b",
@@ -21,7 +16,7 @@ const TIER_TESTS_FOLDER_MAP = {
   "Super License": "super_license",
 };
 
-const TIER_REQUIRES_MAP = {
+const TIER_REQUIRES_MAP: Record<string, string> = {
   "National B": "",
   "National A": "series_gt_license_b",
   "International B": "series_gt_license_a",
@@ -29,24 +24,32 @@ const TIER_REQUIRES_MAP = {
   "Super License": "series_gt_license_ia",
 };
 
-/**
- * Validates in-memory curriculum definitions against schema and game rules.
- * @param {Array} curriculum
- * @returns {Object} validation report
- */
-export function validateCurriculumClient(curriculum) {
+export interface ValidationIssue {
+  severity: "ERROR" | "WARNING";
+  test_id: string;
+  message: string;
+}
+
+export interface ClientValidationReport {
+  success: boolean;
+  total_files: number;
+  passed: number;
+  failed: number;
+  errors: ValidationIssue[];
+  warnings: ValidationIssue[];
+}
+
+export function validateCurriculumClient(curriculum: LicenseTier[]): ClientValidationReport {
   let passed = 0;
   let failed = 0;
-  const errors = [];
-  const warnings = [];
+  const errors: ValidationIssue[] = [];
+  const warnings: ValidationIssue[] = [];
 
   curriculum.forEach((tier) => {
-    const tierName = tier.tier_name || "Unknown Tier";
     (tier.tests || []).forEach((test) => {
       const tId = test.test_id || "UNKNOWN";
       let hasError = false;
 
-      // 1. Mandatory text fields
       if (!test.title || test.title.trim() === "") {
         errors.push({ severity: "ERROR", test_id: tId, message: "Missing test title" });
         hasError = true;
@@ -60,8 +63,7 @@ export function validateCurriculumClient(curriculum) {
         hasError = true;
       }
 
-      // 2. Targets sanity (gold <= silver <= bronze)
-      const targets = test.targets || {};
+      const targets = test.targets || { gold_seconds: 0, silver_seconds: 0, bronze_seconds: 0 };
       const g = Number(targets.gold_seconds);
       const s = Number(targets.silver_seconds);
       const b = Number(targets.bronze_seconds);
@@ -78,7 +80,6 @@ export function validateCurriculumClient(curriculum) {
         hasError = true;
       }
 
-      // 3. Spatial progress bounds
       const s0 = Number(test.start_s ?? 0);
       const s1 = Number(test.finish_s ?? 1);
       if (s0 < 0 || s0 > 1 || s1 < 0 || s1 > 1) {
@@ -104,13 +105,9 @@ export function validateCurriculumClient(curriculum) {
   };
 }
 
-/**
- * Formats strict Kunos-compliant series.ini text.
- * No spaces around '=', strictly uppercase keys.
- */
-export function formatSeriesIni(tier) {
-  const folder = tier.folder || TIER_FOLDER_MAP[tier.tier_name] || "series_gt_license_b";
-  const requires = TIER_REQUIRES_MAP[tier.tier_name] || "";
+export function formatSeriesIni(tier: LicenseTier & { description?: string }): string {
+  const tierKey = tier.tier_name || "National B";
+  const requires = TIER_REQUIRES_MAP[tierKey] || "";
   const desc = (tier.description || "Gran Turismo style driving school licenses.")
     .replace(/\r\n/g, "\n")
     .replace(/\n/g, " ");
@@ -127,10 +124,7 @@ export function formatSeriesIni(tier) {
   return lines.join("\r\n");
 }
 
-/**
- * Formats strict Kunos-compliant event.ini text for an individual license test event.
- */
-export function formatEventIni(test, eventIdx) {
+export function formatEventIni(test: LicenseTest, eventIdx: number): string {
   const tId = test.test_id || `EVENT-${eventIdx}`;
   const title = test.title || "License Test";
   const desc = (test.description || "").replace(/\r\n/g, "\n").replace(/\n/g, "\\n");
@@ -195,10 +189,7 @@ export function formatEventIni(test, eventIdx) {
   return lines.join("\r\n");
 }
 
-/**
- * Formats a clean test definition JSON string matching the official schema.
- */
-export function formatTestJson(test, tier) {
+export function formatTestJson(test: LicenseTest, tier: LicenseTier): string {
   const tId = test.test_id || "B-1";
   const tierName = tier.tier_name || "National B";
 
@@ -212,16 +203,16 @@ export function formatTestJson(test, tier) {
     track_id: test.track_id || "",
     track_layout: test.track_layout || "",
     start_mode: test.start_mode || "STANDING",
-    spawn: test.spawn || {
+    spawn: {
       position: [0, 0, 0],
       forward: [0, 0, 1],
-      initial_speed_kmh: Number(test.speed || 0),
+      initial_speed_kmh: Number(test.rolling_speed_kmh ?? test.speed ?? 0),
       gear: 1,
       rpm: 3500,
       heading_deg: 0,
       is_valid: true,
     },
-    timing: test.timing || {
+    timing: {
       start_gate: {
         center: [0, 0, 0],
         forward: [0, 0, 1],
@@ -256,37 +247,10 @@ export function formatTestJson(test, tier) {
   return JSON.stringify(jsonDef, null, 2);
 }
 
-/**
- * Assembles and downloads the complete Content Manager Mod (.zip) directly in the browser.
- * @param {Array} curriculum In-memory curriculum catalog
- * @param {Function} onProgress Progress callback(percent, statusMessage)
- */
-let jszipLoadedPromise = null;
-
-/**
- * Dynamically load JSZip compression engine on-demand.
- */
-export function ensureJSZipLoaded() {
-  if (typeof JSZip !== "undefined") return Promise.resolve();
-  if (!jszipLoadedPromise) {
-    jszipLoadedPromise = new Promise((resolve, reject) => {
-      const s = document.createElement("script");
-      s.src = "jszip.min.js";
-      s.onload = () => resolve();
-      s.onerror = (err) => reject(new Error("Failed to load JSZip: " + err));
-      document.head.appendChild(s);
-    });
-  }
-  return jszipLoadedPromise;
-}
-
-export async function buildAndExportModZip(curriculum, onProgress = () => {}) {
-  onProgress(2, "Loading compression engine...");
-  await ensureJSZipLoaded();
-  if (typeof JSZip === "undefined") {
-    throw new Error("JSZip library is not loaded. Please ensure jszip.min.js is included.");
-  }
-
+export async function buildAndExportModZip(
+  curriculum: LicenseTier[],
+  onProgress: (percent: number, message: string) => void = () => {}
+): Promise<{ success: boolean; size: number; validation: ClientValidationReport }> {
   onProgress(5, "Validating curriculum definitions...");
   const report = validateCurriculumClient(curriculum);
   if (!report.success) {
@@ -295,55 +259,44 @@ export async function buildAndExportModZip(curriculum, onProgress = () => {}) {
     );
   }
 
-  onProgress(15, "Loading base mod package template...");
+  onProgress(15, "Loading compression engine...");
+  const { default: JSZip } = await import("jszip");
   const zip = new JSZip();
 
-  // Fetch base mod zip template
-  const baseZipUrl = "./assets/base_package.zip";
-  let baseArrayBuffer;
   try {
-    const res = await fetch(baseZipUrl);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    baseArrayBuffer = await res.arrayBuffer();
-    await zip.loadAsync(baseArrayBuffer);
-  } catch (err) {
-    console.warn("Could not load base_package.zip, assembling new package from scratch:", err);
+    const res = await fetch("./assets/base_package.zip");
+    if (res.ok) {
+      const baseArrayBuffer = await res.arrayBuffer();
+      await zip.loadAsync(baseArrayBuffer);
+    }
+  } catch {
+    // Assemble package from scratch if base_package.zip is absent
   }
 
   onProgress(40, "Generating Content Manager career series and event configs...");
-
-  // Inject fresh configs into zip
   curriculum.forEach((tier) => {
-    const sFolder = tier.folder || TIER_FOLDER_MAP[tier.tier_name] || "series_gt_license_b";
-    const tFolder = TIER_TESTS_FOLDER_MAP[tier.tier_name] || "national_b";
+    const tierKey = tier.tier_name || "National B";
+    const sFolder = tier.folder || TIER_FOLDER_MAP[tierKey] || "series_gt_license_b";
+    const tFolder = TIER_TESTS_FOLDER_MAP[tierKey] || "national_b";
 
-    // 1. series.ini
-    const seriesIni = formatSeriesIni(tier);
-    zip.file(`content/career/${sFolder}/series.ini`, seriesIni);
+    zip.file(`content/career/${sFolder}/series.ini`, formatSeriesIni(tier));
 
-    // 2. Events & Tests
     (tier.tests || []).forEach((test, idx) => {
       const eventNum = idx + 1;
-      const eventIni = formatEventIni(test, eventNum);
-      zip.file(`content/career/${sFolder}/event${eventNum}/event.ini`, eventIni);
+      zip.file(`content/career/${sFolder}/event${eventNum}/event.ini`, formatEventIni(test, eventNum));
 
-      // Calibrated test definition JSON
       const testJson = formatTestJson(test, tier);
       const parts = (test.test_id || `T-${eventNum}`).split("-");
       const prefix = parts[0].toLowerCase();
-      const num = parseInt(parts[1] || eventNum, 10);
+      const num = parseInt(parts[1] || String(eventNum), 10);
       const filename = `test_${prefix}${num.toString().padStart(2, "0")}.json`;
 
-      // Save to content/tests/<tier>/
       zip.file(`content/tests/${tFolder}/${filename}`, testJson);
-
-      // Also mirror to extension/lua/new-modes/gt-license/data/tests/<tier>/
       zip.file(`extension/lua/new-modes/gt-license/data/tests/${tFolder}/${filename}`, testJson);
     });
   });
 
   onProgress(75, "Compressing Content Manager drag-and-drop ZIP archive...");
-
   const blob = await zip.generateAsync(
     {
       type: "blob",
@@ -357,8 +310,6 @@ export async function buildAndExportModZip(curriculum, onProgress = () => {}) {
   );
 
   onProgress(100, "Triggering download...");
-
-  // Trigger browser file download
   const downloadUrl = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = downloadUrl;

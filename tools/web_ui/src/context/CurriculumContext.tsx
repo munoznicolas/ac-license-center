@@ -1,6 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { LicenseTier, LicenseTest, Track, CarModel, SplineData } from "../types";
-import { api } from "../api/client";
+import { api, isStaticHost } from "../api/client";
+import {
+  exportCurriculumJson,
+  importCurriculumJsonFile,
+  loadCurriculum,
+  resetCurriculumToDefaults,
+  saveCurriculum,
+} from "../utils/curriculumStore";
 
 interface CurriculumContextType {
   curriculum: LicenseTier[];
@@ -24,6 +31,9 @@ interface CurriculumContextType {
   loadSplineForActiveTest: (trackId: string, layout: string) => Promise<void>;
   setCurrentSpline: (spline: SplineData | null) => void;
   reloadCurriculum: () => Promise<void>;
+  importCurriculum: (file: File) => Promise<void>;
+  exportCurriculum: () => void;
+  resetCurriculum: () => Promise<void>;
 }
 
 const CurriculumContext = createContext<CurriculumContextType | undefined>(undefined);
@@ -45,12 +55,15 @@ export const CurriculumProvider: React.FC<{ children: ReactNode }> = ({ children
   const reloadCurriculum = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [currRes, tracksRes, carsRes] = await Promise.all([
-        api.getCurriculum(),
+      const fetchBaseline = async () => {
+        const currRes = await api.getCurriculum();
+        return currRes.curriculum || currRes.tiers || [];
+      };
+      const [tiersList, tracksRes, carsRes] = await Promise.all([
+        isStaticHost() ? loadCurriculum(fetchBaseline) : fetchBaseline(),
         api.getTracks(),
         api.getCars(),
       ]);
-      const tiersList = currRes.curriculum || currRes.tiers || [];
       setCurriculum(tiersList);
       setTracks(tracksRes.tracks || []);
       setCars(carsRes.cars || []);
@@ -234,6 +247,35 @@ export const CurriculumProvider: React.FC<{ children: ReactNode }> = ({ children
     setDirty(true);
   };
 
+  const importCurriculum = async (file: File) => {
+    const imported = await importCurriculumJsonFile(file);
+    setCurriculum(imported);
+    setActiveTierIndex(0);
+    setActiveTestIndex(0);
+    setDirty(false);
+  };
+
+  const exportCurriculum = () => {
+    exportCurriculumJson(curriculum);
+  };
+
+  const resetCurriculum = async () => {
+    const reset = await resetCurriculumToDefaults(async () => {
+      const currRes = await api.getCurriculum();
+      return currRes.curriculum || currRes.tiers || [];
+    });
+    setCurriculum(reset);
+    setActiveTierIndex(0);
+    setActiveTestIndex(0);
+    setDirty(false);
+  };
+
+  useEffect(() => {
+    if (isStaticHost() && curriculum.length > 0) {
+      saveCurriculum(curriculum);
+    }
+  }, [curriculum]);
+
   return (
     <CurriculumContext.Provider
       value={{
@@ -258,6 +300,9 @@ export const CurriculumProvider: React.FC<{ children: ReactNode }> = ({ children
         loadSplineForActiveTest,
         setCurrentSpline,
         reloadCurriculum,
+        importCurriculum,
+        exportCurriculum,
+        resetCurriculum,
       }}
     >
       {children}

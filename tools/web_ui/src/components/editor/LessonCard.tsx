@@ -16,7 +16,7 @@ interface FieldProps {
   onChange: (val: string) => void;
 }
 
-const CharQuotaRing: React.FC<{ length: number; max: number }> = ({
+export const CharQuotaRing: React.FC<{ length: number; max: number }> = ({
   length,
   max,
 }) => {

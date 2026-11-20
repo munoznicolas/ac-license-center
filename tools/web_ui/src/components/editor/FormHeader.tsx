@@ -1,5 +1,5 @@
 import React from "react";
-import { Trash2, Save, Play, ChevronLeft } from "lucide-react";
+import { Trash2, Save, ChevronLeft } from "lucide-react";
 
 interface Props {
   testId: string;

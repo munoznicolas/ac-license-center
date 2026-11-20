@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ThemeProvider, CssBaseline } from "@mui/material";
+import { ThemeProvider } from "@mui/material";
 import { createAppTheme } from "./theme/theme";
 import { CurriculumProvider } from "./context/CurriculumContext";
 import { Header } from "./components/layout/Header";
@@ -9,6 +9,9 @@ import { Sidebar } from "./components/layout/Sidebar";
 import { TestEditor } from "./components/editor/TestEditor";
 import { ReferenceView } from "./components/reference/ReferenceView";
 import { BatchTelemetryModal } from "./components/modals/BatchTelemetryModal";
+import { ContactModal } from "./components/modals/ContactModal";
+import { TelemetrySubmitModal } from "./components/modals/TelemetrySubmitModal";
+import { startOnboardingTour } from "./utils/tour";
 
 export const App: React.FC = () => {
   const [themeMode, setThemeMode] = useState<"light" | "dark">(() => {
@@ -25,6 +28,8 @@ export const App: React.FC = () => {
   const [mobileView, setMobileView] = useState<"catalog" | "editor">("catalog");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isBatchOpen, setIsBatchOpen] = useState(false);
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isSubmitPrOpen, setIsSubmitPrOpen] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "info" | "success" | "error" } | null>(null);
 
   useEffect(() => {
@@ -83,8 +88,10 @@ export const App: React.FC = () => {
             onClose={() => setIsMenuOpen(false)}
             onToggleTheme={toggleTheme}
             onOpenBatchTelemetry={() => setIsBatchOpen(true)}
+            onOpenContact={() => setIsContactOpen(true)}
+            onOpenTelemetrySubmit={() => setIsSubmitPrOpen(true)}
             onOpenTour={() => {
-              showToast("Starting onboarding walkthrough...", "info");
+              startOnboardingTour();
             }}
             onShowToast={showToast}
           />
@@ -93,6 +100,20 @@ export const App: React.FC = () => {
           <BatchTelemetryModal
             isOpen={isBatchOpen}
             onClose={() => setIsBatchOpen(false)}
+            onShowToast={showToast}
+          />
+
+          {/* Contact Developer Modal */}
+          <ContactModal
+            isOpen={isContactOpen}
+            onClose={() => setIsContactOpen(false)}
+            onShowToast={showToast}
+          />
+
+          {/* Submit Telemetry PR Modal */}
+          <TelemetrySubmitModal
+            isOpen={isSubmitPrOpen}
+            onClose={() => setIsSubmitPrOpen(false)}
             onShowToast={showToast}
           />
 
@@ -117,6 +138,24 @@ export const App: React.FC = () => {
               {toast.message}
             </div>
           )}
+
+          <footer
+            style={{
+              textAlign: "center",
+              padding: "12px 16px",
+              fontSize: "12px",
+              color: "var(--text-muted)",
+              borderTop: "1px solid var(--border-color)",
+            }}
+          >
+            <a href="privacy.html" style={{ color: "var(--text-muted)", textDecoration: "none", margin: "0 8px" }}>
+              Privacy Policy
+            </a>
+            &middot;
+            <a href="terms.html" style={{ color: "var(--text-muted)", textDecoration: "none", margin: "0 8px" }}>
+              Terms of Service
+            </a>
+          </footer>
         </div>
       </CurriculumProvider>
     </ThemeProvider>

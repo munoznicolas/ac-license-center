@@ -88,7 +88,8 @@ export interface SplineData {
 export interface ReferenceTest {
   game: string;
   code: string;
-  tier: string;
+  tier?: string;
+  license?: string;
   test: string;
   title?: string;
   car: string;
@@ -97,6 +98,8 @@ export interface ReferenceTest {
   pw?: number;
   pw_kg_hp?: number;
   weight_kg?: number;
+  drivetrain_layout?: string;
+  drivetrain?: string;
   layout?: string;
   track: string;
   gold: string;

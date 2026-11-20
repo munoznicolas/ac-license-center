@@ -3,10 +3,8 @@ import { Trash2, Save, Play, ChevronLeft } from "lucide-react";
 
 interface Props {
   testId: string;
-  title: string;
   isSaving: boolean;
   onBack?: () => void;
-  onTitleChange: (newTitle: string) => void;
   onRunDemo: () => void;
   onDeleteTest: () => void;
   onSaveTest: () => void;
@@ -14,10 +12,8 @@ interface Props {
 
 export const FormHeader: React.FC<Props> = ({
   testId,
-  title,
   isSaving,
   onBack,
-  onTitleChange,
   onRunDemo,
   onDeleteTest,
   onSaveTest,
@@ -41,20 +37,6 @@ export const FormHeader: React.FC<Props> = ({
         <span id="form-test-id-badge" className="badge badge-lg">
           {testId || "--"}
         </span>
-        <label htmlFor="input-title" className="visually-hidden">
-          Test Title
-        </label>
-        <input
-          type="text"
-          id="input-title"
-          className="form-control title-input"
-          maxLength={80}
-          placeholder="Test Title"
-          aria-label="Test Title"
-          value={title}
-          onChange={(e) => onTitleChange(e.target.value)}
-          required
-        />
       </div>
 
       <div className="form-actions">

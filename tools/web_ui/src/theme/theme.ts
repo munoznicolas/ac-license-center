@@ -122,6 +122,9 @@ export const getDesignTokens = (mode: "light" | "dark"): ThemeOptions => ({
         input: {
           padding: "7px 12px",
         },
+        multiline: {
+          padding: 0,
+        },
       },
     },
     MuiAutocomplete: {

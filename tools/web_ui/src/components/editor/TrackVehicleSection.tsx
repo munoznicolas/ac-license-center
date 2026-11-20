@@ -35,7 +35,7 @@ export const TrackVehicleSection: React.FC<Props> = ({
   }) || null;
 
   return (
-    <FormCard title={<span>Track & Vehicle Selection</span>} columns={3}>
+    <FormCard id="card-track-vehicle" title={<span>Track & Vehicle Selection</span>} columns={3}>
         {/* 1. Track Autocomplete */}
         <div className="form-group">
           <Autocomplete

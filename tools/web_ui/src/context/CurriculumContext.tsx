@@ -101,11 +101,6 @@ export const CurriculumProvider: React.FC<{ children: ReactNode }> = ({ children
   const updateActiveTest = (fields: Partial<LicenseTest>) => {
     if (!activeTier || !activeTest) return;
     const normalizedFields: Partial<LicenseTest> = { ...fields };
-    if (fields.objective !== undefined) {
-      normalizedFields.lesson_objective = fields.objective;
-    } else if (fields.lesson_objective !== undefined) {
-      normalizedFields.objective = fields.lesson_objective;
-    }
     if (fields.rolling_speed_kmh !== undefined) {
       normalizedFields.speed = fields.rolling_speed_kmh;
     } else if (fields.speed !== undefined) {
@@ -159,7 +154,6 @@ export const CurriculumProvider: React.FC<{ children: ReactNode }> = ({ children
     const newTest: LicenseTest = {
       test_id: `${tierPrefix}-${nextNum}`,
       title: "New Curriculum Test",
-      objective: "Technique to practice",
       description: "Instructions during countdown",
       track_id: tracks[0]?.track_id || "ks_vallelunga",
       track_layout: "",

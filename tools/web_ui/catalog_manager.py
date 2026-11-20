@@ -533,6 +533,14 @@ def get_track_spline_data(track_id: str, layout: str = "", ac_root: str = DEFAUL
                     break
 
     if not spline_file:
+        splines_dir = os.path.join(REPO_ROOT, "data", "splines")
+        candidates = [f"{track_id}__{layout}.json", f"{track_id}.json"] if layout else [f"{track_id}.json"]
+        for name in candidates:
+            cached = os.path.join(splines_dir, name)
+            if os.path.isfile(cached):
+                with open(cached, "r", encoding="utf-8") as f:
+                    payload = json.load(f)
+                return payload.get("spline", payload)
         return None
 
     try:

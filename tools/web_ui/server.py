@@ -214,6 +214,9 @@ class DesignerRequestHandler(SimpleHTTPRequestHandler):
         try:
             kunos_only = query.get("all", ["0"])[0] != "1"
             tracks = get_available_tracks(kunos_only=kunos_only)
+            if not tracks:
+                from tools.build_static_site import _build_fallback_tracks
+                tracks = _build_fallback_tracks(load_curriculum())
             self.send_json_response({"success": True, "tracks": tracks, "kunos_only": kunos_only})
         except Exception as e:
             self.send_json_response({"success": False, "error": str(e)}, status=500)
@@ -222,6 +225,9 @@ class DesignerRequestHandler(SimpleHTTPRequestHandler):
         try:
             kunos_only = query.get("all", ["0"])[0] != "1"
             cars = get_available_cars(kunos_only=kunos_only)
+            if not cars:
+                from tools.build_static_site import _build_fallback_cars
+                cars = _build_fallback_cars(load_curriculum())
             self.send_json_response({"success": True, "cars": cars, "kunos_only": kunos_only})
         except Exception as e:
             self.send_json_response({"success": False, "error": str(e)}, status=500)

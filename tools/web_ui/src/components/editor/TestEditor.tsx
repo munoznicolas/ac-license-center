@@ -92,13 +92,11 @@ export const TestEditor: React.FC<Props> = ({ onShowToast, onBack }) => {
           handleSave();
         }}
       >
-        {/* Header: Title + Watch AI Demo + Trashcan + Diskette */}
+        {/* Header: Badge + Watch AI Demo + Trashcan + Diskette */}
         <FormHeader
           testId={activeTest.test_id}
-          title={activeTest.title}
           isSaving={isSaving}
           onBack={onBack}
-          onTitleChange={(title) => updateActiveTest({ title })}
           onRunDemo={handleRunDemo}
           onDeleteTest={handleDelete}
           onSaveTest={handleSave}
@@ -106,9 +104,9 @@ export const TestEditor: React.FC<Props> = ({ onShowToast, onBack }) => {
 
         {/* Section 1: Curriculum Lesson & Description */}
         <LessonCard
-          objective={activeTest.objective || ""}
+          title={activeTest.title || ""}
           description={activeTest.description || ""}
-          onObjectiveChange={(objective) => updateActiveTest({ objective })}
+          onTitleChange={(title) => updateActiveTest({ title })}
           onDescriptionChange={(description) => updateActiveTest({ description })}
         />
 

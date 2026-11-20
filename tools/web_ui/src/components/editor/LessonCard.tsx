@@ -1,7 +1,8 @@
-import React, { useLayoutEffect, useRef } from "react";
+import React from "react";
+import { TextField } from "@mui/material";
 import { FormCard } from "./FormCard";
 
-const OBJECTIVE_MAX_LENGTH = 120;
+const TITLE_MAX_LENGTH = 80;
 const DESCRIPTION_MAX_LENGTH = 200;
 const RING_CIRCUMFERENCE = 2 * Math.PI * 9;
 
@@ -11,6 +12,7 @@ interface FieldProps {
   placeholder: string;
   value: string;
   maxLength: number;
+  multiline?: boolean;
   onChange: (val: string) => void;
 }
 
@@ -49,31 +51,30 @@ const LessonTextField: React.FC<FieldProps> = ({
   placeholder,
   value,
   maxLength,
+  multiline = true,
   onChange,
 }) => {
-  const ref = useRef<HTMLTextAreaElement>(null);
-
-  useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
-  }, [value]);
-
   return (
     <div className="form-group">
-      <label htmlFor={id}>{label}</label>
       <div className="input-ring-wrap">
-        <textarea
-          ref={ref}
+        <TextField
           id={id}
-          className="form-control"
-          rows={2}
-          maxLength={maxLength}
+          label={label}
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          multiline={multiline}
+          minRows={multiline ? 2 : undefined}
+          fullWidth
+          size="small"
           required
+          InputLabelProps={{ shrink: true }}
+          inputProps={{ maxLength }}
+          sx={{
+            [multiline
+              ? "& .MuiInputBase-inputMultiline"
+              : "& .MuiInputBase-input"]: { paddingRight: "32px" },
+          }}
         />
         <CharQuotaRing length={value.length} max={maxLength} />
       </div>
@@ -82,27 +83,28 @@ const LessonTextField: React.FC<FieldProps> = ({
 };
 
 interface Props {
-  objective: string;
+  title: string;
   description: string;
-  onObjectiveChange: (val: string) => void;
+  onTitleChange: (val: string) => void;
   onDescriptionChange: (val: string) => void;
 }
 
 export const LessonCard: React.FC<Props> = ({
-  objective,
+  title,
   description,
-  onObjectiveChange,
+  onTitleChange,
   onDescriptionChange,
 }) => {
   return (
     <FormCard id="card-lesson-info" title="Curriculum Lesson & Description">
       <LessonTextField
-        id="input-objective"
-        label="Lesson Objective"
-        placeholder="Driving technique to practice"
-        value={objective}
-        maxLength={OBJECTIVE_MAX_LENGTH}
-        onChange={onObjectiveChange}
+        id="input-title"
+        label="Test Title"
+        placeholder="Test Title"
+        value={title}
+        maxLength={TITLE_MAX_LENGTH}
+        multiline={false}
+        onChange={onTitleChange}
       />
       <LessonTextField
         id="input-description"

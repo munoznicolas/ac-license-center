@@ -1,6 +1,7 @@
 import React from "react";
 import { Autocomplete, TextField, Box, Typography } from "@mui/material";
 import { Track, CarModel } from "../../types";
+import { FormCard } from "./FormCard";
 
 interface Props {
   tracks: Track[];
@@ -34,12 +35,7 @@ export const TrackVehicleSection: React.FC<Props> = ({
   }) || null;
 
   return (
-    <div className="card form-card">
-      <div className="card-title">
-        <span>Track & Vehicle Selection</span>
-      </div>
-
-      <div className="form-grid cols-3" style={{ gap: "14px", alignItems: "flex-start" }}>
+    <FormCard title={<span>Track & Vehicle Selection</span>} columns={3}>
         {/* 1. Track Autocomplete */}
         <div className="form-group">
           <Autocomplete
@@ -205,7 +201,6 @@ export const TrackVehicleSection: React.FC<Props> = ({
             )}
           />
         </div>
-      </div>
-    </div>
+    </FormCard>
   );
 };

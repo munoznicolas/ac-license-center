@@ -26,6 +26,54 @@
   color: var(--text-muted);
 }
 
+.input-ring-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.input-ring-wrap .form-control {
+  padding-right: 38px;
+}
+
+.char-ring {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  width: 20px;
+  height: 20px;
+  transform: rotate(-90deg);
+  pointer-events: none;
+  display: none;
+}
+
+.char-ring.is-visible {
+  display: block;
+}
+
+.char-ring-track {
+  fill: none;
+  stroke: var(--border-color);
+  stroke-width: 2.5;
+}
+
+.char-ring-fill {
+  fill: none;
+  stroke: #1d9bf0;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 56.55;
+  stroke-dashoffset: 56.55;
+  transition: stroke-dashoffset 0.1s ease, stroke 0.15s ease;
+}
+
+.char-ring.is-warning .char-ring-fill {
+  stroke: #f59e0b;
+}
+
+.char-ring.is-limit .char-ring-fill {
+  stroke: #ef4444;
+}
+
 .form-control {
   background-color: var(--bg-input);
   border: 1px solid var(--border-color);
@@ -37,6 +85,13 @@
   outline: none;
   transition: border-color 0.15s ease;
   width: 100%;
+}
+
+.input-ring-wrap textarea.form-control {
+  width: 100%;
+  box-sizing: border-box;
+  resize: none;
+  overflow-y: hidden;
 }
 
 .form-control:focus {

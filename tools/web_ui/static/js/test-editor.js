@@ -608,6 +608,34 @@ export function isFullLapTest(test) {
   return (s0 <= 0.005 && s1 >= 0.99) || test.start_mode === "FLYING_LAP";
 }
 
+function autoResizeTextarea(el) {
+  if (!el) return;
+  el.style.height = "auto";
+  el.style.height = `${el.scrollHeight}px`;
+}
+
+const CHAR_RING_CIRCUMFERENCE = 2 * Math.PI * 9;
+
+function updateCharRing(inputEl, ringId) {
+  const ringEl = document.getElementById(ringId);
+  if (!inputEl || !ringEl || inputEl.maxLength <= 0) return;
+
+  const ratio = Math.min(inputEl.value.length / inputEl.maxLength, 1);
+  ringEl.classList.toggle("is-visible", ratio >= 0.75);
+  ringEl.classList.toggle("is-warning", ratio >= 0.9 && ratio < 1);
+  ringEl.classList.toggle("is-limit", ratio >= 1);
+
+  const fillEl = ringEl.querySelector(".char-ring-fill");
+  if (fillEl) {
+    fillEl.style.strokeDashoffset = (CHAR_RING_CIRCUMFERENCE * (1 - ratio)).toFixed(2);
+  }
+}
+
+function syncLessonField(inputEl, ringId) {
+  autoResizeTextarea(inputEl);
+  updateCharRing(inputEl, ringId);
+}
+
 /**
  * Populate standard test text and dropdown fields in the form.
  */
@@ -615,8 +643,14 @@ function populateTestFormFields(test) {
   if (dom.formTestIdBadge) dom.formTestIdBadge.textContent = test.test_id;
   if (dom.inputTestId) dom.inputTestId.value = test.test_id;
   if (dom.inputTitle) dom.inputTitle.value = test.title || "";
-  if (dom.inputObjective) dom.inputObjective.value = test.lesson_objective || "";
-  if (dom.inputDescription) dom.inputDescription.value = test.description || "";
+  if (dom.inputObjective) {
+    dom.inputObjective.value = test.lesson_objective || "";
+    syncLessonField(dom.inputObjective, "ring-objective");
+  }
+  if (dom.inputDescription) {
+    dom.inputDescription.value = test.description || "";
+    syncLessonField(dom.inputDescription, "ring-description");
+  }
 
   if (dom.inputSearchTrack) dom.inputSearchTrack.value = "";
   if (dom.inputSearchCar) dom.inputSearchCar.value = "";
@@ -687,8 +721,14 @@ export function clearForm() {
   if (dom.formTestIdBadge) dom.formTestIdBadge.textContent = "--";
   if (dom.inputTestId) dom.inputTestId.value = "";
   if (dom.inputTitle) dom.inputTitle.value = "";
-  if (dom.inputObjective) dom.inputObjective.value = "";
-  if (dom.inputDescription) dom.inputDescription.value = "";
+  if (dom.inputObjective) {
+    dom.inputObjective.value = "";
+    syncLessonField(dom.inputObjective, "ring-objective");
+  }
+  if (dom.inputDescription) {
+    dom.inputDescription.value = "";
+    syncLessonField(dom.inputDescription, "ring-description");
+  }
   if (dom.inputSearchTrack) dom.inputSearchTrack.value = "";
   if (dom.inputSearchCar) dom.inputSearchCar.value = "";
   populateTrackDropdown("");
@@ -1882,6 +1922,15 @@ export function setupEditorEventListeners() {
   dom.form?.addEventListener("submit", (e) => {
     void handleFormSubmit(e);
   });
+
+  for (const [el, ringId] of [
+    [dom.inputObjective, "ring-objective"],
+    [dom.inputDescription, "ring-description"],
+  ]) {
+    if (!el) continue;
+    el.addEventListener("input", () => syncLessonField(el, ringId));
+    window.addEventListener("resize", () => autoResizeTextarea(el));
+  }
 
   if (dom.btnDownloadRecordScript) {
     dom.btnDownloadRecordScript.addEventListener("click", () => {

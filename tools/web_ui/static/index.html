@@ -385,6 +385,7 @@
                   type="text"
                   id="input-title"
                   class="form-control title-input"
+                  maxlength="80"
                   placeholder="Test Title"
                   aria-label="Test Title"
                   required
@@ -438,41 +439,43 @@
             <!-- Section 1: Objective & Description -->
             <div id="card-lesson-info" class="card form-card">
               <div class="card-title">Curriculum Lesson & Description</div>
-              <div class="form-grid cols-2">
+              <div class="form-grid">
                 <div class="form-group">
                   <label for="input-objective">Lesson Objective</label>
-                  <input
-                    type="text"
-                    id="input-objective"
-                    class="form-control"
-                    placeholder="Key driving technique to teach..."
-                    required
-                  />
+                  <div class="input-ring-wrap">
+                    <textarea
+                      id="input-objective"
+                      class="form-control"
+                      rows="2"
+                      maxlength="120"
+                      placeholder="Key driving technique to teach..."
+                      required
+                    ></textarea>
+                    <svg id="ring-objective" class="char-ring" viewBox="0 0 24 24" aria-hidden="true">
+                      <circle class="char-ring-track" cx="12" cy="12" r="9" />
+                      <circle class="char-ring-fill" cx="12" cy="12" r="9" />
+                    </svg>
+                  </div>
                 </div>
                 <div class="form-group">
-                  <label for="input-test-id">Test Identifier</label>
-                  <input
-                    type="text"
-                    id="input-test-id"
-                    class="form-control mono"
-                    placeholder="e.g. B-1, A-12"
-                    required
-                    readonly
-                    title="Automatically assigned sequentially based on position in this license tier"
-                  />
+                  <label for="input-description"
+                    >Test Description / Instruction</label
+                  >
+                  <div class="input-ring-wrap">
+                    <textarea
+                      id="input-description"
+                      class="form-control"
+                      rows="2"
+                      maxlength="200"
+                      placeholder="Driver instruction displayed during countdown..."
+                      required
+                    ></textarea>
+                    <svg id="ring-description" class="char-ring" viewBox="0 0 24 24" aria-hidden="true">
+                      <circle class="char-ring-track" cx="12" cy="12" r="9" />
+                      <circle class="char-ring-fill" cx="12" cy="12" r="9" />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-              <div class="form-group">
-                <label for="input-description"
-                  >Test Description / Instruction</label
-                >
-                <textarea
-                  id="input-description"
-                  class="form-control"
-                  rows="2"
-                  placeholder="Driver instruction displayed during countdown..."
-                  required
-                ></textarea>
               </div>
             </div>
 

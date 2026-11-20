@@ -48,6 +48,7 @@ export const FormHeader: React.FC<Props> = ({
           type="text"
           id="input-title"
           className="form-control title-input"
+          maxLength={80}
           placeholder="Test Title"
           aria-label="Test Title"
           value={title}

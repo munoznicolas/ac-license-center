@@ -106,7 +106,6 @@ export const TestEditor: React.FC<Props> = ({ onShowToast, onBack }) => {
 
         {/* Section 1: Curriculum Lesson & Description */}
         <LessonCard
-          testId={activeTest.test_id}
           objective={activeTest.objective || ""}
           description={activeTest.description || ""}
           onObjectiveChange={(objective) => updateActiveTest({ objective })}

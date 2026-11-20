@@ -139,3 +139,34 @@ test("worker.js rejects oversized payloads", async () => {
   const dataOversized = await resOversized.json();
   assert.match(dataOversized.error, /Payload too large/i);
 });
+
+test("worker.js exposes only public GOOGLE_CLIENT_ID on GET /config", async () => {
+  const workerPath = path.resolve(__dirname, "../../serverless/telemetry_pr_gateway/worker.js");
+  const { default: worker } = await import("file://" + workerPath.replace(/\\/g, "/"));
+
+  const env = {
+    ALLOWED_ORIGIN: "https://munoznicolas.github.io",
+    GITHUB_TOKEN: "ghp_super_secret",
+    DEV_TOKEN: "dev_secret",
+    GOOGLE_CLIENT_ID: "12345.apps.googleusercontent.com",
+  };
+
+  const res = await worker.fetch(
+    new Request("https://gateway.test/config", {
+      method: "GET",
+      headers: { Origin: "https://munoznicolas.github.io" },
+    }),
+    env
+  );
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.deepEqual(body, { google_client_id: "12345.apps.googleusercontent.com" });
+  assert.equal(JSON.stringify(body).includes("ghp_super_secret"), false);
+  assert.equal(JSON.stringify(body).includes("dev_secret"), false);
+
+  const resUnset = await worker.fetch(new Request("https://gateway.test/config", { method: "GET" }), {
+    GITHUB_TOKEN: "ghp_super_secret",
+  });
+  assert.equal(resUnset.status, 200);
+  assert.deepEqual(await resUnset.json(), { google_client_id: null });
+});

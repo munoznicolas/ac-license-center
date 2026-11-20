@@ -42,6 +42,8 @@ jobs:
 
       - name: Build Vite Web UI
         working-directory: tools/web_ui
+        env:
+          VITE_GOOGLE_CLIENT_ID: ${{ vars.VITE_GOOGLE_CLIENT_ID }}
         run: |
           npm ci
           npm run build

@@ -151,7 +151,7 @@ export class TelemetryEngine {
     };
   }
 
-  private _computeSectorLength(startS: number, finishS: number, startMode: string) {
+  private _computeSectorLength(startS: number, finishS: number) {
     const tot = this.totalTrackLengthM;
     const s0 = ((startS % 1.0) + 1.0) % 1.0;
     const s1 = Math.abs(finishS - 1.0) < 1e-4 ? 1.0 : ((finishS % 1.0) + 1.0) % 1.0;
@@ -245,7 +245,7 @@ export class TelemetryEngine {
     withStopBox = false,
     stepM = 1.0
   ) {
-    const { startDist, secLen } = this._computeSectorLength(startS, finishS, startMode);
+    const { startDist, secLen } = this._computeSectorLength(startS, finishS);
     const tAccum = this._integrateTraversalTime(startDist, secLen, startMode, withStopBox, stepM);
     const { gold, silver, bronze } = this._calculateMedalTargets(tAccum, startMode);
 

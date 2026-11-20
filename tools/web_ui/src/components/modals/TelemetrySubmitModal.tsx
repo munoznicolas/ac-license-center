@@ -5,10 +5,15 @@ import { api } from "../../api/client";
 import { validateTelemetryPayload, ValidatedTelemetryResult } from "../../utils/telemetrySubmitter";
 import { saveCustomTelemetryProfile } from "../../utils/telemetryStore";
 
-const DEFAULT_GOOGLE_CLIENT_ID =
-  (import.meta as unknown as { env?: Record<string, string> }).env?.VITE_GOOGLE_CLIENT_ID ||
-  localStorage.getItem("gt_google_client_id") ||
-  "";
+function getInitialGoogleClientId(): string {
+  const fromEnv = (import.meta as unknown as { env?: Record<string, string> }).env?.VITE_GOOGLE_CLIENT_ID;
+  if (fromEnv) return fromEnv;
+  try {
+    return localStorage.getItem("gt_google_client_id") || "";
+  } catch {
+    return "";
+  }
+}
 
 interface GoogleUser {
   name: string;
@@ -58,7 +63,9 @@ interface Props {
 
 export const TelemetrySubmitModal: React.FC<Props> = ({ isOpen, onClose, onShowToast }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const gsiButtonRef = useRef<HTMLDivElement | null>(null);
+  const [gsiContainer, setGsiContainer] = useState<HTMLDivElement | null>(null);
+  const [googleClientId, setGoogleClientId] = useState<string>(getInitialGoogleClientId);
+  const [loadingAuth, setLoadingAuth] = useState(false);
 
   const [googleUser, setGoogleUser] = useState<GoogleUser | null>(() => {
     try {
@@ -98,24 +105,62 @@ export const TelemetrySubmitModal: React.FC<Props> = ({ isOpen, onClose, onShowT
     [onShowToast]
   );
 
-  // Load Google Identity Services script on modal open if client_id is configured
+  // Fetch public Google Client ID from the Telemetry PR Gateway when not configured at build time
   useEffect(() => {
-    if (!isOpen || googleUser || !DEFAULT_GOOGLE_CLIENT_ID) return;
+    if (!isOpen || googleUser || googleClientId) return;
+
+    let cancelled = false;
+    setLoadingAuth(true);
+    api
+      .getGatewayConfig()
+      .then((cfg) => {
+        if (cancelled) return;
+        if (cfg.google_client_id) {
+          setGoogleClientId(cfg.google_client_id);
+          setError(null);
+        } else {
+          setError(
+            "Google Sign-In is not configured on the Telemetry PR Gateway (GOOGLE_CLIENT_ID is unset)."
+          );
+        }
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setError(
+          "Could not load Google Sign-In configuration from the Telemetry PR Gateway. Please try again later."
+        );
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingAuth(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, googleUser, googleClientId]);
+
+  // Load Google Identity Services script and render button once the Dialog portal container mounts
+  useEffect(() => {
+    if (!isOpen || googleUser || !googleClientId || !gsiContainer) return;
 
     const initGsi = () => {
-      if (window.google?.accounts?.id && gsiButtonRef.current) {
-        window.google.accounts.id.initialize({
-          client_id: DEFAULT_GOOGLE_CLIENT_ID,
-          callback: (resp) => {
-            if (resp.credential) handleCredential(resp.credential);
-          },
-        });
-        window.google.accounts.id.renderButton(gsiButtonRef.current, {
-          theme: "outline",
-          size: "medium",
-          text: "signin_with",
-        });
-      }
+      if (!window.google?.accounts?.id) return;
+      gsiContainer.innerHTML = "";
+      window.google.accounts.id.initialize({
+        client_id: googleClientId,
+        callback: (resp) => {
+          if (resp.credential) handleCredential(resp.credential);
+        },
+      });
+      window.google.accounts.id.renderButton(gsiContainer, {
+        theme: "outline",
+        size: "medium",
+        text: "signin_with",
+      });
+    };
+
+    const onScriptError = () => {
+      setError("Failed to load Google Sign-In script. Check your network or content blocker.");
     };
 
     if (window.google?.accounts?.id) {
@@ -123,26 +168,24 @@ export const TelemetrySubmitModal: React.FC<Props> = ({ isOpen, onClose, onShowT
       return;
     }
 
-    const existing = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
-    if (!existing) {
-      const s = document.createElement("script");
-      s.src = "https://accounts.google.com/gsi/client";
-      s.async = true;
-      s.defer = true;
-      s.onload = initGsi;
-      document.head.appendChild(s);
-    }
-  }, [isOpen, googleUser, handleCredential]);
-
-  const handleManualGoogleSignIn = () => {
-    if (window.google?.accounts?.id && DEFAULT_GOOGLE_CLIENT_ID) {
-      window.google.accounts.id.prompt();
-      return;
-    }
-    setError(
-      "Google Sign-In is required to authenticate submissions to the Telemetry PR Gateway (guests cannot create Pull Requests). Please sign in with Google."
+    let script = document.querySelector<HTMLScriptElement>(
+      'script[src="https://accounts.google.com/gsi/client"]'
     );
-  };
+    if (!script) {
+      script = document.createElement("script");
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+
+    script.addEventListener("load", initGsi);
+    script.addEventListener("error", onScriptError);
+    return () => {
+      script?.removeEventListener("load", initGsi);
+      script?.removeEventListener("error", onScriptError);
+    };
+  }, [isOpen, googleUser, googleClientId, gsiContainer, handleCredential]);
 
   const handleSignOut = () => {
     setGoogleUser(null);
@@ -275,16 +318,11 @@ export const TelemetrySubmitModal: React.FC<Props> = ({ isOpen, onClose, onShowT
           <Box id="google-signin-container" sx={{ display: "flex", alignItems: "center", gap: 1.5, minHeight: 36 }}>
             {!googleUser ? (
               <>
-                <div ref={gsiButtonRef} />
-                {!DEFAULT_GOOGLE_CLIENT_ID && (
-                  <button
-                    type="button"
-                    id="btn-manual-contributor-id"
-                    className="btn btn-sm btn-secondary"
-                    onClick={handleManualGoogleSignIn}
-                  >
-                    Sign in with Google
-                  </button>
+                <div ref={setGsiContainer} />
+                {loadingAuth && (
+                  <Typography sx={{ fontSize: "12px", color: "var(--text-muted)" }}>
+                    Loading Google Sign-In...
+                  </Typography>
                 )}
               </>
             ) : (

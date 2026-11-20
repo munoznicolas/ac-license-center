@@ -25,18 +25,23 @@ export default {
         status: 204,
         headers: {
           "Access-Control-Allow-Origin": corsOrigin,
-          "Access-Control-Allow-Methods": "POST, OPTIONS",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type, Authorization",
           "Access-Control-Max-Age": "86400",
         },
       });
     }
 
-    if (request.method !== "POST") {
-      return jsonResponse({ success: false, error: "Method not allowed. Use POST /submit or POST /contact" }, 405, corsOrigin);
+    const url = new URL(request.url);
+    // Google OAuth Client ID is a public identifier; expose it so the static Web UI stays in sync with aud verification
+    if (request.method === "GET" && url.pathname === "/config") {
+      return jsonResponse({ google_client_id: env.GOOGLE_CLIENT_ID || null }, 200, corsOrigin);
     }
 
-    const url = new URL(request.url);
+    if (request.method !== "POST") {
+      return jsonResponse({ success: false, error: "Method not allowed. Use GET /config, POST /submit, or POST /contact" }, 405, corsOrigin);
+    }
+
     if (url.pathname === "/contact") {
       return handleContactSubmit(request, env, corsOrigin);
     }

@@ -241,6 +241,14 @@ export const api = {
     });
   },
 
+  getGatewayConfig: async (gatewayUrl?: string): Promise<{ google_client_id: string | null }> => {
+    const res = await fetch(resolveGatewayUrl("/config", gatewayUrl));
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    }
+    return res.json();
+  },
+
   submitTelemetryProfile: async (params: {
     googleToken: string;
     filename: string;

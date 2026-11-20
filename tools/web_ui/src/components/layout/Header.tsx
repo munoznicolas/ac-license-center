@@ -11,7 +11,7 @@ export const Header: React.FC<Props> = ({ isOpen, onToggleMenu }) => {
     <header className="navbar">
       <div className="brand">
         <img
-          src="/favicon.svg"
+          src="./favicon.svg"
           alt="License Center Logo"
           className="gt-logo-img"
           width="34"

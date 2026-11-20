@@ -240,23 +240,6 @@ body {
   border-radius: 8px;
 }
 
-.gt-logo {
-  font-family: var(--font-mono);
-  font-weight: 600;
-  font-style: normal;
-  font-size: 14px;
-  letter-spacing: 0;
-  color: var(--text-main);
-  background: var(--bg-input);
-  padding: 4px 8px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-}
-
 .title-wrap h1 {
   font-family: var(--font-display);
   font-size: 15px;
@@ -3468,23 +3451,6 @@ select optgroup {
   .navbar {
     padding: 6px 12px;
   }
-
-  .gt-logo {
-  font-family: var(--font-mono);
-  font-weight: 600;
-  font-style: normal;
-  font-size: 14px;
-  letter-spacing: 0;
-  color: var(--text-main);
-  background: var(--bg-input);
-  padding: 4px 8px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-}
 
   .title-wrap h1 {
   font-family: var(--font-display);
